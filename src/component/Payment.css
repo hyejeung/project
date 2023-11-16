@@ -1,0 +1,58 @@
+/* Payment.css */
+
+/* Payment 컴포넌트 전체에 대한 스타일 */
+.payment-container {
+    max-width: 800px; /* 크기 조절 */
+    margin: 0 auto;
+    padding: 30px; /* 여백 조절 */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 배송지 정보 섹션 스타일 */
+.address-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/* 추가 정보 섹션 스타일 */
+.additional-info-section {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.request-section,
+.payment-method-section {
+    margin-bottom: 15px; /* 여백 조절 */
+}
+
+textarea,
+select {
+    width: 100%;
+    padding: 12px; /* 패딩 조절 */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 예상 소요시간 및 총 결제금액 섹션 스타일 */
+.summary-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px; /* 여백 조절 */
+}
+
+/* 결제 버튼 스타일 */
+.pay-button {
+    background-color: #4CAF50;
+    color: #fff;
+    padding: 15px; /* 크기 조절 */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* 추가적인 스타일은 필요에 따라 추가 */

@@ -1,0 +1,53 @@
+/* App.css (수정된 부분) */
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+.App {
+  height: 100%;
+}
+
+.my-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin: 0;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #4caf50;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+  box-sizing: content-box;
+}
+
+.my-page-container h2 {
+  color: #4caf50;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.my-page-container p {
+  margin: 10px 0;
+  font-size: 16px;
+}
+
+.my-page-container button {
+  padding: 12px 20px;
+  margin: 10px;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.my-page-container button:hover {
+  background-color: #388e3c;
+}
