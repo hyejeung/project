@@ -1,0 +1,81 @@
+/* login.css */
+
+body {
+  background-color: #eaf9e8; /* 연한 초록색 배경 */
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 60px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  text-align: center;
+}
+
+h2 {
+  color: #333;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #555;
+}
+
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-button {
+  background-color: #4caf50; /* 초록색 */
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 16px; /* 수정된 부분: 버튼 아래 여백 추가 */
+}
+
+.login-button:hover {
+  background-color: #45a049; /* 진한 초록색 */
+}
+
+.social-buttons {
+  margin-top: 16px;
+}
+
+.social-button-google,
+.social-button-facebook {
+  background-color: #4caf50; /* 초록색 */
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.social-button-google:hover,
+.social-button-facebook:hover {
+  background-color: #45a049; /* 진한 초록색 */
+}
+
+.signup-text {
+  margin-top: 16px;
+  color: #333;
+}
+
+.signup-text:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}

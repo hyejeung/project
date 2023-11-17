@@ -5,7 +5,8 @@ import Wishlist from './component/Wishlist';
 import Cart from './component/Cart';
 import Payment from './component/Payment';
 import Restaurant from './component/Restaurant';
-
+import Login from './component/login';
+import Signup from './component/Signup';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -29,7 +30,7 @@ const RestaurantCard = ({ name }) => {
   );
 };
 
-const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogout }) => {
+const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, handleLogout, isLoggedIn }) => {
   const settings = {
     dots: true,
     infinite: true,
@@ -51,12 +52,18 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogout }
             value={searchQuery}
             onChange={handleSearchChange}
           />
-         /{/* 통일된 스타일을 적용한 로그아웃, 마이페이지, 찜목록, 장바구니 링크 */}
-          <button className="nav-link" onClick={handleLogout}>로그아웃</button>
+        
+
           <Link to="/mypage" className="nav-link">마이페이지</Link>
           <Link to="/wishlist" className="nav-link">찜목록</Link>
           <Link to="/cart" className="nav-link">장바구니</Link>
-
+          {isLoggedIn ? (
+            // 로그인 상태일 때, 로그아웃 버튼
+            <button className="nav-link" onClick={handleLogout}>로그아웃</button>
+          ) : (
+            // 로그아웃 상태일 때, 로그인 버튼
+            <Link to="/login" className="nav-link">로그인</Link>
+          )}
         </div>
       </header>
       <main>
@@ -110,10 +117,17 @@ const App = () => {
     // 검색어에 따라 음식점을 필터링하거나 서버에 검색 요청을 보낼 수 있는 로직
   };
 
-  const handleLogout = () => {
-    // 로그아웃 로직
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const handleLogin = () => {
+    // 로그인 로직 구현
+    setIsLoggedIn(true);
   };
 
+  const handleLogout = () => {
+    // 로그아웃 로직 구현
+    setIsLoggedIn(false);
+  };
   return (
     <Router>
       <Routes>
@@ -124,7 +138,9 @@ const App = () => {
               restaurants={restaurants}
               searchQuery={searchQuery}
               handleSearchChange={handleSearchChange}
+              handleLogin={handleLogin}
               handleLogout={handleLogout}
+              isLoggedIn={isLoggedIn}
             />
           }
         />
@@ -133,6 +149,8 @@ const App = () => {
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
       </Routes>
     </Router>
   );
