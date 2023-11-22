@@ -1,0 +1,46 @@
+/* snsSignup.css */
+
+.sns-signup-container {
+    max-width: 300px; /* 전체 폼의 최대 너비를 조절해주었습니다. */
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .sns-signup-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+  
+  .sns-signup-input-group {
+    margin-bottom: 15px;
+  }
+  
+  .sns-signup-label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .sns-signup-input {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+  }
+  
+  .sns-signup-button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  .sns-signup-button:hover {
+    background-color: #45a049;
+  }
+  

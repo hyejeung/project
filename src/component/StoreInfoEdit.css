@@ -1,0 +1,49 @@
+/* AddMenu.css */
+
+/* 컨테이너 스타일 */
+.add-menu-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* 페이지 제목 스타일 */
+.add-menu-container h1 {
+  font-size: 24px;
+  color: #333;
+}
+
+/* 폼 스타일 */
+.add-menu-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 입력란 스타일 */
+.add-menu-container div {
+  margin-bottom: 15px;
+}
+
+.add-menu-container label {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.add-menu-container input {
+  padding: 8px;
+  font-size: 14px;
+  width: 100%;
+}
+
+/* 제출 버튼 스타일 */
+.add-menu-container button {
+  background-color: #4caf50;
+  color: #fff;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.add-menu-container button:hover {
+  background-color: #45a049;
+}

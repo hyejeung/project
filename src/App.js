@@ -1,5 +1,7 @@
+// app.js
+
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import MyPage from './component/Mypage';
 import Wishlist from './component/Wishlist';
 import Cart from './component/Cart';
@@ -7,12 +9,21 @@ import Payment from './component/Payment';
 import Restaurant from './component/Restaurant';
 import Login from './component/login';
 import Signup from './component/Signup';
+import SnsSignup from './component/SnsSignup';
+import Navbar from './component/Navbar';
+import ManagerMain from './component/ManagerMain';
+import StoreInfoEdit from './component/StoreInfoEdit';  
+import AddMenu from './component/AddMenu'; 
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './App.css';
 
+const Navigation = ({ handleSearchChange, isLoggedIn, handleLogout }) => {
+  const navigate = useNavigate();
 
+ 
+};
 
 const Category = ({ name }) => {
   return (
@@ -23,15 +34,23 @@ const Category = ({ name }) => {
 };
 
 const RestaurantCard = ({ name }) => {
+  const navigate = useNavigate();
+
+  const handleRestaurantClick = () => {
+    const restaurantId = name.toLowerCase().replace(/\s/g, '-');
+    navigate(`/restaurant/${restaurantId}`);
+  };
+
   return (
-    <div className="restaurant-card">
+    <div className="restaurant-card" onClick={handleRestaurantClick}>
       {name}
     </div>
   );
 };
 
 const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, handleLogout, isLoggedIn }) => {
-  const settings = {
+ 
+ const settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -41,44 +60,20 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
 
   return (
     <div className="App">
-      <header>
-        <div className="header-left">
-          <h1>배달및 주문서비스</h1>
-        </div>
-        <div className="header-right">
-          <input
-            type="text"
-            placeholder="검색"
-            value={searchQuery}
-            onChange={handleSearchChange}
-          />
-        
-
-          <Link to="/mypage" className="nav-link">마이페이지</Link>
-          <Link to="/wishlist" className="nav-link">찜목록</Link>
-          <Link to="/cart" className="nav-link">장바구니</Link>
-          {isLoggedIn ? (
-            // 로그인 상태일 때, 로그아웃 버튼
-            <button className="nav-link" onClick={handleLogout}>로그아웃</button>
-          ) : (
-            // 로그아웃 상태일 때, 로그인 버튼
-            <Link to="/login" className="nav-link">로그인</Link>
-          )}
-        </div>
-      </header>
+      <Navigation handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <main>
         <div className="categories">
           <Category name="배달" />
           <Category name="한식" />
-            <Category name="분식" />
-            <Category name="일식" />
-            <Category name="치킨" />
-            <Category name="피자" />
-            <Category name="중식" />
-            <Category name="족발" />
-            <Category name="야식" />
-            <Category name="도시락" />
-            <Category name="디저트" />
+          <Category name="분식" />
+          <Category name="일식" />
+          <Category name="치킨" />
+          <Category name="피자" />
+          <Category name="중식" />
+          <Category name="족발" />
+          <Category name="야식" />
+          <Category name="도시락" />
+          <Category name="디저트" />
         </div>
         <Slider className="main-slider" {...settings}>
           {restaurants.map((restaurant, index) => (
@@ -128,29 +123,48 @@ const App = () => {
     // 로그아웃 로직 구현
     setIsLoggedIn(false);
   };
+  
   return (
     <Router>
+      {/* Navbar를 모든 페이지에 표시 */}
+      <Navbar handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <Routes>
+        {/* 메인페이지 */}
         <Route
           path="/"
           element={
-            <MainPage
-              restaurants={restaurants}
-              searchQuery={searchQuery}
-              handleSearchChange={handleSearchChange}
-              handleLogin={handleLogin}
-              handleLogout={handleLogout}
-              isLoggedIn={isLoggedIn}
-            />
+            <>
+              <MainPage
+                restaurants={restaurants}
+                searchQuery={searchQuery}
+                handleSearchChange={handleSearchChange}
+                handleLogin={handleLogin}
+                handleLogout={handleLogout}
+                isLoggedIn={isLoggedIn}
+              />
+            </>
           }
         />
-        <Route path="/mypage" element={<MyPage />} /> 
+
+       {/* 나머지 페이지 */}
+       <Route path="/mypage" element={<MyPage />} />
         <Route path="/restaurant/:id" element={<Restaurant />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/payment" element={<Payment />} />
+
+        {/* 로그인 페이지 - Navbar를 표시하지 않음 */}
         <Route path="/login" element={<Login />} />
+
+        <Route path="/wishlist" element={<Wishlist />} />
+
+        {/* 장바구니 페이지 - Navbar를 표시하지 않음 */}
+        <Route path="/cart" element={<Cart />} />
+
+        <Route path="/payment" element={<Payment />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/sns-signup" element={<SnsSignup />} />
+        <Route path="/managermain" element={<ManagerMain />} />
+        <Route path="/store-info-edit" element={<StoreInfoEdit />} /> 
+        <Route path="/add-menu" element={<AddMenu />} />
+
       </Routes>
     </Router>
   );
