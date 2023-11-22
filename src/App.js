@@ -116,7 +116,10 @@ const App = () => {
 
   const handleLogin = () => {
     // 로그인 로직 구현
-    setIsLoggedIn(true);
+    console.log('access_token 값:', localStorage.getItem('access_token'))
+    if (localStorage.getItem('access_token')) {
+      setIsLoggedIn(true);
+    }
   };
 
   const handleLogout = () => {

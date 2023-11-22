@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 import './MyPage.css'; // Import the CSS file for styling
 
@@ -8,7 +9,6 @@ const MyPage = () => {
     username: '사용자 이름',
     email: 'user@example.com',
     phoneNumber: '010-1234-5678', // 전화번호 추가
-    userId: 'user123', // 아이디 추가
     password: '********', // 비밀번호 추가
     gender: '남성', // 성별 추가
     // ... Add more user information as needed
@@ -20,6 +20,15 @@ const MyPage = () => {
       // 페이지가 홈페이지에서 이동된 경우, 창 크기를 조절하거나 다른 조치를 취할 수 있습니다.
       // 예: window.resizeTo(width, height);
     }
+
+    axios.get('/api/member', 
+      {params: {email: "test@asd.123"}})
+    .then(response => {
+      setUserInfo(response.data)
+      return response;
+    })
+    .then(response => console.log(response.data))
+    .catch(error => console.log(error))
   }, []);
 
   const handleUpdate = async (newUserInfo) => {
@@ -52,10 +61,9 @@ const MyPage = () => {
   return (
     <div className="my-page-container">
       <h2>마이페이지</h2>
-      <p>사용자 이름: {userInfo.username}</p>
+      <p>사용자 이름: {userInfo.name}</p>
       <p>Email: {userInfo.email}</p>
-      <p>전화번호: {userInfo.phoneNumber}</p>
-      <p>아이디: {userInfo.userId}</p>
+      <p>전화번호: {userInfo.phone}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
       {/* Additional user information fields can be added here */}
