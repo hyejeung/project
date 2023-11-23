@@ -7,12 +7,15 @@ const MyPage = () => {
   const [userInfo, setUserInfo] = useState({
     username: '사용자 이름',
     email: 'user@example.com',
-    phoneNumber: '010-1234-5678', // 전화번호 추가
-    userId: 'user123', // 아이디 추가
-    password: '********', // 비밀번호 추가
-    gender: '남성', // 성별 추가
-    // ... Add more user information as needed
+    phoneNumber: '010-1234-5678',
+    userId: 'user123',
+    password: '********',
+    gender: '남성',
+    points: 1000, 
+    grade: 'gold', 
+    address: '서울특별시 성북구 서경로 123번지', 
   });
+
 
   useEffect(() => {
     const { fromHomePage } = window.history.state || {};
@@ -49,6 +52,7 @@ const MyPage = () => {
     }
   };
 
+ 
   return (
     <div className="my-page-container">
       <h2>마이페이지</h2>
@@ -58,7 +62,9 @@ const MyPage = () => {
       <p>아이디: {userInfo.userId}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
-      {/* Additional user information fields can be added here */}
+      <p>적립금: {userInfo.points} 포인트</p>
+      <p>등급: {userInfo.grade}</p>
+      <p>주소: {userInfo.address}</p>
       <button onClick={() => handleUpdate({ ...userInfo, username: '새로운 이름' })}>
         회원정보 수정
       </button>
