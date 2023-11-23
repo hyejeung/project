@@ -9,8 +9,8 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState('');
-  const [gender, setGender] = useState(''); // 추가: 성별 상태 추가
+  const [address, setAddress] = useState(''); // 추가: 주소 상태 추가
+  const [gender, setGender] = useState('');
   const [error, setError] = useState('');
 
   const handleSignup = () => {
@@ -35,7 +35,7 @@ const Signup = () => {
       return;
     }
 
-    if (!gender) { // 추가: 성별 선택 여부 확인
+    if (!gender) {
       setError('성별을 선택하세요.');
       return;
     }
@@ -45,7 +45,6 @@ const Signup = () => {
   };
 
   const handleDuplicateCheck = () => {
-    // 중복확인 로직을 구현합니다.
     console.log('아이디 중복 확인 시도:', newUsername);
   };
 
@@ -53,29 +52,23 @@ const Signup = () => {
     setGender(selectedGender);
   };
 
-  // 이메일 유효성 검사 함수
   const isValidEmail = (value) => {
-    // 간단한 형식의 이메일 유효성 검사
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   };
 
-  // 비밀번호 유효성 검사 함수
   const isValidPassword = (value) => {
-    // 비밀번호는 8자리 이상, 특수문자를 포함해야 함
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return passwordRegex.test(value);
   };
 
-  // 전화번호 유효성 검사 함수
   const isValidPhoneNumber = (value) => {
-    // 간단한 형식의 전화번호 유효성 검사 (010-xxxx-xxxx)
     const phoneNumberRegex = /^010-\d{4}-\d{4}$/;
     return phoneNumberRegex.test(value);
   };
 
   return (
-    <div>
+    <div className="signup-container">
       <h2>회원가입</h2>
       <div>
         <label htmlFor="newUsername">아이디:</label>
@@ -85,7 +78,7 @@ const Signup = () => {
           value={newUsername}
           onChange={(e) => setNewUsername(e.target.value)}
         />
-        <button onClick={handleDuplicateCheck}>중복확인</button>
+        <button className="duplicate-check" onClick={handleDuplicateCheck}>중복확인</button>
       </div>
       <div>
         <label htmlFor="newPassword">비밀번호:</label>
@@ -124,32 +117,43 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label>성별:</label>
-        <div>
-          <input
-            type="radio"
-            id="male"
-            name="gender"
-            value="male"
-            checked={gender === 'male'}
-            onChange={() => handleGenderChange('male')}
-          />
-          <label htmlFor="male">남성</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="female"
-            name="gender"
-            value="female"
-            checked={gender === 'female'}
-            onChange={() => handleGenderChange('female')}
-          />
-          <label htmlFor="female">여성</label>
+        <label htmlFor="address">주소:</label>
+        <input
+          type="text"
+          id="address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="gender-label">성별:</label>
+        <div className="gender-options">
+          <label htmlFor="male">
+            <input
+              type="radio"
+              id="male"
+              name="gender"
+              value="male"
+              checked={gender === 'male'}
+              onChange={() => handleGenderChange('male')}
+            />
+            남성
+          </label>
+          <label htmlFor="female">
+            <input
+              type="radio"
+              id="female"
+              name="gender"
+              value="female"
+              checked={gender === 'female'}
+              onChange={() => handleGenderChange('female')}
+            />
+            여성
+          </label>
         </div>
       </div>
       <div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p>{error}</p>}
         <button onClick={handleSignup}>회원가입</button>
       </div>
     </div>

@@ -6,7 +6,7 @@ import './MyPage.css'; // Import the CSS file for styling
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({
     username: '사용자 이름',
-    email: 'user@example.com',
+    email: 'abc@google.com',
     phoneNumber: '010-1234-5678',
     userId: 'user123',
     password: '********',
