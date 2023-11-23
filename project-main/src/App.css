@@ -1,0 +1,93 @@
+/* App.css (수정된 부분) */
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.App {
+  text-align: center;
+}
+
+header {
+  background-color: #4CAF50;
+  padding: 1rem;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left h1 {
+  margin: 0;
+}
+
+.header-right input {
+  margin-right: 10px;
+}
+
+.categories {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  padding: 1rem;
+  background-color: #f2f2f2;
+}
+
+.category {
+  background-color: #808080; /* 회색 배경색으로 수정 */
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.category:hover {
+  background-color: #555; /* 호버 시 어두운 회색으로 수정 */
+}
+
+.main-slider {
+  margin: 20px; /* 슬라이더의 외부 여백 설정 */
+}
+
+.restaurant-card {
+  background-color: #fff; /* 음식점 카드 배경색 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.3s ease-in-out;
+}
+
+.restaurant-card:hover {
+  transform: scale(1.05); /* 호버 시 확대 효과 */
+}
+
+.my-page-link,
+.nav-link,
+.logout-button {
+  text-decoration: none;
+  color: black;
+  margin-left: 10px;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-block;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.my-page-link:hover {
+  background-color: rgb(105, 163, 108); /* 더 진한 그린 톤 */
+  text-decoration: underline;
+}
+
+.nav-link:hover {
+  background-color: #0af573; /* 더 진한 블루 톤 */
+}
+
+.logout-button:hover {
+  background-color: #8bc34a; /* 더 연한 초록색 */
+  color: black;
+}
