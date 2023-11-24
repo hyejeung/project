@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import './ManagerMain.css';
- 
+
 const ManagerMain = () => {
   console.log('ManagerMain 컴포넌트 렌더링');
 
@@ -15,15 +15,7 @@ const ManagerMain = () => {
 
   return (
     <div className="managermain-container">
-      <div className="header">
-        <h1>주문 관리 페이지</h1>
-        <div className="header-menu">
-          <Link to="/store-info-edit">가게 정보 수정</Link>
-          <Link to="/add-menu" >메뉴 추가</Link>
-          <Link to="/mypage">마이페이지</Link>
-          <Link to="/sales">매출 관리</Link>
-        </div>
-      </div>
+     
 
       <div className="order-list">
         <div className="order-item">
@@ -41,7 +33,7 @@ const ManagerMain = () => {
           <button onClick={() => processOrder(2, 'accepted')}>수락</button>
           <button onClick={() => processOrder(2, 'rejected')}>거절</button>
         </div>
-       
+        {/* 다른 주문 아이템들을 추가합니다 */}
       </div>
 
       <div className="go-back-link">

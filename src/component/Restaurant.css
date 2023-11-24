@@ -2,48 +2,47 @@
 
 /* Restaurant 클래스에 대한 스타일 */
 .Restaurant {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 30px;
-    border: 2px solid #4CAF50;
-    border-radius: 15px;
-    background-color: #f9f9f9;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* 제목 스타일 */
-  .Restaurant h2 {
-    color: #4CAF50;
-    font-size: 28px;
-    margin-bottom: 10px;
-    text-align: center;
-  }
-  
-  /* 정보 섹션에 대한 스타일 */
-  .Restaurant div > div {
-    margin-top: 30px;
-  }
-  
-  /* 위치, 연락처, 리뷰, 메뉴와 같은 특정 섹션에 대한 스타일 */
-  .Restaurant h3 {
-    color: #4CAF50;
-    font-size: 24px;
-    border-bottom: 2px solid #4CAF50;
-    padding-bottom: 5px;
-  }
-  
-  /* 메뉴 목록 스타일 */
-  .Restaurant ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .Restaurant li {
-    margin-bottom: 15px;
-    font-weight: bold;
-    font-size: 18px;
-    color: #333;
-  }
-  
-  /* 다른 섹션 또는 특정 요소에 필요한 스타일 추가 가능 */
-  
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px;
+  border: 2px solid #4CAF50;
+  border-radius: 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 제목 스타일 */
+.Restaurant h2 {
+  color: #4CAF50;
+  font-size: 28px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* 정보 섹션에 대한 스타일 */
+.Restaurant div > div {
+  margin-top: 30px;
+}
+
+/* 위치, 연락처, 리뷰, 메뉴와 같은 특정 섹션에 대한 스타일 */
+.Restaurant h3 {
+  color: #4CAF50;
+  font-size: 24px;
+  border-bottom: 2px solid #4CAF50;
+  padding-bottom: 5px;
+}
+
+/* 메뉴 목록 스타일 */
+.Restaurant ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.Restaurant li {
+  margin-bottom: 15px;
+  font-weight: bold;
+  font-size: 18px;
+  color: #333;
+}
+
+/* 다른 섹션 또는 특정 요소에 필요한 스타일 추가 가능 */

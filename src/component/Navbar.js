@@ -12,7 +12,12 @@ const Navbar = ({ handleSearchChange, isLoggedIn, handleLogout }) => {
     location.pathname === '/sns-signup' ||
     location.pathname === '/signup' ||
     location.pathname === '/add-menu' ||
-    location.pathname === '/store-info-edit'
+    location.pathname === '/store-info-edit'||
+    location.pathname === '/menu-management'||
+    location.pathname === '/menu-detail'||
+    location.pathname === '/sales'||
+    location.pathname === '/register'
+
   ) {
     return null;
   }

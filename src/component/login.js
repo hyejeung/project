@@ -1,29 +1,30 @@
 // Login.js
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './login.css'; 
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
 
   const handleLogin = () => {
-    // 실제 로그인 로직을 수행합니다.
-    // 성공하면 관리자 페이지로 이동합니다.
+    // 로그인 로직 구현: 서버로 아이디와 비밀번호 전송 등
     console.log('로그인 시도:', { username, password });
-
     // 여기에서 로그인 성공 여부를 판단하여 페이지 이동
     const loginSuccessful = true; // 예시로 성공했다고 가정
 
     if (loginSuccessful) {
-      navigate('/managermain');
-
+      // Link 컴포넌트를 사용하여 관리자 페이지로 이동
+      return (
+        <Link to="/register" />
+      );
     } else {
       alert('로그인 실패. 올바른 사용자 이름과 비밀번호를 입력하세요.');
     }
   };
+  
+
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
     console.log(`SNS ${provider} 계정으로 로그인 시도`);
@@ -56,11 +57,7 @@ const Login = () => {
         />
       </div>
       <div>
-      <Link to="/managermain">
-        <button className="login-button" onClick={handleLogin}>
-          로그인
-        </button>
-        </Link>
+        <button className="login-button" onClick={handleLogin}>로그인</button>
       </div>
       <div>
       <Link to="/sns-signup">
