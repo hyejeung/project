@@ -1,5 +1,3 @@
-// Signup.js
-
 import React, { useState } from 'react';
 import './Signup.css';
 
@@ -9,8 +7,9 @@ const Signup = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [address, setAddress] = useState(''); // 추가: 주소 상태 추가
+  const [address, setAddress] = useState('');
   const [gender, setGender] = useState('');
+  const [memberType, setMemberType] = useState('regular');
   const [error, setError] = useState('');
 
   const handleSignup = () => {
@@ -40,8 +39,21 @@ const Signup = () => {
       return;
     }
 
-    // 회원가입 로직을 구현합니다.
-    console.log('회원가입 시도:', { newUsername, newPassword, email, phoneNumber, address, gender });
+    if (!memberType) {
+      setError('회원 유형을 선택하세요.');
+      return;
+    }
+
+    // 회원가입 로직
+    console.log('회원가입 시도:', {
+      newUsername,
+      newPassword,
+      email,
+      phoneNumber,
+      address,
+      gender,
+      memberType,
+    });
   };
 
   const handleDuplicateCheck = () => {
@@ -50,6 +62,10 @@ const Signup = () => {
 
   const handleGenderChange = (selectedGender) => {
     setGender(selectedGender);
+  };
+
+  const handleMemberTypeChange = (selectedMemberType) => {
+    setMemberType(selectedMemberType);
   };
 
   const isValidEmail = (value) => {
@@ -71,17 +87,19 @@ const Signup = () => {
     <div className="signup-container">
       <h2>회원가입</h2>
       <div>
-        <label htmlFor="newUsername">아이디:</label>
+        <label htmlFor="newUsername">아이디</label>
         <input
           type="text"
           id="newUsername"
           value={newUsername}
           onChange={(e) => setNewUsername(e.target.value)}
         />
-        <button className="duplicate-check" onClick={handleDuplicateCheck}>중복확인</button>
+        <button className="duplicate-check" onClick={handleDuplicateCheck}>
+          중복확인
+        </button>
       </div>
       <div>
-        <label htmlFor="newPassword">비밀번호:</label>
+        <label htmlFor="newPassword">비밀번호</label>
         <input
           type="password"
           id="newPassword"
@@ -90,7 +108,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="confirmPassword">비밀번호 확인:</label>
+        <label htmlFor="confirmPassword">비밀번호 확인</label>
         <input
           type="password"
           id="confirmPassword"
@@ -99,7 +117,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="email">이메일:</label>
+        <label htmlFor="email">이메일</label>
         <input
           type="text"
           id="email"
@@ -108,7 +126,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="phoneNumber">전화번호:</label>
+        <label htmlFor="phoneNumber">전화번호</label>
         <input
           type="text"
           id="phoneNumber"
@@ -117,7 +135,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="address">주소:</label>
+        <label htmlFor="address">주소</label>
         <input
           type="text"
           id="address"
@@ -126,7 +144,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label className="gender-label">성별:</label>
+        <label className="gender-label">성별</label>
         <div className="gender-options">
           <label htmlFor="male">
             <input
@@ -149,6 +167,33 @@ const Signup = () => {
               onChange={() => handleGenderChange('female')}
             />
             여성
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="member-type-label">회원 유형</label>
+        <div className="member-type-options">
+          <label htmlFor="regular">
+            <input
+              type="radio"
+              id="regular"
+              name="memberType"
+              value="regular"
+              checked={memberType === 'regular'}
+              onChange={() => handleMemberTypeChange('regular')}
+            />
+            일반 회원
+          </label>
+          <label htmlFor="storeOwner">
+            <input
+              type="radio"
+              id="storeOwner"
+              name="memberType"
+              value="storeOwner"
+              checked={memberType === 'storeOwner'}
+              onChange={() => handleMemberTypeChange('storeOwner')}
+            />
+            가맹점
           </label>
         </div>
       </div>
