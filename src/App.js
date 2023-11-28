@@ -15,15 +15,17 @@ import ManagerMain from './component/ManagerMain';
 import StoreInfoEdit from './component/StoreInfoEdit';  
 import AddMenu from './component/AddMenu'; 
 import CategoryPage from './component/CategoryPage';
-import Register from './component/Register';
+
 import MenuManagement from './component/MenuManagement';
-import MenuDetail from './component/MenuDetail'; 
+import ManagerMypage from './component/ManagerMypage';
+import GeneralManager from './component/GeneralManager';
 import MenuNavbar from './component/MenuNavbar';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './App.css';
 import axios from 'axios';
+
 
 const Navigation = ({ handleSearchChange, isLoggedIn, handleLogout }) => {
 
@@ -186,9 +188,10 @@ const App = () => {
         <Route path="/store-info-edit" element={<StoreInfoEdit />} /> 
         <Route path="/add-menu" element={<AddMenu />} />
         <Route path="/category/:category" element={<CategoryPage />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/manager-mypage" element={<ManagerMypage />} />
         <Route path="/menu-management" element={<MenuManagement />} />
-        <Route path="/menu-detail" element={<MenuDetail />} />
+        <Route path="/general-manager" element={<GeneralManager />} />
+        
        
         
 

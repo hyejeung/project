@@ -2,11 +2,12 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import './login.css'; 
+import './login.css';
 
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = () => {
     // 로그인 로직 구현: 서버로 아이디와 비밀번호 전송 등
@@ -16,14 +17,11 @@ const Login = () => {
 
     if (loginSuccessful) {
       // Link 컴포넌트를 사용하여 관리자 페이지로 이동
-      return (
-        <Link to="/register" />
-      );
+      return <Link to="/register" />;
     } else {
       alert('로그인 실패. 올바른 사용자 이름과 비밀번호를 입력하세요.');
     }
   };
-  
 
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
@@ -47,29 +45,45 @@ const Login = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
+      <div className="password-container">
         <label htmlFor="password">비밀번호:</label>
         <input
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           id="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+        <span
+          className={`password-toggle-icon ${showPassword ? 'visible' : ''}`}
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          👁️
+        </span>
       </div>
       <div>
-        <button className="login-button" onClick={handleLogin}>로그인</button>
+        <button className="login-button" onClick={handleLogin}>
+          로그인
+        </button>
       </div>
       <div>
-      <Link to="/sns-signup">
-          <button className="social-button-google" onClick={() => handleSocialLogin('Google')}>Google로 로그인</button>
+        <Link to="/sns-signup">
+          <button
+            className="social-button-google"
+            onClick={() => handleSocialLogin('Google')}
+          >
+            Google로 로그인
+          </button>
         </Link>
         <Link to="/sns-signup">
-          <button className="social-button-facebook" onClick={() => handleSocialLogin('Facebook')}>Facebook으로 로그인</button>
+          <button
+            className="social-button-facebook"
+            onClick={() => handleSocialLogin('Facebook')}
+          >
+            Facebook으로 로그인
+          </button>
         </Link>
       </div>
-      {/* <div className="signup-text" onClick={handleSignUp}>아직 회원이 아니신가요?</div>
-      <button className="signup-link" onClick={handleSignUp}>회원가입</button> */}
-       <div className="signup-text">
+      <div className="signup-text">
         아직 회원이 아니신가요? <Link to="/signup">회원가입</Link>
       </div>
     </div>

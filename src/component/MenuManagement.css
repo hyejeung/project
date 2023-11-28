@@ -33,7 +33,8 @@
 }
 
 .header-menu a:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: #1a5311; /* 호버 상태의 배경색 */
+  color: #fff; /* 호버 상태의 글자색 */
 }
 
 .order-list {

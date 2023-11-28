@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './MyPage.css'; // Import the CSS file for styling
+import './ManagerMypage.css'; // Import the CSS file for styling
 
-const MyPage = () => {
+const ManagerMypage = () => {
   const [userInfo, setUserInfo] = useState({
     username: '사용자 이름',
     email: 'abc@google.com',
@@ -76,8 +76,6 @@ const MyPage = () => {
       <p>전화번호: {userInfo.phoneNumber}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
-      <p>적립금: {userInfo.points} 포인트</p>
-      <p>등급: {userInfo.grade}</p>
       <p>주소: {userInfo.address}</p>
       <button onClick={openModal}>회원정보 수정</button>
       <button onClick={handleWithdrawal}>회원탈퇴</button>
@@ -157,4 +155,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default ManagerMypage;

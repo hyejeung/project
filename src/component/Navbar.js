@@ -16,6 +16,8 @@ const Navbar = ({ handleSearchChange, isLoggedIn, handleLogout }) => {
     location.pathname === '/menu-management'||
     location.pathname === '/menu-detail'||
     location.pathname === '/sales'||
+    location.pathname === '/manager-mypage'||
+    location.pathname === '/general-manager'||
     location.pathname === '/register'
 
   ) {
