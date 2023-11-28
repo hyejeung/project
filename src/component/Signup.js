@@ -1,5 +1,3 @@
-// Signup.js
-
 import React, { useState } from 'react';
 import './Signup.css';
 
@@ -10,7 +8,8 @@ const Signup = () => {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
-  const [gender, setGender] = useState(''); // 추가: 성별 상태 추가
+  const [gender, setGender] = useState('');
+  const [memberType, setMemberType] = useState('regular');
   const [error, setError] = useState('');
 
   const handleSignup = () => {
@@ -35,17 +34,29 @@ const Signup = () => {
       return;
     }
 
-    if (!gender) { // 추가: 성별 선택 여부 확인
+    if (!gender) {
       setError('성별을 선택하세요.');
       return;
     }
 
-    // 회원가입 로직을 구현합니다.
-    console.log('회원가입 시도:', { newUsername, newPassword, email, phoneNumber, address, gender });
+    if (!memberType) {
+      setError('회원 유형을 선택하세요.');
+      return;
+    }
+
+    // 회원가입 로직
+    console.log('회원가입 시도:', {
+      newUsername,
+      newPassword,
+      email,
+      phoneNumber,
+      address,
+      gender,
+      memberType,
+    });
   };
 
   const handleDuplicateCheck = () => {
-    // 중복확인 로직을 구현합니다.
     console.log('아이디 중복 확인 시도:', newUsername);
   };
 
@@ -53,42 +64,42 @@ const Signup = () => {
     setGender(selectedGender);
   };
 
-  // 이메일 유효성 검사 함수
+  const handleMemberTypeChange = (selectedMemberType) => {
+    setMemberType(selectedMemberType);
+  };
+
   const isValidEmail = (value) => {
-    // 간단한 형식의 이메일 유효성 검사
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
   };
 
-  // 비밀번호 유효성 검사 함수
   const isValidPassword = (value) => {
-    // 비밀번호는 8자리 이상, 특수문자를 포함해야 함
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/;
     return passwordRegex.test(value);
   };
 
-  // 전화번호 유효성 검사 함수
   const isValidPhoneNumber = (value) => {
-    // 간단한 형식의 전화번호 유효성 검사 (010-xxxx-xxxx)
     const phoneNumberRegex = /^010-\d{4}-\d{4}$/;
     return phoneNumberRegex.test(value);
   };
 
   return (
-    <div>
+    <div className="signup-container">
       <h2>회원가입</h2>
       <div>
-        <label htmlFor="newUsername">아이디:</label>
+        <label htmlFor="newUsername">아이디</label>
         <input
           type="text"
           id="newUsername"
           value={newUsername}
           onChange={(e) => setNewUsername(e.target.value)}
         />
-        <button onClick={handleDuplicateCheck}>중복확인</button>
+        <button className="duplicate-check" onClick={handleDuplicateCheck}>
+          중복확인
+        </button>
       </div>
       <div>
-        <label htmlFor="newPassword">비밀번호:</label>
+        <label htmlFor="newPassword">비밀번호</label>
         <input
           type="password"
           id="newPassword"
@@ -97,7 +108,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="confirmPassword">비밀번호 확인:</label>
+        <label htmlFor="confirmPassword">비밀번호 확인</label>
         <input
           type="password"
           id="confirmPassword"
@@ -106,7 +117,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="email">이메일:</label>
+        <label htmlFor="email">이메일</label>
         <input
           type="text"
           id="email"
@@ -115,7 +126,7 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="phoneNumber">전화번호:</label>
+        <label htmlFor="phoneNumber">전화번호</label>
         <input
           type="text"
           id="phoneNumber"
@@ -124,32 +135,70 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label>성별:</label>
-        <div>
-          <input
-            type="radio"
-            id="male"
-            name="gender"
-            value="male"
-            checked={gender === 'male'}
-            onChange={() => handleGenderChange('male')}
-          />
-          <label htmlFor="male">남성</label>
-        </div>
-        <div>
-          <input
-            type="radio"
-            id="female"
-            name="gender"
-            value="female"
-            checked={gender === 'female'}
-            onChange={() => handleGenderChange('female')}
-          />
-          <label htmlFor="female">여성</label>
+        <label htmlFor="address">주소</label>
+        <input
+          type="text"
+          id="address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="gender-label">성별</label>
+        <div className="gender-options">
+          <label htmlFor="male">
+            <input
+              type="radio"
+              id="male"
+              name="gender"
+              value="male"
+              checked={gender === 'male'}
+              onChange={() => handleGenderChange('male')}
+            />
+            남성
+          </label>
+          <label htmlFor="female">
+            <input
+              type="radio"
+              id="female"
+              name="gender"
+              value="female"
+              checked={gender === 'female'}
+              onChange={() => handleGenderChange('female')}
+            />
+            여성
+          </label>
         </div>
       </div>
       <div>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+        <label className="member-type-label">회원 유형</label>
+        <div className="member-type-options">
+          <label htmlFor="regular">
+            <input
+              type="radio"
+              id="regular"
+              name="memberType"
+              value="regular"
+              checked={memberType === 'regular'}
+              onChange={() => handleMemberTypeChange('regular')}
+            />
+            일반 회원
+          </label>
+          <label htmlFor="storeOwner">
+            <input
+              type="radio"
+              id="storeOwner"
+              name="memberType"
+              value="storeOwner"
+              checked={memberType === 'storeOwner'}
+              onChange={() => handleMemberTypeChange('storeOwner')}
+            />
+            가맹점
+          </label>
+        </div>
+      </div>
+      <div>
+        {error && <p>{error}</p>}
         <button onClick={handleSignup}>회원가입</button>
       </div>
     </div>

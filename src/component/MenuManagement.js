@@ -3,12 +3,23 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
 import './ManagerMain.css';
+import MenuDetail from './MenuDetail'; // MenuDetail 컴포넌트를 import
 
-const ManagerMain = () => {
-  const [isModalOpen, setModalOpen] = useState(true); // 모달을 페이지 로딩 시에 자동으로 열도록 변경
+const MenuManagement = () => {
+  const [isModalOpen, setModalOpen] = useState(false);
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantInfo, setRestaurantInfo] = useState('');
   const navigate = useNavigate();
+
+  // 메뉴 상세 정보 모달 열기
+  const openMenuDetailModal = () => {
+    setModalOpen(true);
+  };
+
+  // 메뉴 상세 정보 모달 닫기
+  const closeMenuDetailModal = () => {
+    setModalOpen(false);
+  };
 
   const processOrder = (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
@@ -42,18 +53,15 @@ const ManagerMain = () => {
     <div className="managermain-container">
       <div className="order-list">
         <div className="order-item">
-          <Link to="/menu-detail">
-            <span>엽기떡볶이</span>
-            <span>15000원</span>
-          </Link>
+          <span onClick={openMenuDetailModal}>엽기떡볶이</span>
+          <span>15000원</span>
         </div>
 
         <div className="order-item">
-          <Link to="/menu-detail">
-            <span>엽기오뎅</span>
-            <span>20000원</span>
-          </Link>
+          <span onClick={openMenuDetailModal}>엽기오뎅</span>
+          <span>20000원</span>
         </div>
+        {/* 다른 상품들도 유사하게 작성 */}
       </div>
 
       <div className="add-menu-link">
@@ -94,6 +102,18 @@ const ManagerMain = () => {
         </div>
       )}
 
+      {/* 메뉴 상세 정보 모달 */}
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <MenuDetail />
+            <button className="close-button" onClick={closeMenuDetailModal}>
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
       <button onClick={openStoreInfoModal}>음식점 등록</button>
 
       <Outlet />
@@ -101,4 +121,4 @@ const ManagerMain = () => {
   );
 };
 
-export default ManagerMain;
+export default MenuManagement;

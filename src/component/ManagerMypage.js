@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './MyPage.css'; // Import the CSS file for styling
+import './ManagerMypage.css'; // Import the CSS file for styling
 
-const MyPage = () => {
+const ManagerMypage = () => {
   const [userInfo, setUserInfo] = useState({
     username: '사용자 이름',
     email: 'abc@google.com',
@@ -30,15 +30,6 @@ const MyPage = () => {
         .then((response) => console.log(response.data))
         .catch((error) => console.log(error));
     }
-
-    axios.get('/api/member', 
-      {params: {email: "test@asd.123"}})
-    .then(response => {
-      setUserInfo(response.data)
-      return response;
-    })
-    .then(response => console.log(response.data))
-    .catch(error => console.log(error))
   }, []);
 
   const handleUpdate = async () => {
@@ -80,13 +71,11 @@ const MyPage = () => {
   return (
     <div className="my-page-container">
       <h2>마이페이지</h2>
-      <p>사용자 이름: {userInfo.name}</p>
+      <p>사용자 이름: {userInfo.username}</p>
       <p>Email: {userInfo.email}</p>
-      <p>전화번호: {userInfo.phone}</p>
+      <p>전화번호: {userInfo.phoneNumber}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
-      <p>적립금: {userInfo.points} 포인트</p>
-      <p>등급: {userInfo.grade}</p>
       <p>주소: {userInfo.address}</p>
       <button onClick={openModal}>회원정보 수정</button>
       <button onClick={handleWithdrawal}>회원탈퇴</button>
@@ -166,4 +155,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default ManagerMypage;

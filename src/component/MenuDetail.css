@@ -1,0 +1,68 @@
+/* MenuDetail.css */
+
+/* MenuDetail 클래스에 대한 스타일 */
+.MenuDetail {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+    border: 2px solid #4CAF50;
+    border-radius: 15px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 제목 스타일 */
+.MenuDetail h2 {
+    color: #4CAF50;
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/* 정보 섹션에 대한 스타일 */
+.MenuDetail div > div {
+    margin-top: 30px;
+}
+
+/* 상품에 대한 정보 스타일 */
+.MenuDetail h3 {
+    color: #4CAF50;
+    font-size: 24px;
+    border-bottom: 2px solid #4CAF50;
+    padding-bottom: 5px;
+}
+
+/* 이미지 스타일 */
+.MenuDetail img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 15px;
+}
+
+/* 상세 설명 스타일 */
+.MenuDetail p {
+    margin-top: 15px;
+    font-size: 18px;
+    color: #333;
+}
+
+/* 수정과 삭제 버튼 스타일 */
+.MenuDetail .action-buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.MenuDetail .action-buttons button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.MenuDetail .action-buttons button:hover {
+    background-color: #45a049;
+}
