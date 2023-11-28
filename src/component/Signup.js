@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Signup.css';
 
 const Signup = () => {
@@ -11,6 +13,7 @@ const Signup = () => {
   const [gender, setGender] = useState('');
   const [memberType, setMemberType] = useState('regular');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSignup = () => {
     // 유효성 검사
@@ -54,6 +57,24 @@ const Signup = () => {
       gender,
       memberType,
     });
+
+    axios.post("/api/users", {
+      email: email,
+      password: newPassword,
+      name: newUsername,
+      phone: phoneNumber,
+      gender: gender,
+      role: "ROLE_USER"
+    })
+    .then(res => {
+      console.log("200", res.data);
+
+      if (res.status === 200 || res.status === 201) {
+        alert('회원가입에 성공했습니다.');
+        navigate('/login');
+      }
+    })
+    .catch(error => console.log(error))
   };
 
   const handleDuplicateCheck = () => {
