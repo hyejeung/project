@@ -1,14 +1,15 @@
+
 // StoreInfoEdit.js
 
 import React, { useState } from 'react';
-import './StoreInfoEdit.css';  
+import './StoreInfoEdit.css'; 
 
 const StoreInfoEdit = () => {
   const [storeInfo, setStoreInfo] = useState({
-    name: '가게 이름',
-    location: '가게 위치',
-    phoneNumber: '가게 전화번호',
-    menu: '가게 메뉴',
+    name: '',
+    location: '',
+    phoneNumber: '',
+   
   });
 
   const handleChange = (e) => {
@@ -29,7 +30,7 @@ const StoreInfoEdit = () => {
       <h1>가게 정보 수정 </h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">가게 이름:</label>
+          <label htmlFor="name">가게 이름</label>
           <input
             type="text"
             id="name"
@@ -39,7 +40,7 @@ const StoreInfoEdit = () => {
           />
         </div>
         <div>
-          <label htmlFor="location">가게 위치:</label>
+          <label htmlFor="location">가게 위치</label>
           <input
             type="text"
             id="location"
@@ -49,7 +50,7 @@ const StoreInfoEdit = () => {
           />
         </div>
         <div>
-          <label htmlFor="phoneNumber">가게 전화번호:</label>
+          <label htmlFor="phoneNumber">가게 전화번호</label>
           <input
             type="text"
             id="phoneNumber"
@@ -58,16 +59,7 @@ const StoreInfoEdit = () => {
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor="menu">가게 메뉴:</label>
-          <input
-            type="text"
-            id="menu"
-            name="menu"
-            value={storeInfo.menu}
-            onChange={handleChange}
-          />
-        </div>
+       
         <button type="submit">가게 정보 수정 완료</button>
       </form>
     </div>

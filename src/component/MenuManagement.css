@@ -4,7 +4,7 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
-  max-width: 100%; /* 변경된 부분: 전체 폭을 차지하도록 수정 */
+  max-width: 70%; /* 변경된 부분: 전체 폭을 차지하도록 수정 */
 }
 
 .header {

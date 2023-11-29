@@ -20,6 +20,7 @@ import MenuManagement from './component/MenuManagement';
 import ManagerMypage from './component/ManagerMypage';
 import GeneralManager from './component/GeneralManager';
 import MenuNavbar from './component/MenuNavbar';
+import Sales from './component/Sales';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -191,6 +192,7 @@ const App = () => {
         <Route path="/manager-mypage" element={<ManagerMypage />} />
         <Route path="/menu-management" element={<MenuManagement />} />
         <Route path="/general-manager" element={<GeneralManager />} />
+        <Route path="/sales" element={<Sales />} />
         
        
         
