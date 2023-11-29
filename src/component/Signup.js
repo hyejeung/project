@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './Signup.css';
 
 const Signup = () => {
@@ -11,6 +13,7 @@ const Signup = () => {
   const [gender, setGender] = useState('');
   const [memberType, setMemberType] = useState('regular');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSignup = () => {
     // 유효성 검사
@@ -54,10 +57,28 @@ const Signup = () => {
       gender,
       memberType,
     });
+
+    axios.post("/api/users", {
+      email: email,
+      password: newPassword,
+      name: newUsername,
+      phone: phoneNumber,
+      gender: gender,
+      role: memberType
+    })
+    .then(res => {
+      console.log("200", res.data);
+
+      if (res.status === 200 || res.status === 201) {
+        alert('회원가입에 성공했습니다.');
+        navigate('/login');
+      }
+    })
+    .catch(error => console.log(error))
   };
 
   const handleDuplicateCheck = () => {
-    console.log('아이디 중복 확인 시도:', newUsername);
+    console.log('이메일 중복 확인 시도:', email);
   };
 
   const handleGenderChange = (selectedGender) => {
@@ -87,12 +108,12 @@ const Signup = () => {
     <div className="signup-container">
       <h2>회원가입</h2>
       <div>
-        <label htmlFor="newUsername">아이디</label>
+        <label htmlFor="email">이메일</label>
         <input
           type="text"
-          id="newUsername"
-          value={newUsername}
-          onChange={(e) => setNewUsername(e.target.value)}
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
         <button className="duplicate-check" onClick={handleDuplicateCheck}>
           중복확인
@@ -117,12 +138,12 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="email">이메일</label>
+        <label htmlFor="newUsername">아이디</label>
         <input
           type="text"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          id="newUsername"
+          value={newUsername}
+          onChange={(e) => setNewUsername(e.target.value)}
         />
       </div>
       <div>
@@ -146,25 +167,25 @@ const Signup = () => {
       <div>
         <label className="gender-label">성별</label>
         <div className="gender-options">
-          <label htmlFor="male">
+          <label htmlFor="MALE">
             <input
               type="radio"
-              id="male"
+              id="MALE"
               name="gender"
-              value="male"
-              checked={gender === 'male'}
-              onChange={() => handleGenderChange('male')}
+              value="MALE"
+              checked={gender === 'MALE'}
+              onChange={() => handleGenderChange('MALE')}
             />
             남성
           </label>
-          <label htmlFor="female">
+          <label htmlFor="FEMALE">
             <input
               type="radio"
-              id="female"
+              id="FEMALE"
               name="gender"
-              value="female"
-              checked={gender === 'female'}
-              onChange={() => handleGenderChange('female')}
+              value="FEMALE"
+              checked={gender === 'FEMALE'}
+              onChange={() => handleGenderChange('FEMALE')}
             />
             여성
           </label>
@@ -173,25 +194,25 @@ const Signup = () => {
       <div>
         <label className="member-type-label">회원 유형</label>
         <div className="member-type-options">
-          <label htmlFor="regular">
+          <label htmlFor="ROLE_USER">
             <input
               type="radio"
-              id="regular"
+              id="ROLE_USER"
               name="memberType"
-              value="regular"
-              checked={memberType === 'regular'}
-              onChange={() => handleMemberTypeChange('regular')}
+              value="ROLE_USER"
+              checked={memberType === 'ROLE_USER'}
+              onChange={() => handleMemberTypeChange('ROLE_USER')}
             />
             일반 회원
           </label>
-          <label htmlFor="storeOwner">
+          <label htmlFor="ROLE_ADMIN">
             <input
               type="radio"
-              id="storeOwner"
+              id="ROLE_ADMIN"
               name="memberType"
-              value="storeOwner"
-              checked={memberType === 'storeOwner'}
-              onChange={() => handleMemberTypeChange('storeOwner')}
+              value="ROLE_ADMIN"
+              checked={memberType === 'ROLE_ADMIN'}
+              onChange={() => handleMemberTypeChange('ROLE_ADMIN')}
             />
             가맹점
           </label>

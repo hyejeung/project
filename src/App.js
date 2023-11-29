@@ -1,6 +1,6 @@
 // app.js
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import MyPage from './component/Mypage';
 import Wishlist from './component/Wishlist';
@@ -25,12 +25,11 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import './App.css';
 import axios from 'axios';
+import { AuthProvider } from './AuthContext';
 
 
-const Navigation = ({ handleSearchChange, isLoggedIn, handleLogout }) => {
+const Navigation = ({ handleSearchChange }) => {
 
-
- 
 };
 
 const Category = ({ name }) => {
@@ -41,11 +40,11 @@ const Category = ({ name }) => {
   );
 };
 
-const RestaurantCard = ({ name }) => {
+const RestaurantCard = ({ id, name }) => {
   const navigate = useNavigate();
 
   const handleRestaurantClick = () => {
-    const restaurantId = name.toLowerCase().replace(/\s/g, '-');
+    const restaurantId = id;
     navigate(`/restaurant/${restaurantId}`);
   };
 
@@ -84,13 +83,13 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
           <Link to="/category/디저트" className="category">디저트</Link>
         </div>
         <Slider className="main-slider" {...settings}>
-        {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.name} name={restaurant.name} />
+          {restaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.id} id={restaurant.id} name={restaurant.name} />
           ))}
         </Slider>
         <div className="restaurants">
-        {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.name} name={restaurant.name} />
+          {restaurants.map((restaurant) => (
+            <RestaurantCard key={restaurant.id} id={restaurant.id} name={restaurant.name} />
           ))}
         </div>
       </main>
@@ -130,27 +129,13 @@ const App = () => {
     setSearchQuery(e.target.value);
     // 검색어에 따라 음식점을 필터링하거나 서버에 검색 요청을 보낼 수 있는 로직
   };
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const handleLogin = () => {
-    // 로그인 로직 구현
-    console.log('access_token 값:', localStorage.getItem('access_token'))
-    if (localStorage.getItem('access_token')) {
-      setIsLoggedIn(true);
-    }
-  };
-  
-  const handleLogout = () => {
-    // 로그아웃 로직 구현
-    setIsLoggedIn(false);
-  };
   
   return (
     <Router>
+      <AuthProvider>
       {/* Navbar를 모든 페이지에 표시 */}
-      <Navbar handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
-      <MenuNavbar handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
+      <Navbar handleSearchChange={handleSearchChange} />
+      <MenuNavbar handleSearchChange={handleSearchChange} />
       <Routes>
         {/* 메인페이지 */}
         <Route
@@ -161,9 +146,6 @@ const App = () => {
                 restaurants={restaurants}
                 searchQuery={searchQuery}
                 handleSearchChange={handleSearchChange}
-                handleLogin={handleLogin}
-                handleLogout={handleLogout}
-                isLoggedIn={isLoggedIn}
               />
             </>
           }
@@ -191,11 +173,8 @@ const App = () => {
         <Route path="/manager-mypage" element={<ManagerMypage />} />
         <Route path="/menu-management" element={<MenuManagement />} />
         <Route path="/general-manager" element={<GeneralManager />} />
-        
-       
-        
-
       </Routes>
+      </AuthProvider>
     </Router>
   );
 };

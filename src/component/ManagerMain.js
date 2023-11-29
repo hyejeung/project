@@ -1,14 +1,20 @@
 // ManagerMain.js
 
 import React, { useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 import './ManagerMain.css';
 
 const ManagerMain = () => {
-  const [isModalOpen, setModalOpen] = useState(true); // 모달을 페이지 로딩 시에 자동으로 열도록 변경
+  const [isModalOpen, setModalOpen] = useState(false); // 모달을 페이지 로딩 시에 자동으로 열도록 변경
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantInfo, setRestaurantInfo] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location;
+
+  //상태에서 storeId에 접근
+  const storeId = state && state.storeId;
 
   const processOrder = (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
@@ -23,19 +29,43 @@ const ManagerMain = () => {
   };
 
   const handleRegister = () => {
-    // 음식점 등록 로직을 수행합니다.
-    console.log('음식점 등록 시도:', { restaurantName, restaurantInfo });
 
-    // 여기에서 음식점 등록 성공 여부를 판단하여 페이지 이동
-    const registerSuccessful = true; // 예시로 성공했다고 가정
+    console.log('storeId=', storeId);
 
-    if (registerSuccessful) {
-      setModalOpen(false);
-      // 음식점 등록 성공 시 관리자 페이지로 이동
-      navigate('/managermain');
-    } else {
-      alert('음식점 등록 실패. 모든 필수 정보를 입력하세요.');
+    if (storeId === 0) {
+
+      setModalOpen(true);
+      // 음식점 등록 로직을 수행합니다.
+      console.log('음식점 등록 시도:', { restaurantName, restaurantInfo });
+
+      axios.post("/api/stores", {
+        name: restaurantName,
+        content: restaurantInfo,
+      }, {
+        headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => {
+        console.log("200", res.data);
+
+        if (res.status === 200 || res.status === 201) {
+          alert('음식점 등록에 성공했습니다.');
+          setModalOpen(false);
+          navigate('/managermain');
+        }
+        else {
+          alert('음식점 등록 실패');
+        }
+      })
+      .catch(error => console.log(error))
     }
+    else {
+      setModalOpen(false);
+      navigate('/managermain');
+    }
+    
   };
 
   return (

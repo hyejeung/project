@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Restaurant.css';
 
 const Restaurant = () => {
@@ -18,7 +19,6 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-    const userId = getUserId();
 
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
     const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
@@ -26,6 +26,7 @@ const Restaurant = () => {
     // 새로 추가할 아이템
     const newItem = {
       item_id: selectedMenu.id,
+      price: selectedMenu.price,
       amount: quantity,
     };
 
@@ -41,15 +42,22 @@ const Restaurant = () => {
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
     localStorage.setItem('cart', JSON.stringify(existingCartData));
 
+    const data = JSON.parse(localStorage.getItem('cart')) || [];
+    console.log(data);
+
+    axios.post("/api/orders", data)
+    .then(res => {
+      console.log("200", res.data);
+
+      if (res.status === 200 || res.status === 201) {
+        alert('주문 등록에 성공했습니다.');
+      }
+    })
+    .catch(error => console.log(error))
+
     // 모달을 닫음
     setModalOpen(false);
   };
-
-  const getUserId = () => {
-    return 'user123'; // 여기에 실제 사용자 ID를 가져오는 로직을 추가하세요.
-  };
-
-
 
   // 가게 정보
   const restaurantInfo = {
