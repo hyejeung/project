@@ -19,7 +19,6 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-    const userId = getUserId();
 
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
     const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
@@ -59,12 +58,6 @@ const Restaurant = () => {
     // 모달을 닫음
     setModalOpen(false);
   };
-
-  const getUserId = () => {
-    return 'user123'; // 여기에 실제 사용자 ID를 가져오는 로직을 추가하세요.
-  };
-
-
 
   // 가게 정보
   const restaurantInfo = {

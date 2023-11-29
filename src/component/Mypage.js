@@ -18,21 +18,7 @@ const MyPage = () => {
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
 
   useEffect(() => {
-    const { fromHomePage } = window.history.state || {};
-    if (fromHomePage) {
-      axios
-        .get('/api/member', { params: { email: 'test@asd.123' } })
-        .then((response) => {
-          setUserInfo(response.data);
-          setUpdatedUserInfo(response.data); // Initialize updatedUserInfo with current user info
-          return response;
-        })
-        .then((response) => console.log(response.data))
-        .catch((error) => console.log(error));
-    }
-
-    axios.get('/api/member', 
-      {params: {email: "test@asd.123"}})
+    axios.get('/api/member') 
     .then(response => {
       setUserInfo(response.data)
       return response;

@@ -1,8 +1,11 @@
 // MenuNavbar.js
 import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import './MenuNavbar.css';
+
 const MenuNavbar = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -32,8 +35,7 @@ const MenuNavbar = () => {
         <Link to="/menu-management">메뉴 관리</Link>
         <Link to="/manager-mypage">마이페이지</Link>
         <Link to="/sales">매출 관리</Link>
-        <Link to="/login">로그아웃</Link>
-        
+        <Link to="/login" className="nav-link" onClick={handleLogout}>로그아웃</Link>
       </div>
     </header>
   );
