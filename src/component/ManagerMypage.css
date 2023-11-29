@@ -1,7 +1,7 @@
 /* mypage.css (수정된 부분) */
 
 .my-page-container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 50px auto;
     padding: 30px;
     border: 1px solid #ccc;
@@ -29,8 +29,8 @@
   }
   
   .my-page-container button {
-    padding: 14px 24px;
-    margin: 10px;
+    padding: 10px 18px; /* 변경된 부분: 더 작은 값으로 수정 */
+    margin: 10px auto;
     background: #4caf50;
     color: #fff;
     border: none;
@@ -39,8 +39,9 @@
     transition: background-color 0.3s ease;
     font-size: 18px;
     font-weight: bold;
-  }
-  
+    max-width: 200px;
+}
+
   .my-page-container button:hover {
     background: #45a049;
   }

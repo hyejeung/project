@@ -1,50 +1,75 @@
 // GeneralManager.js
 
 import React, { useState } from 'react';
-import './GeneralManager.css'; // 스타일링을 위한 CSS 파일을 import합니다.
+import { useNavigate } from 'react-router-dom';
+import './GeneralManager.css';
 
 const GeneralManager = () => {
-  const [franchiseApplications, setFranchiseApplications] = useState([
-    { id: 1, name: '엽기떡볶이' },
-    // 다른 가맹점 신청 목록들 추가
-  ]);
+  const franchiseApplications = ['엽기떡볶이', '신전떡볶이', '버거킹'];
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleAccept = (applicationId) => {
-    // 가맹점 신청 수락 로직을 여기에 추가
-    console.log(`가맹점 신청 ID ${applicationId}를 수락합니다.`);
+  const handleActionClick = (application, action) => {
+    console.log(`${application} 가맹점을 ${action}합니다.`);
   };
 
-  const handleReject = (applicationId) => {
-    // 가맹점 신청 거절 로직을 여기에 추가
-    console.log(`가맹점 신청 ID ${applicationId}를 거절합니다.`);
-  };
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    // 로그아웃 로직을 여기에 추가
-    console.log('로그아웃');
-    // 로그아웃 후, 로그인 페이지로 이동
-    // 예시: window.location.href = '/login';
+    navigate('/login');
+  };
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
   };
 
   return (
-    <div className="general-manager-container">
-      <h2>총관리자 페이지</h2>
-      <button className="logout-button" onClick={handleLogout}>
-        로그아웃
-      </button>
+    <div className="general-manager-page">
+      <header>
+        <div className="header-left">
+          <h1>총관리자 페이지</h1>
+        </div>
+        <div className="header-right">
+          <button onClick={handleLogout}>로그아웃</button>
+          <button onClick={toggleModal}>가맹점 목록</button>
+        </div>
+      </header>
 
       <div className="franchise-applications">
-        <h3>가맹점 신청 목록</h3>
-        <ul>
-          {franchiseApplications.map((application) => (
-            <li key={application.id}>
-              {application.name} 가맹점 신청
-              <button onClick={() => handleAccept(application.id)}>수락</button>
-              <button onClick={() => handleReject(application.id)}>거절</button>
-            </li>
-          ))}
-        </ul>
+        <h2>가맹점 신청 현황</h2>
+        {franchiseApplications.map((application) => (
+          <div key={application} className="franchise-application">
+            <p>{application} 가맹점</p>
+            <div className="action-buttons">
+              <button
+                className="accept" // 새로운 클래스 추가: 초록색 배경
+                onClick={() => handleActionClick(application, '수락')}
+              >
+                수락
+              </button>
+              <button
+                className="reject" // 새로운 클래스 추가: 빨간색 배경
+                onClick={() => handleActionClick(application, '거절')}
+              >
+                거절
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
+
+      {isModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>가맹점 목록</h2>
+            <ul>
+              {franchiseApplications.map((franchise, index) => (
+                <li key={index}>{franchise}</li>
+              ))}
+            </ul>
+            <button onClick={toggleModal}>닫기</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

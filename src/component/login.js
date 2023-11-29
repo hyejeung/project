@@ -12,7 +12,7 @@ const Login = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   let storeId;
-
+  
   const [user, setUser] = useState({
     email: '',
     password: ''
@@ -81,6 +81,15 @@ const Login = () => {
     });
   };
 
+   
+    // if (loginSuccessful) {
+    //   navigate('/managermain');
+
+   
+    // } else {
+    //   alert('로그인 실패. 올바른 사용자 이름과 비밀번호를 입력하세요.');
+    // }
+  };
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
     console.log(`SNS ${provider} 계정으로 로그인 시도`);
@@ -104,51 +113,67 @@ const Login = () => {
           onChange={handleUser}
         />
       </div>
-      <div className="password-container">
+      <div>
         <label htmlFor="password">비밀번호:</label>
         <input
-          type={showPassword ? 'text' : 'password'}
+          type="password"
           id="password"
           name="password"
           value={password}
           onChange={handleUser}
         />
-        <span
-          className={`password-toggle-icon ${showPassword ? 'visible' : ''}`}
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          👁️
-        </span>
       </div>
       <div>
+          {/* <Link to="/managermain"> */}
+      
         <button className="login-button" onClick={handleLogin}>
           로그인
         </button>
+          {/* </Link> */}
+        
       </div>
       <div>
-        <Link to="/sns-signup">
-          <button
-            className="social-button-google"
-            onClick={() => handleSocialLogin('Google')}
-          >
-            Google로 로그인
-          </button>
+      <Link to="/sns-signup">
+          <button className="social-button-google" onClick={() => handleSocialLogin('Google')}>Google로 로그인</button>
         </Link>
         <Link to="/sns-signup">
-          <button
-            className="social-button-facebook"
-            onClick={() => handleSocialLogin('Facebook')}
-          >
-            Facebook으로 로그인
-          </button>
+          <button className="social-button-facebook" onClick={() => handleSocialLogin('Facebook')}>Facebook으로 로그인</button>
         </Link>
       </div>
-      <div className="signup-text">
+      {/* <div className="signup-text" onClick={handleSignUp}>아직 회원이 아니신가요?</div>
+      <button className="signup-link" onClick={handleSignUp}>회원가입</button> */}
+       <div className="signup-text">
         아직 회원이 아니신가요? <Link to="/signup">회원가입</Link>
       </div>
     </div>
   );
 };
+function httpRequest(url, body, success_user, success_admin, fail) {
+  axios.post(url, body, {
+    headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
+      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+      'Content-Type': 'application/json',
+    },
+  })
+  .then(response => {
+    if (response.status === 200 || response.status === 201) {
+        localStorage.setItem('access_token', response.data.token);
+        console.log('response 값 출력', response.data.role);
+
+        if (response.data.role == 'ROLE_ADMIN') {
+          return success_admin();
+        }
+        else {
+          return success_user();
+        }
+
+    } 
+    else {
+        return fail();
+    }
+  });
+}
+
 
 // function httpRequest(url, body, success_user, success_admin, fail) {
 //   axios.post(url, body, {

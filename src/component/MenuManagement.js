@@ -6,51 +6,49 @@ import './ManagerMain.css';
 import MenuDetail from './MenuDetail'; // MenuDetail 컴포넌트를 import
 
 const MenuManagement = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [isAddMenuModalOpen, setAddMenuModalOpen] = useState(false);
+  const [isNewMenuItemModalOpen, setNewMenuItemModalOpen] = useState(false); // 추가
+
   const [restaurantName, setRestaurantName] = useState('');
   const [restaurantInfo, setRestaurantInfo] = useState('');
+  const [newMenuItem, setNewMenuItem] = useState({ name: '', price: '' });
   const navigate = useNavigate();
 
   // 메뉴 상세 정보 모달 열기
   const openMenuDetailModal = () => {
-    setModalOpen(true);
+    setNewMenuItemModalOpen(true); // 변경
   };
 
-  // 메뉴 상세 정보 모달 닫기
-  const closeMenuDetailModal = () => {
-    setModalOpen(false);
+  // 메뉴 추가 모달 열기
+  const openAddMenuModal = () => {
+    setAddMenuModalOpen(true);
   };
 
-  const processOrder = (orderId, status) => {
-    console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
+  // 모달 닫기
+  const closeAddMenuModal = () => {
+    setAddMenuModalOpen(false);
   };
 
-  const openStoreInfoModal = () => {
-    setModalOpen(true);
+  // 모달 닫기 (추가)
+  const closeNewMenuItemModal = () => {
+    setNewMenuItemModalOpen(false);
   };
 
-  const closeStoreInfoModal = () => {
-    setModalOpen(false);
-  };
+  // 메뉴 추가 폼 제출
+  const handleAddMenu = (e) => {
+    e.preventDefault();
+    console.log('새로운 메뉴 정보:', newMenuItem);
 
-  const handleRegister = () => {
-    // 음식점 등록 로직을 수행합니다.
-    console.log('음식점 등록 시도:', { restaurantName, restaurantInfo });
+    // 여기에서 새로운 메뉴를 등록하는 로직 수행
 
-    // 여기에서 음식점 등록 성공 여부를 판단하여 페이지 이동
-    const registerSuccessful = true; // 예시로 성공했다고 가정
-
-    if (registerSuccessful) {
-      setModalOpen(false);
-      // 음식점 등록 성공 시 관리자 페이지로 이동
-      navigate('/managermain');
-    } else {
-      alert('음식점 등록 실패. 모든 필수 정보를 입력하세요.');
-    }
+    // 모달 닫기
+    closeAddMenuModal();
   };
 
   return (
     <div className="managermain-container">
+      <h2>메뉴 관리 페이지</h2>
+
       <div className="order-list">
         <div className="order-item">
           <span onClick={openMenuDetailModal}>엽기떡볶이</span>
@@ -65,56 +63,56 @@ const MenuManagement = () => {
       </div>
 
       <div className="add-menu-link">
-        <Link to="/add-menu">메뉴 추가</Link>
+        <button onClick={openAddMenuModal}>메뉴 추가</button>
       </div>
 
-      {/* 음식점 등록 모달 */}
-      {isModalOpen && (
+      {/* 모달 */}
+      {isAddMenuModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>음식점 등록</h2>
-            <div>
-              <label htmlFor="restaurantName">음식점명:</label>
-              <input
-                type="text"
-                id="restaurantName"
-                value={restaurantName}
-                onChange={(e) => setRestaurantName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="restaurantInfo">상세 정보:</label>
-              <textarea
-                id="restaurantInfo"
-                value={restaurantInfo}
-                onChange={(e) => setRestaurantInfo(e.target.value)}
-              />
-            </div>
-            <div>
-              <button className="register-button" onClick={handleRegister}>
-                등록
-              </button>
-              <button className="close-button" onClick={closeStoreInfoModal}>
-                닫기
-              </button>
-            </div>
+            {/* 메뉴 추가 폼 */}
+            <form onSubmit={handleAddMenu}>
+              <h2>메뉴 추가</h2>
+              <div>
+                <label htmlFor="menuName">메뉴명:</label>
+                <input
+                  type="text"
+                  id="menuName"
+                  value={newMenuItem.name}
+                  onChange={(e) => setNewMenuItem({ ...newMenuItem, name: e.target.value })}
+                />
+              </div>
+              <div>
+                <label htmlFor="menuPrice">가격:</label>
+                <input
+                  type="text"
+                  id="menuPrice"
+                  value={newMenuItem.price}
+                  onChange={(e) => setNewMenuItem({ ...newMenuItem, price: e.target.value })}
+                />
+              </div>
+              <div>
+                <button type="submit">추가</button>
+                <button type="button" onClick={closeAddMenuModal}>
+                  닫기
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
       {/* 메뉴 상세 정보 모달 */}
-      {isModalOpen && (
+      {isNewMenuItemModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
             <MenuDetail />
-            <button className="close-button" onClick={closeMenuDetailModal}>
+            <button className="close-button" onClick={closeNewMenuItemModal}>
               닫기
             </button>
           </div>
         </div>
       )}
-
-      <button onClick={openStoreInfoModal}>음식점 등록</button>
 
       <Outlet />
     </div>
