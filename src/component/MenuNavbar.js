@@ -2,9 +2,11 @@
 // MenuNavbar.js
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useAuth } from '../AuthContext';
 import './MenuNavbar.css';
 
 const MenuNavbar = () => {
+  const { handleLogout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();

@@ -18,18 +18,13 @@ const MyPage = () => {
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
 
   useEffect(() => {
-    const { fromHomePage } = window.history.state || {};
-    if (fromHomePage) {
-      axios
-        .get('/api/member', { params: { email: 'test@asd.123' } })
-        .then((response) => {
-          setUserInfo(response.data);
-          setUpdatedUserInfo(response.data); // Initialize updatedUserInfo with current user info
-          return response;
-        })
-        .then((response) => console.log(response.data))
-        .catch((error) => console.log(error));
-    }
+    axios.get('/api/member') 
+    .then(response => {
+      setUserInfo(response.data)
+      return response;
+    })
+    .then(response => console.log(response.data))
+    .catch(error => console.log(error))
   }, []);
 
   const handleUpdate = async () => {
@@ -71,9 +66,9 @@ const MyPage = () => {
   return (
     <div className="my-page-container">
       <h2>마이페이지</h2>
-      <p>사용자 이름: {userInfo.username}</p>
+      <p>사용자 이름: {userInfo.name}</p>
       <p>Email: {userInfo.email}</p>
-      <p>전화번호: {userInfo.phoneNumber}</p>
+      <p>전화번호: {userInfo.phone}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
       <p>적립금: {userInfo.points} 포인트</p>
