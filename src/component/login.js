@@ -89,7 +89,6 @@ const Login = () => {
     // } else {
     //   alert('로그인 실패. 올바른 사용자 이름과 비밀번호를 입력하세요.');
     // }
-  };
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
     console.log(`SNS ${provider} 계정으로 로그인 시도`);
@@ -148,6 +147,7 @@ const Login = () => {
     </div>
   );
 };
+
 function httpRequest(url, body, success_user, success_admin, fail) {
   axios.post(url, body, {
     headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
