@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams } from 'react-router';
 import axios from 'axios';
 import './Restaurant.css';
 
@@ -26,7 +27,6 @@ const Restaurant = () => {
     // 새로 추가할 아이템
     const newItem = {
       item_id: selectedMenu.id,
-      price: selectedMenu.price,
       amount: quantity,
     };
 
@@ -40,32 +40,44 @@ const Restaurant = () => {
     }
 
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
+    //'cart'가 아닌 'user_id'로 저장하도록
     localStorage.setItem('cart', JSON.stringify(existingCartData));
 
     const data = JSON.parse(localStorage.getItem('cart')) || [];
     console.log(data);
 
-    axios.post("/api/orders", data)
-    .then(res => {
-      console.log("200", res.data);
-
-      if (res.status === 200 || res.status === 201) {
-        alert('주문 등록에 성공했습니다.');
-      }
-    })
-    .catch(error => console.log(error))
-
     // 모달을 닫음
     setModalOpen(false);
   };
 
+  //가게 정보 불러오기
+  const [restaurantInfo, setRestaurantInfo] = useState('');
+
+  const { id } = useParams();
+  console.log(id);
+
+  useEffect(() => {
+    // 서버에서 음식점 상세정보을 가져오는 API 호출 등의 로직
+    axios.get(`/api/stores/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      setRestaurantInfo(response.data)
+    })
+    .then(response => console.log(response.data))
+    .catch(error => console.log(error))
+  }, []);
+
   // 가게 정보
-  const restaurantInfo = {
-    name: '엽기떡볶이',
-    rating: 4.8,
-    reviewCount: 300,
-    minOrderAmount: 15000,
-  };
+  // const restaurantInfo = {
+  //   name: '엽기떡볶이',
+  //   rating: 4.8,
+  //   reviewCount: 300,
+  //   minOrderAmount: 15000,
+  // };
 
   return (
     <div className="Restaurant">
@@ -75,14 +87,16 @@ const Restaurant = () => {
       <div>
         <h3>가게 정보</h3>
         <p>별점: {restaurantInfo.rating}</p>
-        <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
-        <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+        <p>사진: {restaurantInfo.picture}</p>
+        <p>상세설명: {restaurantInfo.content}</p>
+        {/* <p>리뷰 수: {restaurantInfo.reviewCount}개</p> */}
+        {/* <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p> */}
       </div>
 
       {/* 위치 정보 */}
       <div>
         <h3>위치</h3>
-        <p>성북구 정릉동</p>
+        <p>{restaurantInfo.address}</p>
       </div>
 
       {/* 연락처 정보 */}

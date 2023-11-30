@@ -20,12 +20,12 @@ const CartItem = ({ restaurantName, menuName, quantity, price }) => {
 const Cart = () => {
   const [itemInfo, setItemInfo] = useState([]);
 
-  //localstorage에 있는 아이템 불러오기
+  //localstorage에 있는 아이템 불러오기 'cart'가 아니라 'user_id'가 들어가야 함
   const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
 
   console.log('data 정보:', existingCartData);
 
-  //불러온 다음 item에 대한 get 요청을 보내야 함 get/items
+  //user정보는 로그인 정보에서 가져오면 된다.
   axios.post('/api/carts', existingCartData, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
