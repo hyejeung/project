@@ -1,0 +1,49 @@
+/* Sales.css */
+
+.sales-container {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+  }
+  
+  .sales-container button {
+    padding: 10px;
+    margin-right: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+  }
+  
+  .sales-container button:hover {
+    background-color: #217dbb;
+  }
+  
+  .sales-container canvas {
+    width: 100%;
+    height: 400px; /* 높이를 조절하여 표의 크기를 키웁니다. */
+    margin-top: 20px;
+  }
+  
+  .sales-container ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sales-container li {
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  .sales-container hr {
+    border-top: 2px solid #ddd; /* 수평선을 두껍게 설정 */
+    margin-top: 20px; /* 수평선 위에 간격 추가 */
+    margin-bottom: 20px; /* 수평선 아래에 간격 추가 */
+  }
+  
+  /* 추가적인 스타일링을 원하면 여기에 추가하세요 */
+  
