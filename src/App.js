@@ -99,6 +99,9 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
 };
 
 const App = () => {
+  //login에서 user_id 받기 테스트
+  const [storeId, setStoreId] = useState('');
+  
   const [restaurants, setRestaurants] = useState([
     '엽기떡볶이',
     '교촌치킨',
@@ -157,7 +160,7 @@ const App = () => {
         <Route path="/restaurant/:id" element={<Restaurant />} />
 
         {/* 로그인 페이지 - Navbar를 표시하지 않음 */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setStoreId={setStoreId} />} />
 
         <Route path="/wishlist" element={<Wishlist />} />
 
@@ -167,7 +170,7 @@ const App = () => {
         <Route path="/payment" element={<Payment />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/sns-signup" element={<SnsSignup />} />
-        <Route path="/managermain" element={<ManagerMain />} />
+        <Route path="/managermain" element={<ManagerMain storeId={storeId}/>} />
         <Route path="/store-info-edit" element={<StoreInfoEdit />} /> 
         <Route path="/add-menu" element={<AddMenu />} />
         <Route path="/category/:category" element={<CategoryPage />} />

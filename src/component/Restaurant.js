@@ -71,14 +71,6 @@ const Restaurant = () => {
     .catch(error => console.log(error))
   }, []);
 
-  // 가게 정보
-  // const restaurantInfo = {
-  //   name: '엽기떡볶이',
-  //   rating: 4.8,
-  //   reviewCount: 300,
-  //   minOrderAmount: 15000,
-  // };
-
   return (
     <div className="Restaurant">
       <h2>{restaurantInfo.name}</h2>

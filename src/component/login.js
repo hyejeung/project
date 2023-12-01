@@ -6,8 +6,8 @@ import './login.css';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 
-const Login = () => {
-  const { login, user_id } = useAuth();
+const Login = ({ setStoreId }) => {
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -57,13 +57,14 @@ const Login = () => {
       console.log('서버 응답:', response); //테스트 코드
       if (response.status === 200 || response.status === 201) {
           localStorage.setItem('access_token', response.data.token);
-          console.log('response storeId 값 출력', response.data.storeId);
 
           storeId = response.data.storeId;
           console.log('storeId에 저장된 수: ', storeId);
             
           if (response.data.role === 'ROLE_ADMIN') {
             //해당 유저의 음식점이 있으면 true, 없으면 false
+
+            setStoreId(response.data.storeId);
             return success_admin();
           }
           else {
@@ -81,14 +82,6 @@ const Login = () => {
     });
   };
 
-   
-    // if (loginSuccessful) {
-    //   navigate('/managermain');
-
-   
-    // } else {
-    //   alert('로그인 실패. 올바른 사용자 이름과 비밀번호를 입력하세요.');
-    // }
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
     console.log(`SNS ${provider} 계정으로 로그인 시도`);

@@ -4,6 +4,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState('');
 
   useEffect(() => {
     // 새로고침 시 로컬 스토리지에서 로그인 상태를 가져옴
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, handleLogout, user_id }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, handleLogout, userId }}>
       {children}
     </AuthContext.Provider>
   );
