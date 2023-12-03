@@ -23,6 +23,7 @@ label {
   display: block;
   margin-bottom: 8px;
   color: #555;
+  text-align: left; /* 왼쪽 정렬 추가 */
 }
 
 input {
@@ -32,6 +33,24 @@ input {
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 4px;
+  text-align: left; /* 왼쪽 정렬 추가 */
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 35%;
+  right: 10px; /* 조정 가능한 값으로 설정 */
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.password-input {
+  font-family: 'Arial', sans-serif;
+  letter-spacing: 4px;
 }
 
 .login-button {
@@ -42,7 +61,7 @@ input {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
-  margin-bottom: 16px; /* 수정된 부분: 버튼 아래 여백 추가 */
+  margin-bottom: 16px;
 }
 
 .login-button:hover {
