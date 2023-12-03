@@ -53,21 +53,7 @@ const MenuNavbar = () => {
           className={`store-info-edit ${activeButton === 'store-info-edit' ? 'active' : ''}`}
           onClick={() => handleButtonClick('store-info-edit')}
         >
-          가게 정보 수정
-        </Link>
-        <Link
-          to="/menu-management"
-          className={`menu-management ${activeButton === 'menu-management' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('menu-management')}
-        >
-          메뉴 관리
-        </Link>
-        <Link
-          to="/manager-mypage"
-          className={`manager-mypage ${activeButton === 'manager-mypage' ? 'active' : ''}`}
-          onClick={() => handleButtonClick('manager-mypage')}
-        >
-          마이페이지
+          가게 정보 
         </Link>
         <Link
           to="/sales"
@@ -76,6 +62,14 @@ const MenuNavbar = () => {
         >
           매출 관리
         </Link>
+        <Link
+          to="/manager-mypage"
+          className={`manager-mypage ${activeButton === 'manager-mypage' ? 'active' : ''}`}
+          onClick={() => handleButtonClick('manager-mypage')}
+        >
+          마이페이지
+        </Link>
+       
         <Link to="/login">로그아웃</Link>
       </div>
     </header>

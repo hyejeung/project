@@ -12,7 +12,7 @@
 .storeinfoedit-container h1 {
   margin-bottom: 20px;
   color: rgb(253, 255, 253);
-  text-align: center; /* 변경된 부분: 가운데 정렬 추가 */
+  text-align: left; /* 변경된 부분: 왼쪽 정렬 추가 */
   max-width: 100%;
 }
 
@@ -21,29 +21,62 @@
   gap: 20px;
 }
 
-.storeinfoedit-container label {
-  font-weight: bold;
+/* 이하 MenuManagement 내용 */
+.storeinfoedit-container h2 {
+  margin-bottom: 20px;
+  color: rgb(10, 171, 10);
+  text-align: left; /* 변경된 부분: 왼쪽 정렬 추가 */
+  max-width: 100%;
 }
 
-.storeinfoedit-container input {
-  max-width: 70%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+.order-list {
+  display: grid;
+  gap: 20px;
 }
 
-.storeinfoedit-container button {
-  background-color: #27ae60;
+.order-item {
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-item span {
+  margin-right: 10px;
+}
+
+.order-item button {
+  background-color: #218c53;
   color: white;
   border: none;
   padding: 10px 15px;
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  max-width: 200px;
-  
 }
 
-.storeinfoedit-container button:hover {
+.order-item button:hover {
   background-color: #218c53;
+}
+
+.add-menu-link {
+  margin-top: 20px;
+  text-align: center; /* 변경된 부분: 왼쪽 정렬 추가 */
+}
+
+.add-menu-link button {
+  background-color: #218c53;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-menu-link button:hover {
+  background-color: #04751a;
 }
