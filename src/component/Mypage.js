@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './MyPage.css'; // Import the CSS file for styling
+import './MyPage.css'; // 스타일링을 위한 CSS 파일을 import
 
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({
@@ -14,31 +14,35 @@ const MyPage = () => {
     address: '서울특별시 성북구 서경로 123번지',
   });
 
+  const [orderHistory, setOrderHistory] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isOrderHistoryModalOpen, setOrderHistoryModalOpen] = useState(false);
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
 
   useEffect(() => {
-    const { fromHomePage } = window.history.state || {};
-    if (fromHomePage) {
-      axios
-        .get('/api/member', { params: { email: 'test@asd.123' } })
-        .then((response) => {
-          setUserInfo(response.data);
-          setUpdatedUserInfo(response.data); // Initialize updatedUserInfo with current user info
-          return response;
-        })
-        .then((response) => console.log(response.data))
-        .catch((error) => console.log(error));
-    }
+    // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
+    axios.get('/api/member')
+      .then(response => {
+        setUserInfo(response.data);
+        return response;
+      })
+      .then(response => console.log(response.data))
+      .catch(error => console.log(error));
+
+    axios.get('/api/orders')
+      .then(response => {
+        setOrderHistory(response.data);
+      })
+      .catch(error => console.log(error));
   }, []);
 
   const handleUpdate = async () => {
     try {
-      // Logic to update user information
-      // 예: const response = await updateUser(updatedUserInfo);
+      // 사용자 정보 업데이트 로직
+      // const response = await updateUser(updatedUserInfo);
       setUserInfo(updatedUserInfo);
-      setModalOpen(false); // Close the modal after successful update
-      // Additional logic to handle successful update
+      setModalOpen(false); // 업데이트 성공 시 모달 닫기
+      // 업데이트 성공에 대한 추가적인 로직
     } catch (error) {
       console.error('사용자 정보 업데이트 실패:', error.message);
       // 에러 핸들링 로직 추가
@@ -50,9 +54,9 @@ const MyPage = () => {
 
     if (confirmWithdrawal) {
       try {
-        // Logic for user withdrawal
-        // 예: const response = await withdrawUser();
-        // Additional logic to handle successful withdrawal
+        // 회원 탈퇴 로직
+        // const response = await withdrawUser();
+        // 탈퇴 성공에 대한 추가적인 로직
       } catch (error) {
         console.error('회원탈퇴 실패:', error.message);
         // 에러 핸들링 로직 추가
@@ -68,19 +72,30 @@ const MyPage = () => {
     setModalOpen(false);
   };
 
+  const viewOrderHistory = () => {
+    setOrderHistoryModalOpen(true);
+  };
+
+  const closeOrderHistoryModal = () => {
+    setOrderHistoryModalOpen(false);
+  };
+
   return (
     <div className="my-page-container">
       <h2>마이페이지</h2>
-      <p>사용자 이름: {userInfo.username}</p>
+      <p>사용자 이름: {userInfo.name}</p>
       <p>Email: {userInfo.email}</p>
-      <p>전화번호: {userInfo.phoneNumber}</p>
+      <p>전화번호: {userInfo.phone}</p>
       <p>비밀번호: {userInfo.password}</p>
       <p>성별: {userInfo.gender}</p>
       <p>적립금: {userInfo.points} 포인트</p>
       <p>등급: {userInfo.grade}</p>
       <p>주소: {userInfo.address}</p>
+      <button onClick={viewOrderHistory}>주문내역</button>
       <button onClick={openModal}>회원정보 수정</button>
       <button onClick={handleWithdrawal}>회원탈퇴</button>
+      
+
 
       {/* 수정 모달 */}
       {isModalOpen && (
@@ -150,6 +165,18 @@ const MyPage = () => {
                 닫기
               </button>
             </div>
+          </div>
+        </div>
+      )}
+    
+      {/* 주문 내역 모달 */}
+      {isOrderHistoryModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>주문 내역</h2>
+            {/* 주문 내역에 대한 정보를 표시하는 UI 추가 */}
+            {/* ... (주문 내역 정보 표시하는 부분) ... */}
+            <button onClick={closeOrderHistoryModal}>닫기</button>
           </div>
         </div>
       )}

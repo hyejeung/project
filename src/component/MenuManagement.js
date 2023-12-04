@@ -47,7 +47,7 @@ const MenuManagement = () => {
 
   return (
     <div className="managermain-container">
-      <h2>메뉴 관리 페이지</h2>
+      <h2>메뉴 관리 </h2>
 
       <div className="order-list">
         <div className="order-item">

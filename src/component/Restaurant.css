@@ -116,3 +116,36 @@ body {
 }
 
 /* ... (기존 스타일 코드) ... */
+/* Restaurant.css */
+
+/* (기존 스타일들) */
+
+/* 하트(찜 갯수) 스타일 */
+.Restaurant h2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 추가된 섹션 스타일 */
+/* 찜 갯수, 최소 주문 금액, 예상 배달 시간, 배달 팁 */
+.Restaurant > div > div {
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 하트(찜 갯수) 아이콘 스타일 */
+.Restaurant > div > div > span {
+  color: #4CAF50;
+  margin-left: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+/* 하트(찜 갯수) 아이콘 호버 시 스타일 */
+.Restaurant > div > div > span:hover {
+  color: #45a049;
+}

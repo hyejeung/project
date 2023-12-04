@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import './Restaurant.css';
 
 const Restaurant = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [selectedTab, setSelectedTab] = useState('menu'); // 추가
 
   const menuList = [
     { id: 1, name: '엽기떡볶이', price: 15000 },
@@ -18,38 +20,11 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-    const userId = getUserId();
-
-    // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
-    const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
-
-    // 새로 추가할 아이템
-    const newItem = {
-      item_id: selectedMenu.id,
-      amount: quantity,
-    };
-
-    // 이미 장바구니에 있는 아이템이라면 수량을 더함
-    const existingItemIndex = existingCartData.findIndex(item => item.item_id === newItem.item_id);
-    if (existingItemIndex !== -1) {
-      existingCartData[existingItemIndex].amount += newItem.amount;
-    } else {
-      // 장바구니에 없는 아이템이라면 새로 추가
-      existingCartData.push(newItem);
-    }
-
-    // 새로운 장바구니 데이터를 로컬 스토리지에 저장
-    localStorage.setItem('cart', JSON.stringify(existingCartData));
+    // 이전 코드 유지
 
     // 모달을 닫음
     setModalOpen(false);
   };
-
-  const getUserId = () => {
-    return 'user123'; // 여기에 실제 사용자 ID를 가져오는 로직을 추가하세요.
-  };
-
-
 
   // 가게 정보
   const restaurantInfo = {
@@ -59,49 +34,79 @@ const Restaurant = () => {
     minOrderAmount: 15000,
   };
 
+  // 리뷰 섹션
+  const reviews = [
+    { id: 1, user: 'user1', content: '맛있어요!', rating: 5 },
+    { id: 2, user: 'user2', content: '좋아요!', rating: 4.5 },
+    // 다른 리뷰들도 추가할 수 있습니다.
+  ];
+
   return (
     <div className="Restaurant">
       <h2>{restaurantInfo.name}</h2>
-
-      {/* 가게에 대한 정보 */}
+      {/* 찜 갯수 */}
       <div>
-        <h3>가게 정보</h3>
-        <p>별점: {restaurantInfo.rating}</p>
-        <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
-        <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+        <span role="img" aria-label="heart">❤️</span> 100
       </div>
-
-      {/* 위치 정보 */}
+      {/* 최소 주문 금액 */}
       <div>
-        <h3>위치</h3>
-        <p>성북구 정릉동</p>
+        <h3>최소 주문 금액</h3>
+        <p>{restaurantInfo.minOrderAmount}원</p>
       </div>
-
-      {/* 연락처 정보 */}
+      {/* 예상 배달 시간 */}
       <div>
-        <h3>연락처</h3>
-        <p>가게 전화번호: 02-1234-5678</p>
+        <h3>예상 배달 시간</h3>
+        <p>30분</p>
       </div>
-
-      {/* 리뷰 섹션 */}
+      {/* 배달 팁 */}
       <div>
-        <h3>리뷰</h3>
-        
+        <h3>배달 팁</h3>
+        <p>3000원</p>
       </div>
-
-      {/* 메뉴 섹션 */}
+      {/* 탭 선택 */}
       <div>
-        <h3>메뉴</h3>
-        <ul>
-          {menuList.map((menu) => (
-            <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
-              {menu.name} - {menu.price}원
-            </li>
+        <button onClick={() => setSelectedTab('menu')}>메뉴</button>
+        <button onClick={() => setSelectedTab('info')}>정보</button>
+        <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
+      </div>
+      {/* 선택된 탭에 따라 내용 표시 */}
+      {selectedTab === 'menu' && (
+        // 메뉴 섹션
+        <div>
+          <h3>메뉴</h3>
+          <ul>
+            {menuList.map((menu) => (
+              <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
+                {menu.name} - {menu.price}원
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {selectedTab === 'info' && (
+        // 정보 섹션
+        <div>
+          <h3>가게 정보</h3>
+          <p>별점: {restaurantInfo.rating}</p>
+          <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
+          <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+        </div>
+      )}
+      {selectedTab === 'reviews' && (
+        // 리뷰 섹션
+        <div>
+          <h3>리뷰</h3>
+          {reviews.map((review) => (
+            <div key={review.id}>
+              <p>{review.user}</p>
+              <p>{review.content}</p>
+              <p>별점: {review.rating}</p>
+            </div>
           ))}
-        </ul>
-      </div>
-    {/* 모달 */}
-    {modalOpen && selectedMenu && (
+        </div>
+      )}
+      {/* 모달 */}
+      {modalOpen && selectedMenu && (
         <div className="modal-overlay">
           <div className="modal">
             <h2>{selectedMenu.name}</h2>

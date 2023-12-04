@@ -17,6 +17,9 @@ const CartItem = ({ restaurantName, menuName, quantity, price }) => {
 };
 
 const Cart = () => {
+  //localstorage에 있는 아이템 불러오기
+  const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
+
   const cartItems = [
     { restaurantName: '엽기떡볶이', menuName: '마라엽떡', quantity: 1, price: 16000 },
     { restaurantName: '엽기떡볶이', menuName: '주먹김밥', quantity: 1, price: 3000 },
