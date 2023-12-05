@@ -1,181 +1,80 @@
-/* Signup.css */
-
-/* 컨테이너 스타일 */
 .signup-container {
-  max-width: 600px;
-  margin: 20px auto;
+  max-width: 400px;
+  margin: 50px auto;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  background-color: white;
-}
-
-/* 헤더 스타일 */
-.signup-container h2 {
-  text-align: center;
-  color: #27ae60;
-}
-
-/* 이메일 입력 영역 스타일 */
-.email-container {
-  margin-bottom: 15px;
-}
-
-.email-input-container {
-  display: flex;
-  align-items: center;
-}
-
-.signup-container label {
-  display: block;
-  margin-bottom: 8px;
-}
-
-.signup-container input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  box-sizing: border-box;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.signup-container button {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
+h2 {
+  text-align: center;
+  color: #333;
 }
 
-.signup-container button:hover {
-  background-color: #218c53;
-}
-
-/* 에러 메시지 스타일 */
-.signup-container p {
-  color: red;
-  margin-bottom: 10px;
-}
-
-/* 중복확인 버튼 스타일 */
-.signup-container button.duplicate-check {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin-top: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.signup-container button.duplicate-check:hover {
-  background-color: #218c53;
-}
-
-/* 주소 입력 영역 스타일 */
+.email-container,
 .address-container {
   margin-bottom: 15px;
 }
 
+.email-input-container,
 .address-input-container {
   display: flex;
-  align-items: flex-start;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.signup-container button.search-address {
-  background-color: #27ae60;
-  color: white;
+.duplicate-check,
+.search-address {
+  padding: 8px;
+  background-color: #4caf50;
+  color: #fff;
   border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin-left: 20px; /* 여기를 수정해보세요. 예: margin-left: 20px; */
-  margin-top: 10px; /* 추가: 버튼을 아래로 위치시키기 위한 여백 */
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: relative; /* 추가: 상위 엘리먼트에 대해 상대적인 위치를 사용하도록 지정 */
 }
 
-.signup-container button.search-address:hover {
-  background-color: #218c53;
-}
-
-/* 성별 및 회원 유형 선택 영역 스타일 */
 .gender-and-member-type-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
   margin-bottom: 15px;
 }
 
 .gender-options,
 .member-type-options {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  justify-content: flex-start;
+  align-items: flex-start; /* 세로 정렬 추가 */
+  margin-bottom: 10px;
 }
 
-.signup-container label.gender-label,
-.signup-container label.member-type-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: bold;
-}
-
-.signup-container div.gender-options,
-.signup-container div.member-type-options {
+.gender-options label,
+.member-type-options label {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
+  align-items: center;
+  margin-right: 15px; /* 각 항목 사이의 간격 조절 */
 }
 
-.signup-container div.gender-options label,
-.signup-container div.member-type-options label {
-  flex: 1;
+.gender-options input,
+.member-type-options input {
+  margin-left: 5px;
+}
+
+
+.signup-button-container {
   text-align: right;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
 }
 
-.signup-container div.gender-options input[type="radio"],
-.signup-container div.member-type-options input[type="radio"] {
-  margin-bottom: 5px;
-}
-
-/* 반응형 스타일 */
-@media screen and (max-width: 480px) {
-  .signup-container {
-    max-width: 100%;
-  }
-}
-/* 중복확인 버튼 스타일 */
-.signup-container button.duplicate-check {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 5px;
-  margin-top: 20px; /* 추가: 버튼을 아래로 위치시키기 위한 여백 */
-  margin-left: 20px; /* 여기를 수정해보세요. 예: margin-left: 20px; */
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  position: relative; /* 추가: 상위 엘리먼트에 대해 상대적인 위치를 사용하도록 지정 */
-}
-
-.signup-container button.duplicate-check:hover {
-  background-color: #218c53;
-}
-.address-container input {
-  width: calc(100% - 140px); /* 주소 입력창의 너비를 조정해주세요. */
+button {
   padding: 10px;
-  margin-bottom: 15px;
-  box-sizing: border-box;
-  border: 1px solid #ccc;
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
 }

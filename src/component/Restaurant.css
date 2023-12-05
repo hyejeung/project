@@ -55,8 +55,13 @@ body {
   color: #fff;
 }
 
-/* 모달 오버레이 스타일 */
-.modal-overlay {
+/* restaurant.css */
+
+.Restaurant {
+  /* 추가 스타일링 필요한 경우 여기에 작성 */
+}
+
+.restaurant-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -66,59 +71,42 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
 }
 
-/* 모달 스타일 */
-.modal {
-  max-width: 400px;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-/* 모달 내용 스타일 */
-.modal h2 {
-  color: #4CAF50;
-  font-size: 24px;
-  margin-bottom: 15px;
-}
-
-.modal p {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 15px;
-}
-
-.modal label {
-  display: block;
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #4CAF50;
-}
-
-.modal input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+.restaurant-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 20px; /* 줄여진 부분 */
   box-sizing: border-box;
+  text-align: left;
+  max-width: 400px; /* 수정된 부분 */
+  width: 100%; /* 수정된 부분 */
+  display: flex;
+  flex-direction: column;
 }
 
-.modal button {
-  background-color: #4CAF50;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
+.restaurant-modal h2 {
+  margin-bottom: 10px; /* 추가된 부분 */
 }
 
-/* ... (기존 스타일 코드) ... */
-/* Restaurant.css */
+.restaurant-modal p {
+  margin-bottom: 10px;
+}
 
-/* (기존 스타일들) */
+.restaurant-modal label,
+.restaurant-modal input {
+  margin-bottom: 16px;
+}
+
+.restaurant-modal input {
+  flex-grow: 1;
+}
+
+.restaurant-modal button {
+  flex-shrink: 0;
+  margin-top: 10px; /* 수정된 부분 */
+}
 
 /* 하트(찜 갯수) 스타일 */
 .Restaurant h2 {
@@ -138,7 +126,7 @@ body {
 
 /* 하트(찜 갯수) 아이콘 스타일 */
 .Restaurant > div > div > span {
-  color: #4CAF50;
+  color: #f7faf7;
   margin-left: 5px;
   font-size: 20px;
   cursor: pointer;
@@ -147,5 +135,19 @@ body {
 
 /* 하트(찜 갯수) 아이콘 호버 시 스타일 */
 .Restaurant > div > div > span:hover {
-  color: #45a049;
+  color: #f6f8f6;
+}
+
+/* 찜 버튼 스타일 수정 */
+.Restaurant > div > div > button {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #333;
+}
+
+/* 메뉴 정보 리뷰 버튼 스타일 수정 */
+.Restaurant > div > div > button:hover {
+  background-color: #4CAF50;
+  color: #fff;
+  border: 1px solid #4CAF50;
 }

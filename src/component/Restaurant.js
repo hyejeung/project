@@ -7,13 +7,15 @@ const Restaurant = () => {
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState('menu'); // 추가
+  const [isLiked, setIsLiked] = useState(false); // 하트 상태 추가
+  const [likeCount, setLikeCount] = useState(100); // 찜 수 상태 추가
 
   const menuList = [
-    { id: 1, name: '엽기떡볶이', price: 15000 },
-    { id: 2, name: '엽기닭볶음탕', price: 23000 },
+    { id: 1, name: '엽기떡볶이', price: 15000, image: 'https://picsum.photos/seed/picsum/800/300' },
+    { id: 2, name: '엽기닭볶음탕', price: 23000, image: 'https://picsum.photos/seed/picsum/800/300' },
     // 다른 메뉴들도 추가할 수 있습니다.
   ];
-
+ 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
     setSelectedMenu(menu);
@@ -25,10 +27,15 @@ const Restaurant = () => {
     // 모달을 닫음
     setModalOpen(false);
   };
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+  };
 
   // 가게 정보
   const restaurantInfo = {
     name: '엽기떡볶이',
+    image: 'https://picsum.photos/seed/picsum/800/300', // 더미 이미지 URL 예시
     rating: 4.8,
     reviewCount: 300,
     minOrderAmount: 15000,
@@ -43,10 +50,19 @@ const Restaurant = () => {
 
   return (
     <div className="Restaurant">
-      <h2>{restaurantInfo.name}</h2>
-      {/* 찜 갯수 */}
+       {/* <h2>{restaurantInfo.name}</h2> */}
+      {/* 가게 이미지 */}
+      <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
+   
+    
+          <h2>{restaurantInfo.name}</h2>
+      {/* 찜(좋아요) 기능 */}
+      {/* 하트(좋아요) 기능 */}
       <div>
-        <span role="img" aria-label="heart">❤️</span> 100
+        <button onClick={handleLike}>
+          {isLiked ? '❤️' : '🤍'}
+        </button>
+        <span role="img" aria-label="heart"> {likeCount}</span>
       </div>
       {/* 최소 주문 금액 */}
       <div>
@@ -74,10 +90,11 @@ const Restaurant = () => {
         // 메뉴 섹션
         <div>
           <h3>메뉴</h3>
-          <ul>
-            {menuList.map((menu) => (
-              <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
-                {menu.name} - {menu.price}원
+    <ul>
+      {menuList.map((menu) => (
+        <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
+          <img src={menu.image} alt={menu.name} style={{ width: '150px', height: '150px', marginright: '10px' }} />
+          {menu.name} - {menu.price}원
               </li>
             ))}
           </ul>
@@ -107,8 +124,8 @@ const Restaurant = () => {
       )}
       {/* 모달 */}
       {modalOpen && selectedMenu && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="restaurant-modal-overlay">
+        <div className="restaurant-modal">
             <h2>{selectedMenu.name}</h2>
             <p>가격: {selectedMenu.price}원</p>
             <label htmlFor="quantity">수량:</label>

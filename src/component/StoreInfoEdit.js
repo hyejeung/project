@@ -1,7 +1,8 @@
 // StoreInfoEdit.js
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './StoreInfoEdit.css';
+import axios from 'axios';
 import MenuDetail from './MenuDetail'; 
 
 const StoreInfoEdit = () => {
@@ -11,16 +12,48 @@ const StoreInfoEdit = () => {
     name: '가게 이름',
     location: '가게 위치',
     phoneNumber: '가게 전화번호',
-    representativeImage: '대표 사진 URL',
+    representativeImage: 'https://picsum.photos/id/237/200/300', // 샘플 이미지 URL
     details: '상세 내용',
     openingTime: '영업 오픈 시간',
     closingTime: '영업 종료 시간',
   });
   const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
+  const [previewUrl, setPreviewUrl] = useState(storeInfo.representativeImage);
 
   const [isAddMenuModalOpen, setAddMenuModalOpen] = useState(false);
   const [newMenuItem, setNewMenuItem] = useState({ name: '', price: '', status: '판매중' , image: '', // 대표 사진 추가
   details: '',  });
+
+
+  // useEffect(() => {
+
+
+
+  //   const fetchData = async () => {
+  //     try {
+  //       // 서버에서 가게 정보를 가져오는 GET 요청
+  //       const response = await axios.get(`api/stores/${storeId}`);
+  //       // 서버 응답 데이터를 가게 정보로 업데이트
+  //       setStoreInfo(response.data);
+  //     } catch (error) {
+  //       console.error('가게 정보 불러오기 실패:', error);
+  //     }
+  //   };
+
+    // 컴포넌트가 마운트될 때 가게 정보를 불러오도록 호출
+  //   fetchData();
+  // }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행
+
+  
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewUrl(imageUrl);
+      setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: imageUrl });
+    }
+  };
  
   const openEditModal = () => {
     setEditModalOpen(true);
@@ -30,14 +63,20 @@ const StoreInfoEdit = () => {
     setEditModalOpen(false);
   };
 
-  const handleUpdate = () => {
-    // 여기서 서버에 업데이트 요청을 보낼 수 있습니다.
-    // const response = await updateStoreInfo(updatedStoreInfo);
-    setStoreInfo(updatedStoreInfo);
-    closeEditModal();
-    // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
-  };
+  const handleUpdate = async () => {
+    try {
+      // 서버에 업데이트 요청을 보내는 부분
+      // const response = await axios.put('서버의 업데이트 API URL', updatedStoreInfo);
 
+      // 업데이트 성공 시 로직
+      setStoreInfo(updatedStoreInfo);
+      closeEditModal();
+      console.log('시간 출력', typeof(storeInfo.openingTime), storeInfo.closingTime);
+    } catch (error) {
+      // 업데이트 실패 시 에러 처리 로직
+      console.error('업데이트 실패:', error);
+    }
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUpdatedStoreInfo((prevInfo) => ({
@@ -46,12 +85,27 @@ const StoreInfoEdit = () => {
     }));
   };
 
-  const handleAddMenu = (e) => {
+  const handleAddMenu = async (e) => {
     e.preventDefault();
-    // 여기에서 새로운 메뉴를 등록하는 로직 수행
-    console.log('새로운 메뉴 정보:', newMenuItem);
-    // 모달 닫기
-    setAddMenuModalOpen(false);
+
+    try {
+      // 서버에 새로운 메뉴 추가 요청을 보내는 부분
+      const response = await axios.post(`api/stores/${id}`, newMenuItem, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
+
+      // 새로운 메뉴 추가 성공 시 로직
+      console.log('메뉴 추가 성공:', response.data);
+
+      // 모달 닫기
+      setAddMenuModalOpen(false);
+    } catch (error) {
+      // 메뉴 추가 실패 시 에러 처리 로직
+      console.error('메뉴 추가 실패:', error);
+    }
   };
 
   const openAddMenuModal = () => {
@@ -104,16 +158,7 @@ const StoreInfoEdit = () => {
             onChange={handleChange}
           />
         </div>
-        <div>
-          <label htmlFor="representativeImage">대표 사진</label>
-          <input
-            type="text"
-            id="representativeImage"
-            name="representativeImage"
-            value={updatedStoreInfo.representativeImage}
-            onChange={handleChange}
-          />
-        </div>
+       
         <div>
           <label htmlFor="details">상세 내용</label>
           <textarea
@@ -123,7 +168,25 @@ const StoreInfoEdit = () => {
             onChange={handleChange}
           />
         </div>
+       
         <div>
+        <label htmlFor="editedRepresentativeImage"> 대표 사진</label>
+        <input
+          type="text"
+          id="editedRepresentativeImage"
+          value={updatedStoreInfo.representativeImage}
+          onChange={(e) =>
+            setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: e.target.value })
+          }
+        />
+      </div>
+        {previewUrl && (
+          <div>
+            <h3>사진 미리보기</h3>
+            <img src={previewUrl} alt="대표 사진 미리보기" style={{ width: '200px', height: '300px' }} />
+          </div>
+        )}
+         <div>
           <label htmlFor="openingTime">영업 오픈 시간</label>
           <input
             type="text"
@@ -133,6 +196,8 @@ const StoreInfoEdit = () => {
             onChange={handleChange}
           />
         </div>
+ 
+
         <div>
           <label htmlFor="closingTime">영업 종료 시간</label>
           <input
@@ -186,16 +251,15 @@ const StoreInfoEdit = () => {
         />
       </div>
       <div>
-        <label htmlFor="editedRepresentativeImage"> 대표 사진</label>
-        <input
-          type="text"
-          id="editedRepresentativeImage"
-          value={updatedStoreInfo.representativeImage}
-          onChange={(e) =>
-            setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: e.target.value })
-          }
-        />
-      </div>
+              <label htmlFor="editedRepresentativeImage"> 대표 사진</label>
+              <div>
+                <input
+                  type="file"
+                  id="editedRepresentativeImage"
+                  onChange={handleImageUpload}
+                />
+              </div>
+            </div>
       <div>
         <label htmlFor="editedDetails"> 상세 내용</label>
         <textarea
@@ -281,13 +345,20 @@ const StoreInfoEdit = () => {
                 />
               </div>
               <div>
-                <label htmlFor="menuImage">대표 사진 URL:</label>
-                <input
+                <label htmlFor="menuImage">대표 사진 </label>
+                {/* <input
                   type="text"
                   id="menuImage"
                   value={newMenuItem.image}
                   onChange={(e) => setNewMenuItem({ ...newMenuItem, image: e.target.value })}
+                /> */}
+                 <div>
+                <input
+                  type="file"
+                  id="editedRepresentativeImage"
+                  onChange={handleImageUpload}
                 />
+              </div>
               </div>
               <div>
                 <label htmlFor="menuDetails">상세 정보:</label>

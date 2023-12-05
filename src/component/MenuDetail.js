@@ -13,6 +13,17 @@ const MenuDetail = () => {
     availability: true, // 추가: 품절 여부
   });
 
+  const [storeInfo, setStoreInfo] = useState({
+    name: '가게 이름',
+    location: '가게 위치',
+    phoneNumber: '가게 전화번호',
+    representativeImage: 'https://picsum.photos/id/237/200/300', // 샘플 이미지 URL
+    details: '상세 내용',
+    openingTime: '영업 오픈 시간',
+    closingTime: '영업 종료 시간',
+  });
+  const [previewUrl, setPreviewUrl] = useState(storeInfo.representativeImage);
+  const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
   const openEditModal = () => {
     setEditModalOpen(true);
   };
@@ -26,6 +37,16 @@ const MenuDetail = () => {
     // const response = await updateProductInfo(editedProductInfo);
     closeEditModal();
     // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setPreviewUrl(imageUrl);
+      setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: imageUrl });
+    }
   };
 
   return (
@@ -78,16 +99,14 @@ const MenuDetail = () => {
               />
             </div>
             <div>
-              <label htmlFor="editedImage"> 상품 이미지 URL</label>
+              <label htmlFor="editedImage"> 상품 이미지 </label>
               <input
-                type="text"
-                id="editedImage"
-                value={editedProductInfo.image}
-                onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, image: e.target.value })
-                }
-              />
-            </div>
+                  type="file"
+                  id="editedRepresentativeImage"
+                  onChange={handleImageUpload}
+                />
+              </div>
+
             <div>
               <label htmlFor="editedDescription"> 상세 정보</label>
               <textarea
