@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
@@ -59,32 +59,67 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-    // 이전 코드 유지
+
+    // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
+    const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // 새로 추가할 아이템
+    const newItem = {
+      item_id: selectedMenu.id,
+      price: selectedMenu.price,
+      amount: quantity,
+    };
+
+    // 이미 장바구니에 있는 아이템이라면 수량을 더함
+    const existingItemIndex = existingCartData.findIndex(item => item.item_id === newItem.item_id);
+    if (existingItemIndex !== -1) {
+      existingCartData[existingItemIndex].amount += newItem.amount;
+    } else {
+      // 장바구니에 없는 아이템이라면 새로 추가
+      existingCartData.push(newItem);
+    }
+
+    // 새로운 장바구니 데이터를 로컬 스토리지에 저장
+    localStorage.setItem('cart', JSON.stringify(existingCartData));
+
+    const data = JSON.parse(localStorage.getItem('cart')) || [];
+    console.log(data);
+
+    axios.post("/api/orders", data)
+    .then(res => {
+      console.log("200", res.data);
+
+      if (res.status === 200 || res.status === 201) {
+        alert('주문 등록에 성공했습니다.');
+      }
+    })
+    .catch(error => console.log(error))
+
+    // 모달을 닫음
     setModalOpen(false);
   };
 
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+  // 가게 정보
+  const restaurantInfo = {
+    name: '엽기떡볶이',
+    rating: 4.8,
+    reviewCount: 300,
+    minOrderAmount: 15000,
   };
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
-  };
   return (
     <div className="Restaurant">
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
-        <button onClick={handleLike}>
-          {isLiked ? '❤️' : '🤍'}
-        </button>
-        <span role="img" aria-label="heart"> {likeCount}</span>
+        <h3>가게 정보</h3>
+        <p>별점: {restaurantInfo.rating}</p>
+        <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
+        <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
       </div>
       <div>
-        <h3>최소 주문 금액</h3>
-        <p>{restaurantInfo.minOrderAmount}원</p>
+        <h3>위치</h3>
+        <p>성북구 정릉동</p>
       </div>
       <div>
         <h3>예상 배달 시간</h3>

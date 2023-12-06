@@ -38,23 +38,46 @@ const Login = () => {
 
     function success_admin() {
       navigate('/managermain');
-       
-      
     }
 
     function fail() {
       alert('로그인 실패했습니다.');
-    }
+    };
 
-    httpRequest('/api/login', user, success_user, success_admin, fail);
+    axios.post('/api/login', user, {
+      headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => {
+      console.log('서버 응답:', response); //테스트 코드
+      if (response.status === 200 || response.status === 201) {
+          localStorage.setItem('access_token', response.data.token);
+          localStorage.setItem('storeId', response.data.storeId);
+
+          if (response.data.role === 'ROLE_ADMIN') {
+            //해당 유저의 음식점이 있으면 true, 없으면 false
+
+            return success_admin();
+          }
+          else {
+            return success_user();
+          }
+      } 
+      else {
+          console.log('error res:', response.data);
+          return fail();
+      }
+    })
+    .catch(function (error) {
+      alert(error.response.data);
+      console.log('서버 에러 코드:', error);
+    });
   };
 
   const handleSocialLogin = (provider) => {
     console.log(`SNS ${provider} 계정으로 로그인 시도`);
-  };
-
-  const handleSignUp = () => {
-    console.log('회원가입 페이지로 이동');
   };
 
   return (
@@ -105,35 +128,5 @@ const Login = () => {
     </div>
   );
 };
-
-function httpRequest(url, body, success_user, success_admin, fail) {
-  axios.post(url, body, {
-    headers: {
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-      'Content-Type': 'application/json',
-    },
-  })
-    .then(response => {
-      if (response.status === 200 || response.status === 201) {
-        localStorage.setItem('access_token', response.data.token);
-        console.log('response 값 출력', response.data.role);
-
-        if (response.data.role === 'ROLE_ADMIN') {
-          return success_admin();
-        }
-        else {
-          return success_user();
-        }
-
-      }
-      else {
-        return fail();
-      }
-    })
-    .catch(error => {
-      console.error('에러 발생:', error);
-      fail(); // 에러 발생 시도 실패로 처리
-    });
-}
 
 export default Login;
