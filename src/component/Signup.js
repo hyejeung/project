@@ -1,7 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import './Signup.css';
+
+const AddressModal = ({ isOpen, onClose, onSelect }) => {
+  const handleAddressSelect = (data) => {
+    onSelect(data);
+    onClose();
+  };
+
+  return (
+    <>
+      {isOpen && (
+        <div style={{ position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1000 }}>
+          <DaumPostcode
+            onComplete={handleAddressSelect}
+            autoClose
+            animation
+            height={500}
+          />
+        </div>
+      )}
+    </>
+  );
+};
 
 const Signup = () => {
   const [newUsername, setNewUsername] = useState('');
@@ -12,42 +35,62 @@ const Signup = () => {
   const [address, setAddress] = useState('');
   const [gender, setGender] = useState('');
   const [memberType, setMemberType] = useState('regular');
-  const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [confirmPasswordError, setConfirmPasswordError] = useState('');
+  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [genderError, setGenderError] = useState('');
+  const [memberTypeError, setMemberTypeError] = useState('');
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setAddress('');
+  }, [isAddressModalOpen]);
+
   const handleSignup = () => {
-    // 유효성 검사
     if (!isValidEmail(email)) {
-      setError('이메일 형식이 올바르지 않습니다.');
+      setEmailError('이메일 형식이 올바르지 않습니다.');
       return;
+    } else {
+      setEmailError('');
     }
 
     if (!isValidPassword(newPassword)) {
-      setError('비밀번호는 8자리 이상이어야 하며, 특수문자를 포함해야 합니다.');
+      setPasswordError('비밀번호는 8자리 이상이어야 하며, 특수문자를 포함해야 합니다.');
       return;
+    } else {
+      setPasswordError('');
     }
 
     if (newPassword !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.');
+      setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
       return;
+    } else {
+      setConfirmPasswordError('');
     }
 
     if (!isValidPhoneNumber(phoneNumber)) {
-      setError('전화번호 형식이 올바르지 않습니다.');
+      setPhoneNumberError('전화번호 형식이 올바르지 않습니다.');
       return;
+    } else {
+      setPhoneNumberError('');
     }
 
     if (!gender) {
-      setError('성별을 선택하세요.');
+      setGenderError('성별을 선택하세요.');
       return;
+    } else {
+      setGenderError('');
     }
 
     if (!memberType) {
-      setError('회원 유형을 선택하세요.');
+      setMemberTypeError('회원 유형을 선택하세요.');
       return;
+    } else {
+      setMemberTypeError('');
     }
 
-    // 회원가입 로직
     console.log('회원가입 시도:', {
       newUsername,
       newPassword,
@@ -81,6 +124,17 @@ const Signup = () => {
     console.log('이메일 중복 확인 시도:', email);
   };
 
+  const handleAddressSelect = (data) => {
+    setAddress(data.roadAddress);
+    console.log('주소 설정 완료:', data.roadAddress);
+    setIsAddressModalOpen(false);
+  };
+
+  const onCompletePost = (data) => {
+    console.log('주소 검색 완료:', data);
+    handleAddressSelect(data);
+  };
+
   const handleGenderChange = (selectedGender) => {
     setGender(selectedGender);
   };
@@ -107,17 +161,26 @@ const Signup = () => {
   return (
     <div className="signup-container">
       <h2>회원가입</h2>
-      <div>
+      <div className="email-container">
         <label htmlFor="email">이메일</label>
-        <input
-          type="text"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <button className="duplicate-check" onClick={handleDuplicateCheck}>
-          중복확인
-        </button>
+        <div className="email-input-container">
+          <input
+            type="text"
+            id="email"
+            placeholder="이메일을 입력하세요"
+            value={email}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              isValidEmail(e.target.value)
+                ? setEmailError('')
+                : setEmailError('이메일 형식이 올바르지 않습니다.');
+            }}
+          />
+          <button className="duplicate-check" onClick={handleDuplicateCheck}>
+            중복확인
+          </button>
+        </div>
+        {emailError && <p className="error-message">{emailError}</p>}
       </div>
       <div>
         <label htmlFor="newPassword">비밀번호</label>
@@ -125,8 +188,14 @@ const Signup = () => {
           type="password"
           id="newPassword"
           value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
+          onChange={(e) => {
+            setNewPassword(e.target.value);
+            isValidPassword(e.target.value)
+              ? setPasswordError('')
+              : setPasswordError('비밀번호는 8자리 이상이어야 하며, 특수문자를 포함해야 합니다.');
+          }}
         />
+        {passwordError && <p className="error-message">{passwordError}</p>}
       </div>
       <div>
         <label htmlFor="confirmPassword">비밀번호 확인</label>
@@ -134,11 +203,17 @@ const Signup = () => {
           type="password"
           id="confirmPassword"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={(e) => {
+            setConfirmPassword(e.target.value);
+            e.target.value === newPassword
+              ? setConfirmPasswordError('')
+              : setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+          }}
         />
+        {confirmPasswordError && <p className="error-message">{confirmPasswordError}</p>}
       </div>
       <div>
-        <label htmlFor="newUsername">아이디</label>
+        <label htmlFor="newUsername">닉네임</label>
         <input
           type="text"
           id="newUsername"
@@ -147,79 +222,100 @@ const Signup = () => {
         />
       </div>
       <div>
-        <label htmlFor="phoneNumber">전화번호</label>
-        <input
-          type="text"
-          id="phoneNumber"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-        />
-      </div>
-      <div>
+  <label htmlFor="phoneNumber">전화번호</label>
+  <input
+    type="text"
+    id="phoneNumber"
+    placeholder="전화번호를 입력하세요(010-0000-0000)"
+    value={phoneNumber}
+    onChange={(e) => {
+      setPhoneNumber(e.target.value);
+      isValidPhoneNumber(e.target.value)
+        ? setPhoneNumberError('')
+        : setPhoneNumberError('전화번호 형식이 올바르지 않습니다.');
+    }}
+  />
+  {phoneNumberError && <p className="error-message">{phoneNumberError}</p>}
+</div>
+      <div className="address-container">
         <label htmlFor="address">주소</label>
-        <input
-          type="text"
-          id="address"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-        />
+        <div className="address-input-container">
+          <input
+            type="text"
+            id="address"
+            placeholder="주소를 입력하세요"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+          <button className="search-address" onClick={() => setIsAddressModalOpen(true)}>
+            주소검색
+          </button>
+        </div>
       </div>
-      <div>
-        <label className="gender-label">성별</label>
+      <AddressModal isOpen={isAddressModalOpen} onClose={() => setIsAddressModalOpen(true)} onSelect={onCompletePost} />
+      <div className="gender-and-member-type-container">
         <div className="gender-options">
-          <label htmlFor="MALE">
-            <input
-              type="radio"
-              id="MALE"
-              name="gender"
-              value="MALE"
-              checked={gender === 'MALE'}
-              onChange={() => handleGenderChange('MALE')}
-            />
-            남성
-          </label>
-          <label htmlFor="FEMALE">
-            <input
-              type="radio"
-              id="FEMALE"
-              name="gender"
-              value="FEMALE"
-              checked={gender === 'FEMALE'}
-              onChange={() => handleGenderChange('FEMALE')}
-            />
-            여성
-          </label>
+          <label>성별 선택</label>
+          <div>
+            <label htmlFor="FEMALE">
+              여성
+              <input
+                type="radio"
+                id="FEMALE"
+                name="gender"
+                value="FEMALE"
+                checked={gender === 'FEMALE'}
+                onChange={() => handleGenderChange('FEMALE')}
+              />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="MALE">
+              남성
+              <input
+                type="radio"
+                id="MALE"
+                name="gender"
+                value="MALE"
+                checked={gender === 'MALE'}
+                onChange={() => handleGenderChange('MALE')}
+              />
+            </label>
+          </div>
         </div>
-      </div>
-      <div>
-        <label className="member-type-label">회원 유형</label>
         <div className="member-type-options">
-          <label htmlFor="ROLE_USER">
-            <input
-              type="radio"
-              id="ROLE_USER"
-              name="memberType"
-              value="ROLE_USER"
-              checked={memberType === 'ROLE_USER'}
-              onChange={() => handleMemberTypeChange('ROLE_USER')}
-            />
-            일반 회원
-          </label>
-          <label htmlFor="ROLE_ADMIN">
-            <input
-              type="radio"
-              id="ROLE_ADMIN"
-              name="memberType"
-              value="ROLE_ADMIN"
-              checked={memberType === 'ROLE_ADMIN'}
-              onChange={() => handleMemberTypeChange('ROLE_ADMIN')}
-            />
-            가맹점
-          </label>
+          <label>회원 유형 선택</label>
+          <div>
+            <label htmlFor="ROLE_USER">
+              일반 회원
+              <input
+                type="radio"
+                id="ROLE_USER"
+                name="memberType"
+                value="ROLE_USER"
+                checked={memberType === 'ROLE_USER'}
+                onChange={() => handleMemberTypeChange('ROLE_USER')}
+              />
+            </label>
+          </div>
+          <div>
+            <label htmlFor="ROLE_ADMIN">
+              가맹점
+              <input
+                type="radio"
+                id="ROLE_ADMIN"
+                name="memberType"
+                value="ROLE_ADMIN"
+                checked={memberType === 'ROLE_ADMIN'}
+                onChange={() => handleMemberTypeChange('ROLE_ADMIN')}
+              />
+            </label>
+          </div>
         </div>
       </div>
-      <div>
-        {error && <p>{error}</p>}
+      {genderError && <p className="error-message">{genderError}</p>}
+      {memberTypeError && <p className="error-message">{memberTypeError}</p>}
+      <div className="signup-button-container">
         <button onClick={handleSignup}>회원가입</button>
       </div>
     </div>

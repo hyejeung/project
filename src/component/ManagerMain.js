@@ -1,132 +1,93 @@
 // ManagerMain.js
-
-import React, { useState } from 'react';
-import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import ReactPaginate from 'react-paginate';
 import './ManagerMain.css';
+import ProcessingOrders from './ProcessingOrders';
+import InProgressOrders from './InProgressOrders';
+import CancelledOrders from './CancelledOrders';
+import DeliveredOrders from './DeliveredOrders';
 
 const ManagerMain = () => {
-  const [isModalOpen, setModalOpen] = useState(false); // 모달을 페이지 로딩 시에 자동으로 열도록 변경
-  const [restaurantName, setRestaurantName] = useState('');
-  const [restaurantInfo, setRestaurantInfo] = useState('');
+  const [selectedTab, setSelectedTab] = useState('processing');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [ordersPerPage] = useState(10);
+  const [totalOrders, setTotalOrders] = useState(100);
+  const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
 
-  //상태에서 storeId에 접근
   const storeId = state && state.storeId;
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        const response = await axios.get(`/api/orders?storeId=${storeId}`);
+        setTotalOrders(response.data.length);
+        setOrders(response.data);
+      } catch (error) {
+        console.error('주문 목록을 불러오는 데 실패했습니다:', error.message);
+      }
+    };
+
+    fetchOrders();
+  }, [storeId]);
 
   const processOrder = (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
+    // 주문 처리 로직 추가
   };
 
-  const openStoreInfoModal = () => {
-    setModalOpen(true);
-  };
+  const indexOfLastOrder = (currentPage + 1) * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
 
-  const closeStoreInfoModal = () => {
-    setModalOpen(false);
-  };
-
-  const handleRegister = () => {
-
-    console.log('storeId=', storeId);
-
-    if (storeId === 0) {
-
-      setModalOpen(true);
-      // 음식점 등록 로직을 수행합니다.
-      console.log('음식점 등록 시도:', { restaurantName, restaurantInfo });
-
-      axios.post("/api/stores", {
-        name: restaurantName,
-        content: restaurantInfo,
-      }, {
-        headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          'Content-Type': 'application/json',
-        },
-      })
-      .then(res => {
-        console.log("200", res.data);
-
-        if (res.status === 200 || res.status === 201) {
-          alert('음식점 등록에 성공했습니다.');
-          setModalOpen(false);
-          navigate('/managermain');
-        }
-        else {
-          alert('음식점 등록 실패');
-        }
-      })
-      .catch(error => console.log(error))
-    }
-    else {
-      setModalOpen(false);
-      navigate('/managermain');
-    }
-    
+  const handlePageClick = (data) => {
+    const selectedPage = data.selected;
+    setCurrentPage(selectedPage);
   };
 
   return (
     <div className="managermain-container">
-      <div className="order-list">
-        <div className="order-item">
-          <Link to="/menu-detail">
-            <span>엽기떡볶이</span>
-            <span>15000원</span>
-          </Link>
-        </div>
+      <h1>주문 관리 페이지</h1>
 
-        <div className="order-item">
-          <Link to="/menu-detail">
-            <span>엽기오뎅</span>
-            <span>20000원</span>
-          </Link>
-        </div>
+      <div className="order-buttons">
+        <button onClick={() => setSelectedTab('processing')}>접수대기</button>
+        <button onClick={() => setSelectedTab('inProgress')}>처리중</button>
+        <button onClick={() => setSelectedTab('cancelled')}>주문취소</button>
+        <button onClick={() => setSelectedTab('delivered')}>배달완료</button>
       </div>
 
-      <div className="add-menu-link">
-        <Link to="/add-menu">메뉴 추가</Link>
-      </div>
-
-      {/* 음식점 등록 모달 */}
-      {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>음식점 등록</h2>
-            <div>
-              <label htmlFor="restaurantName">음식점명:</label>
-              <input
-                type="text"
-                id="restaurantName"
-                value={restaurantName}
-                onChange={(e) => setRestaurantName(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="restaurantInfo">상세 정보:</label>
-              <textarea
-                id="restaurantInfo"
-                value={restaurantInfo}
-                onChange={(e) => setRestaurantInfo(e.target.value)}
-              />
-            </div>
-            <div>
-              <button className="register-button" onClick={handleRegister}>
-                등록
-              </button>
-              <button className="close-button" onClick={closeStoreInfoModal}>
-                닫기
-              </button>
-            </div>
-          </div>
-        </div>
+      {selectedTab === 'processing' && (
+        <ProcessingOrders orders={currentOrders} processOrder={processOrder} />
       )}
+      {selectedTab === 'inProgress' && <InProgressOrders orders={currentOrders} />}
+      {selectedTab === 'cancelled' && <CancelledOrders orders={currentOrders} />}
+      {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
 
-      <button onClick={openStoreInfoModal}>음식점 등록</button>
-
-      <Outlet />
+      <ReactPaginate
+         prevPageText="<"
+         nextPageText=">"
+         firstPageText="<<"
+         lastPageText=">>"
+        breakLabel={'...'}
+        breakClassName={'break-me'}
+        pageCount={Math.ceil(totalOrders / ordersPerPage)}
+        marginPagesDisplayed={2}
+        pageRangeDisplayed={5}
+        onPageChange={handlePageClick}
+        containerClassName={'pagination'}
+        subContainerClassName={'pages pagination'}
+        activeClassName={'active'}
+        pageClassName={'page-item'}
+        pageLinkClassName={'page-link'}
+        previousClassName={'page-item'}
+        previousLinkClassName={'page-link'}
+        nextClassName={'page-item'}
+        nextLinkClassName={'page-link'}
+      />
     </div>
   );
 };

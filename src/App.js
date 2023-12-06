@@ -15,11 +15,12 @@ import ManagerMain from './component/ManagerMain';
 import StoreInfoEdit from './component/StoreInfoEdit';  
 import AddMenu from './component/AddMenu'; 
 import CategoryPage from './component/CategoryPage';
-
+import Register from './component/Register';
 import MenuManagement from './component/MenuManagement';
 import ManagerMypage from './component/ManagerMypage';
 import GeneralManager from './component/GeneralManager';
 import MenuNavbar from './component/MenuNavbar';
+import Sales from './component/Sales';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -162,7 +163,7 @@ const App = () => {
 
         {/* 장바구니 페이지 - Navbar를 표시하지 않음 */}
         <Route path="/cart" element={<Cart />} />
-
+        <Route path="/register" element={<Register />} />
         <Route path="/payment" element={<Payment />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/sns-signup" element={<SnsSignup />} />
@@ -173,6 +174,7 @@ const App = () => {
         <Route path="/manager-mypage" element={<ManagerMypage />} />
         <Route path="/menu-management" element={<MenuManagement />} />
         <Route path="/general-manager" element={<GeneralManager />} />
+        <Route path="/sales" element={<Sales />} />
       </Routes>
       </AuthProvider>
     </Router>

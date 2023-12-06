@@ -119,17 +119,6 @@ const ManagerMypage = () => {
               />
             </div>
             <div>
-              <label htmlFor="updatedPassword"> 비밀번호</label>
-              <input
-                type="password"
-                id="updatedPassword"
-                value={updatedUserInfo.password}
-                onChange={(e) =>
-                  setUpdatedUserInfo({ ...updatedUserInfo, password: e.target.value })
-                }
-              />
-            </div>
-            <div>
               <label htmlFor="updatedAddress"> 주소</label>
               <input
                 type="text"

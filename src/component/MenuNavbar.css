@@ -1,4 +1,4 @@
-/* MenuNavbar.css (or add this to your existing CSS file) */
+/* MenuNavbar.css */
 
 .header-menu a {
   text-decoration: none;
@@ -8,17 +8,33 @@
   padding: 10px;
   border-radius: 5px;
   transition: background-color 0.3s ease;
-  margin-right: 10px;
 }
 
-/* 주문 관리 페이지에 대한 스타일 */
-.header-menu a.order-management {
-  font-size: 24px; /* 주문 관리 페이지의 글씨 크기 */
-  background-color: #e74c3c; /* 배경색 변경 */
+.header-menu a.order-management-page {
+  font-size: 28px; /* 주문 관리 페이지의 글씨 크기를 더 크게 수정 */
   color: white;
   padding: 12px 20px; /* 좀 더 큰 패딩 추가 */
 }
 
-.header-menu a:hover {
+.header-menu a:hover,
+.header-menu a.active { /* 추가된 스타일: 클릭한 버튼의 색상 유지 */
   background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 추가된 스타일 */
+.header-menu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%; /* 부모 너비에 맞게 설정 */
+}
+
+/* 수정된 스타일: 주문 관리 페이지를 제외한 버튼들을 오른쪽으로 배치 */
+.header-menu a:not(.order-management-page) {
+  margin-right: 10px;
+}
+
+/* 수정된 스타일: 로그아웃 버튼은 오른쪽 마진을 추가하여 간격 조절 */
+.header-menu a:last-child {
+  margin-right: 0;
 }

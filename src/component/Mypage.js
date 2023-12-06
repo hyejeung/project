@@ -1,6 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './MyPage.css'; // Import the CSS file for styling
+import './MyPage.css'; // 스타일링을 위한 CSS 파일을 import
+import ReviewModal from './ReviewModal';
+
 
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({
@@ -14,26 +17,60 @@ const MyPage = () => {
     address: '서울특별시 성북구 서경로 123번지',
   });
 
+  const [orderHistory, setOrderHistory] = useState([
+    {
+      id: 1,
+      date: '2023-01-01',
+      items: [
+        { id: 101, name: '엽기떡볶이', price: 15000, reviewed: false },
+        { id: 102, name: '버거킹', price: 10000, reviewed: true },
+      ],
+      reviewed: false,
+    },
+    // ... 다른 주문 내역들 추가
+  ]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isOrderHistoryModalOpen, setOrderHistoryModalOpen] = useState(false);
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
+  const [selectedOrder, setSelectedOrder] = useState(null); // 선택한 주문 정보를 담는 상태
+  const [reviewOrder, setReviewOrder] = useState(null);
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+
 
   useEffect(() => {
-    axios.get('/api/member') 
-    .then(response => {
-      setUserInfo(response.data)
-      return response;
+    // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
+    axios.get('/api/user', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
     })
-    .then(response => console.log(response.data))
-    .catch(error => console.log(error))
+      .then(response => {
+        setUserInfo(response.data);
+        return response;
+      })
+      .then(response => console.log(response.data))
+      .catch(error => console.log(error));
+
+      axios.get('/api/orders', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          setOrderHistory(response.data);
+        })
+        .catch(error => console.log(error));
   }, []);
 
   const handleUpdate = async () => {
     try {
-      // Logic to update user information
-      // 예: const response = await updateUser(updatedUserInfo);
+      // 사용자 정보 업데이트 로직
+      // const response = await updateUser(updatedUserInfo);
       setUserInfo(updatedUserInfo);
-      setModalOpen(false); // Close the modal after successful update
-      // Additional logic to handle successful update
+      setModalOpen(false); // 업데이트 성공 시 모달 닫기
+      // 업데이트 성공에 대한 추가적인 로직
     } catch (error) {
       console.error('사용자 정보 업데이트 실패:', error.message);
       // 에러 핸들링 로직 추가
@@ -45,15 +82,16 @@ const MyPage = () => {
 
     if (confirmWithdrawal) {
       try {
-        // Logic for user withdrawal
-        // 예: const response = await withdrawUser();
-        // Additional logic to handle successful withdrawal
+        // 회원 탈퇴 로직
+        // const response = await withdrawUser();
+        // 탈퇴 성공에 대한 추가적인 로직
       } catch (error) {
         console.error('회원탈퇴 실패:', error.message);
         // 에러 핸들링 로직 추가
       }
     }
   };
+ 
 
   const openModal = () => {
     setModalOpen(true);
@@ -62,6 +100,51 @@ const MyPage = () => {
   const closeModal = () => {
     setModalOpen(false);
   };
+
+  const viewOrderHistory = () => {
+    setSelectedOrder(orderHistory.length > 0 ? orderHistory[0] : null);
+  setOrderHistoryModalOpen(true);
+  };
+
+  const closeOrderHistoryModal = () => {
+    setSelectedOrder(null);
+    setOrderHistoryModalOpen(false); 
+  };
+  const writeReview = (order, item) => {
+    // 리뷰 작성, 수정, 삭제 등의 로직을 여기에 추가
+    // order와 item 정보를 이용하여 필요한 동작을 수행
+    console.log('리뷰 작성 함수 호출', order, item);
+  };
+  const openReviewModal = (order) => {
+    setReviewOrder(order);
+    setReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setReviewModalOpen(false);
+  };
+
+  const submitReview = (reviewData) => {
+    // 여기에서 리뷰 작성 로직을 수행
+    console.log('리뷰 작성:', reviewData);
+    // 예시로 콘솔에 리뷰 데이터 출력
+  };
+
+  const confirmReviewDeletion = (order, item) => {
+    const confirmDeletion = window.confirm('정말로 리뷰를 삭제하시겠습니까?');
+  
+    if (confirmDeletion) {
+      // 리뷰 삭제 로직을 수행하는 함수를 호출
+      deleteReview(order, item);
+    }
+  };
+  const deleteReview = (order, item) => {
+    // 리뷰 삭제 로직을 수행하는 함수를 호출
+    // 여기에서 필요한 서버 호출 등을 추가하면 됩니다.
+    console.log('리뷰 삭제 함수 호출', order, item);
+  };
+  
+  
 
   return (
     <div className="my-page-container">
@@ -74,13 +157,17 @@ const MyPage = () => {
       <p>적립금: {userInfo.points} 포인트</p>
       <p>등급: {userInfo.grade}</p>
       <p>주소: {userInfo.address}</p>
+     <button onClick={() => viewOrderHistory(orderHistory[0])}>주문내역</button> 
+     
       <button onClick={openModal}>회원정보 수정</button>
       <button onClick={handleWithdrawal}>회원탈퇴</button>
+      
+
 
       {/* 수정 모달 */}
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="mypage-modal-overlay">
+        <div className="mypage-modal">
             <h2>회원정보 수정</h2>
             <div>
               <label htmlFor="updatedUsername"> 사용자 이름</label>
@@ -147,6 +234,79 @@ const MyPage = () => {
             </div>
           </div>
         </div>
+      )}
+    
+   
+    {isOrderHistoryModalOpen && (
+        <div className="modal-overlay">{isOrderHistoryModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h2>주문 내역</h2>
+              {selectedOrder ? (
+                <>
+                  <ul>
+                    {selectedOrder.items.map((item) => (
+                      <li key={item.id}>
+                        {item.name} - {item.price}원
+                        {/* 각 아이템에 대한 리뷰 상태 확인 */}
+                        {item.reviewed ? (
+                          <>
+                            <button onClick={() => openReviewModal(selectedOrder, item)}>리뷰 수정</button>
+                            <button onClick={() => confirmReviewDeletion(selectedOrder, item)}>리뷰 삭제</button>
+                          </>
+                        ) : (
+                          <button onClick={() => openReviewModal(selectedOrder)}>리뷰 쓰기</button>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p>선택된 주문 내역이 없습니다.</p>
+              )}
+              <button onClick={closeOrderHistoryModal}>닫기</button>
+            </div>
+          </div>
+        )}
+          <div className="modal">
+            <h2>주문 내역</h2>
+            {selectedOrder ? (
+              <>
+                <ul>
+                  {selectedOrder.items.map((item) => (
+                    <li key={item.id}>
+                      {item.name} - {item.price}원
+                      {/* 각 아이템에 대한 리뷰 상태 확인 */}
+                      {item.reviewed ? (
+                        <>
+                          <button>리뷰 수정</button>
+                          <button>리뷰 삭제</button>
+                        </>
+                      ) : (
+                        <button onClick={() => openReviewModal(selectedOrder)}>리뷰 쓰기</button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <p>선택된 주문 내역이 없습니다.</p>
+            )}
+            <button onClick={closeOrderHistoryModal}>닫기</button>
+          </div>
+        </div>
+      )}
+
+      {/* 리뷰 작성 모달 */}
+      {reviewOrder && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => {
+            setReviewOrder(null);
+            setReviewModalOpen(false);
+          }}
+          onSubmit={submitReview}
+        />
       )}
     </div>
   );
