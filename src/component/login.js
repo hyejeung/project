@@ -6,13 +6,10 @@ import './login.css';
 import axios from 'axios';
 import { useAuth } from '../AuthContext';
 
-const Login = ({ setStoreId }) => {
+const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-  let storeId;
-  
   const [user, setUser] = useState({
     email: '',
     password: ''
@@ -39,13 +36,11 @@ const Login = ({ setStoreId }) => {
     };
     function success_admin() {
       login();
-      navigate('/managermain', { state: { storeId: storeId }});
+      navigate('/managermain');
     }
     function fail() {
       alert('로그인 실패했습니다.');
     };
-
-    // httpRequest('/api/login', user, success_user, success_admin, fail);
 
     axios.post('/api/login', user, {
       headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
@@ -57,14 +52,11 @@ const Login = ({ setStoreId }) => {
       console.log('서버 응답:', response); //테스트 코드
       if (response.status === 200 || response.status === 201) {
           localStorage.setItem('access_token', response.data.token);
+          localStorage.setItem('storeId', response.data.storeId);
 
-          storeId = response.data.storeId;
-          console.log('storeId에 저장된 수: ', storeId);
-            
           if (response.data.role === 'ROLE_ADMIN') {
             //해당 유저의 음식점이 있으면 true, 없으면 false
 
-            setStoreId(response.data.storeId);
             return success_admin();
           }
           else {
@@ -85,11 +77,6 @@ const Login = ({ setStoreId }) => {
   const handleSocialLogin = (provider) => {
     // SNS 로그인 로직 구현
     console.log(`SNS ${provider} 계정으로 로그인 시도`);
-  };
-
-  const handleSignUp = () => {
-    // 회원가입 페이지로 이동 또는 회원가입 모달 표시 등의 로직
-    console.log('회원가입 페이지로 이동');
   };
 
   return (
@@ -140,31 +127,5 @@ const Login = ({ setStoreId }) => {
     </div>
   );
 };
-
-function httpRequest(url, body, success_user, success_admin, fail) {
-  axios.post(url, body, {
-    headers: { // 로컬 스토리지에서 액세스 토큰 값을 가져와 헤더에 추가
-      Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-      'Content-Type': 'application/json',
-    },
-  })
-  .then(response => {
-    if (response.status === 200 || response.status === 201) {
-        localStorage.setItem('access_token', response.data.token);
-        console.log('response 값 출력', response.data.role);
-
-        if (response.data.role == 'ROLE_ADMIN') {
-          return success_admin();
-        }
-        else {
-          return success_user();
-        }
-
-    } 
-    else {
-        return fail();
-    }
-  });
-}
 
 export default Login;

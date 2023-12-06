@@ -1,10 +1,9 @@
 // ProcessingOrders.js
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 
 //orders 테이블에서 storeId 인 주문들만 가져오면 된다.
-const ProcessingOrders = ({ processOrder, storeId }) => {
+const ProcessingOrders = ({ processOrder }) => {
 
   const [orders, setOrders] = useState([]);
   //임시용 storeId = 2
@@ -44,8 +43,25 @@ const ProcessingOrders = ({ processOrder, storeId }) => {
 
   // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
-    console.log('Updated Orders:', orders);
-  }, [orders]);
+    const storeId = localStorage.getItem('storeId');
+    console.log('storeId:', storeId);
+
+    // SSE 이벤트 수신
+    const eventSource = new EventSource(`/api/orders/${storeId}`);
+  
+    eventSource.addEventListener("order", async (event) => {
+      const orderData = JSON.parse(event.data);
+      console.log('orderData =', orderData);
+
+      setOrders((prevOrders) => [...prevOrders, orderData]);
+      console.log('orders =', orders);
+    });
+
+    return () => {
+      // 컴포넌트가 언마운트될 때 EventSource 연결 해제
+      eventSource.close();
+    };
+  }, []);
 
   return (
     <div className="order-list">
@@ -63,19 +79,6 @@ const ProcessingOrders = ({ processOrder, storeId }) => {
             <button onClick={() => processOrder(order.order_id, 'rejected')}>거절</button>
           </div>
       ))}
-      {/* <div className="order-item">
-        <span>엽기떡볶이</span>
-        <span>15000원</span>
-        <button onClick={() => processOrder(1, 'accepted')}>수락</button>
-        <button onClick={() => processOrder(1, 'rejected')}>거절</button>
-      </div>
-
-      <div className="order-item">
-        <span>엽기오뎅</span>
-        <span>20000원</span>
-        <button onClick={() => processOrder(2, 'accepted')}>수락</button>
-        <button onClick={() => processOrder(2, 'rejected')}>거절</button>
-      </div> */}
     </div>
   );
 };
