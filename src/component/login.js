@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './login.css';
 import axios from 'axios';
+import { useAuth } from '../AuthContext';
 
 const Login = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const [user, setUser] = useState({
@@ -33,10 +35,12 @@ const Login = () => {
     console.log('로그인 시도:', { email, password });
 
     function success_user() {
+      login();
       navigate('/');
     }
 
     function success_admin() {
+      login();
       navigate('/managermain');
     }
 

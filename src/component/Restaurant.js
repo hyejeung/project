@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
+import { useParams } from 'react-router';
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,33 +25,43 @@ const Restaurant = () => {
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
 
-  useEffect(() => {
-    const id = localStorage.getItem('storeId');
-  
-    axios.get(`api/stores/${id}`)
-      .then(response => setMenuList(response.data))
+  const { id } = useParams();
+
+  useEffect(() => {  
+    axios.get(`/api/stores/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
   
-    axios.get('/api/restaurant', {
+    axios.get(`/api/items/${id}`, {
       params: {
         offset: offset,
         limit: perPage,
+        size: 5
+      },
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
       },
     })
       .then(response => {
-        setRestaurantInfo(response.data);
+        setMenuList(response.data.content);
         setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
   
-    axios.get('/api/reviews', {
-      params: {
-        offset: offset,
-        limit: perPage,
-      },
-    })
-      .then(response => setReviews(response.data))
-      .catch(error => console.error('Error fetching reviews:', error));
+    // axios.get('/api/reviews', {
+    //   params: {
+    //     offset: offset,
+    //     limit: perPage,
+    //   },
+    // })
+    //   .then(response => setReviews(response.data))
+    //   .catch(error => console.error('Error fetching reviews:', error));
   }, [offset, perPage]);
 
   const handleMenuButtonClick = (menu) => {
@@ -82,29 +93,18 @@ const Restaurant = () => {
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
     localStorage.setItem('cart', JSON.stringify(existingCartData));
 
-    const data = JSON.parse(localStorage.getItem('cart')) || [];
-    console.log(data);
-
-    axios.post("/api/orders", data)
-    .then(res => {
-      console.log("200", res.data);
-
-      if (res.status === 200 || res.status === 201) {
-        alert('주문 등록에 성공했습니다.');
-      }
-    })
-    .catch(error => console.log(error))
-
     // 모달을 닫음
     setModalOpen(false);
   };
 
-  // 가게 정보
-  const restaurantInfo = {
-    name: '엽기떡볶이',
-    rating: 4.8,
-    reviewCount: 300,
-    minOrderAmount: 15000,
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
 
   return (
@@ -112,14 +112,14 @@ const Restaurant = () => {
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
-        <h3>가게 정보</h3>
-        <p>별점: {restaurantInfo.rating}</p>
-        <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
-        <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+        <button onClick={handleLike}>
+          {isLiked ? '❤️' : '🤍'}
+        </button>
+        <span role="img" aria-label="heart"> {likeCount}</span>
       </div>
       <div>
-        <h3>위치</h3>
-        <p>성북구 정릉동</p>
+        <h3>최소 주문 금액</h3>
+        <p>{restaurantInfo.minOrderAmount}원</p>
       </div>
       <div>
         <h3>예상 배달 시간</h3>
@@ -140,9 +140,9 @@ const Restaurant = () => {
           <h3>메뉴</h3>
           <ul>
             {menuList.map((menu) => (
-              <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
-                <img src={menu.image} alt={menu.name} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
-                {menu.name} - {menu.price}원
+              <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
+                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
+                {menu.itemName} - {menu.price}원
               </li>
             ))}
           </ul>
@@ -195,10 +195,10 @@ const Restaurant = () => {
   totalItemsCount={totalData}
   pageRangeDisplayed={5}
   onChange={handlePageChange}
-  prevPageText="<<"
-  nextPageText=">>"
-  firstPageText="<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">"   // 수정: 마지막 페이지로 이동하는 버튼
+  prevPageText="<"
+  nextPageText=">"
+  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
   itemClass="page-item"
   linkClass="page-link"
   innerClass="pagination"
