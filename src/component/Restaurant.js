@@ -1,15 +1,19 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 
 const Restaurant = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage] = useState(5); // 페이지당 항목 수
+  const [offset, setOffset] = useState(0);
+  const [totalData, setTotalData] = useState(100);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [quantity, setQuantity] = useState(1);
-  const [selectedTab, setSelectedTab] = useState('menu'); // 추가
-  const [isLiked, setIsLiked] = useState(false); // 하트 상태 추가
-  const [likeCount, setLikeCount] = useState(100); // 찜 수 상태 추가
-
+  const [selectedTab, setSelectedTab] = useState('menu');
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(100);
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     image: '',
@@ -18,25 +22,37 @@ const Restaurant = () => {
     minOrderAmount: 0,
   });
   const [reviews, setReviews] = useState([]);
+  const [menuList, setMenuList] = useState([]);
 
-  const menuList = [
-    { id: 1, name: '엽기떡볶이', price: 15000, image: 'https://picsum.photos/seed/picsum/800/300' },
-    { id: 2, name: '엽기닭볶음탕', price: 23000, image: 'https://picsum.photos/seed/picsum/800/300' },
-    // 다른 메뉴들도 추가할 수 있습니다.
-  ];
   useEffect(() => {
-    // 음식점 정보를 서버에서 가져오는 부분
-    axios.get('/api/restaurant') // 서버의 API 엔드포인트에 따라 수정
-      .then(response => setRestaurantInfo(response.data))
+    const id = localStorage.getItem('storeId');
+  
+    axios.get(`api/stores/${id}`)
+      .then(response => setMenuList(response.data))
+      .catch(error => console.error('Error fetching menu list:', error));
+  
+    axios.get('/api/restaurant', {
+      params: {
+        offset: offset,
+        limit: perPage,
+      },
+    })
+      .then(response => {
+        setRestaurantInfo(response.data);
+        setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
+      })
       .catch(error => console.error('Error fetching restaurant info:', error));
-
-    // 리뷰 정보를 서버에서 가져오는 부분
-    axios.get('/api/reviews') // 서버의 API 엔드포인트에 따라 수정
+  
+    axios.get('/api/reviews', {
+      params: {
+        offset: offset,
+        limit: perPage,
+      },
+    })
       .then(response => setReviews(response.data))
       .catch(error => console.error('Error fetching reviews:', error));
-  }, []);
+  }, [offset, perPage]);
 
- 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
     setSelectedMenu(menu);
@@ -44,85 +60,61 @@ const Restaurant = () => {
 
   const handleAddToCart = () => {
     // 이전 코드 유지
-
-    // 모달을 닫음
     setModalOpen(false);
   };
+
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
   };
 
-  // 가게 정보
-  // const restaurantInfo = {
-  //   name: '엽기떡볶이',
-  //   image: 'https://picsum.photos/seed/picsum/800/300', // 더미 이미지 URL 예시
-  //   rating: 4.8,
-  //   reviewCount: 300,
-  //   minOrderAmount: 15000,
-  // };
-
-  // 리뷰 섹션
-  // const reviews = [
-  //   { id: 1, user: 'user1', content: '맛있어요!', rating: 5 },
-  //   { id: 2, user: 'user2', content: '좋아요!', rating: 4.5 },
-  //   // 다른 리뷰들도 추가할 수 있습니다.
-  // ];
-
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
+  };
   return (
     <div className="Restaurant">
-       {/* <h2>{restaurantInfo.name}</h2> */}
-      {/* 가게 이미지 */}
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
-   
-    
-          <h2>{restaurantInfo.name}</h2>
-      {/* 찜(좋아요) 기능 */}
-      {/* 하트(좋아요) 기능 */}
+      <h2>{restaurantInfo.name}</h2>
       <div>
         <button onClick={handleLike}>
           {isLiked ? '❤️' : '🤍'}
         </button>
         <span role="img" aria-label="heart"> {likeCount}</span>
       </div>
-      {/* 최소 주문 금액 */}
       <div>
         <h3>최소 주문 금액</h3>
         <p>{restaurantInfo.minOrderAmount}원</p>
       </div>
-      {/* 예상 배달 시간 */}
       <div>
         <h3>예상 배달 시간</h3>
         <p>30분</p>
       </div>
-      {/* 배달 팁 */}
       <div>
         <h3>배달 팁</h3>
         <p>3000원</p>
       </div>
-      {/* 탭 선택 */}
       <div>
         <button onClick={() => setSelectedTab('menu')}>메뉴</button>
         <button onClick={() => setSelectedTab('info')}>정보</button>
         <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
       </div>
-      {/* 선택된 탭에 따라 내용 표시 */}
+
       {selectedTab === 'menu' && (
-        // 메뉴 섹션
         <div>
           <h3>메뉴</h3>
-    <ul>
-      {menuList.map((menu) => (
-        <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
-          <img src={menu.image} alt={menu.name} style={{ width: '150px', height: '150px', marginright: '10px' }} />
-          {menu.name} - {menu.price}원
+          <ul>
+            {menuList.map((menu) => (
+              <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
+                <img src={menu.image} alt={menu.name} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
+                {menu.name} - {menu.price}원
               </li>
             ))}
           </ul>
         </div>
       )}
+
       {selectedTab === 'info' && (
-        // 정보 섹션
         <div>
           <h3>가게 정보</h3>
           <p>별점: {restaurantInfo.rating}</p>
@@ -131,7 +123,6 @@ const Restaurant = () => {
         </div>
       )}
       {selectedTab === 'reviews' && (
-        // 리뷰 섹션
         <div>
           <h3>리뷰</h3>
           {reviews.map((review) => (
@@ -143,10 +134,10 @@ const Restaurant = () => {
           ))}
         </div>
       )}
-      {/* 모달 */}
+
       {modalOpen && selectedMenu && (
         <div className="restaurant-modal-overlay">
-        <div className="restaurant-modal">
+          <div className="restaurant-modal">
             <h2>{selectedMenu.name}</h2>
             <p>가격: {selectedMenu.price}원</p>
             <label htmlFor="quantity">수량:</label>
@@ -162,6 +153,21 @@ const Restaurant = () => {
           </div>
         </div>
       )}
+
+<Pagination
+  activePage={currentPage}
+  itemsCountPerPage={perPage}
+  totalItemsCount={totalData}
+  pageRangeDisplayed={5}
+  onChange={handlePageChange}
+  prevPageText="<<"
+  nextPageText=">>"
+  firstPageText="<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">"   // 수정: 마지막 페이지로 이동하는 버튼
+  itemClass="page-item"
+  linkClass="page-link"
+  innerClass="pagination"
+/>
     </div>
   );
 };
