@@ -6,40 +6,6 @@ import React, { useState, useEffect } from 'react';
 const ProcessingOrders = ({ processOrder }) => {
 
   const [orders, setOrders] = useState([]);
-  //임시용 storeId = 2
-  const [store_id, setStoreId] = useState(2);
-
-  //session storage에 storeId를 저장하는 코드 필요
-
-  useEffect(() => {
-    console.log('storeId:', store_id);
-    // // 서버에서 해당 음식점의 주문 목록을 가져오는 API 호출 등의 로직
-    // axios.get(`/api/orders/${storeId}`, {
-    //   headers: {
-    //     Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-    //     'Content-Type': 'application/json',
-    //   },
-    // })
-    // .then(response => {
-    //   setOrders(response.data)
-    // })
-    // .then(response => console.log(response.data))
-    // .catch(error => console.log(error))
-
-    // SSE 이벤트 수신
-    const eventSource = new EventSource(`/api/orders/${store_id}`);
-    
-    eventSource.onmessage = (event) => {
-      const orderData = JSON.parse(event.data);
-      // 받아온 주문 데이터를 기존 주문 목록에 추가 또는 업데이트
-      setOrders((prevOrders) => [...prevOrders, orderData]);
-    };
-
-    return () => {
-      // 컴포넌트가 언마운트될 때 EventSource 연결 해제
-      eventSource.close();
-    };
-  }, [store_id]);
 
   // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
@@ -47,20 +13,23 @@ const ProcessingOrders = ({ processOrder }) => {
     console.log('storeId:', storeId);
 
     // SSE 이벤트 수신
-    const eventSource = new EventSource(`/api/orders/${storeId}`);
+    const sse = new EventSource(`/api/connect`);
   
-    eventSource.addEventListener("order", async (event) => {
-      const orderData = JSON.parse(event.data);
-      console.log('orderData =', orderData);
+    // sse.addEventListener('connect', async (event) => {
+    //   const orderData = JSON.parse(event.data);
+    //   console.log('connect event data: ', orderData);
+    // });
 
-      setOrders((prevOrders) => [...prevOrders, orderData]);
-      console.log('orders =', orders);
+    sse.addEventListener('connect', async (event) => {
+      const { data: receiveConnectData } = event;
+      console.log('connect event data: ', receiveConnectData);
     });
 
-    return () => {
-      // 컴포넌트가 언마운트될 때 EventSource 연결 해제
-      eventSource.close();
-    };
+    sse.addEventListener('order', e => {
+      const orderData = JSON.parse(e.data);
+      console.log("order event data: ", orderData);
+      setOrders((prevOrders) => [...prevOrders, orderData]);
+    });
   }, []);
 
   return (
