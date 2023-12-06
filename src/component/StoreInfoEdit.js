@@ -25,24 +25,26 @@ const StoreInfoEdit = () => {
   details: '',  });
 
 
-  // useEffect(() => {
+  useEffect(() => {
 
 
 
-  //   const fetchData = async () => {
-  //     try {
-  //       // 서버에서 가게 정보를 가져오는 GET 요청
-  //       const response = await axios.get(`api/stores/${storeId}`);
-  //       // 서버 응답 데이터를 가게 정보로 업데이트
-  //       setStoreInfo(response.data);
-  //     } catch (error) {
-  //       console.error('가게 정보 불러오기 실패:', error);
-  //     }
-  //   };
+    const fetchData = async () => {
+      try {
 
-    // 컴포넌트가 마운트될 때 가게 정보를 불러오도록 호출
-  //   fetchData();
-  // }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행
+        const storeId = localStorage.getItem('storeId');
+        // 서버에서 가게 정보를 가져오는 GET 요청
+        const response = await axios.get(`api/stores/${storeId}`);
+        // 서버 응답 데이터를 가게 정보로 업데이트
+        setStoreInfo(response.data);
+      } catch (error) {
+        console.error('가게 정보 불러오기 실패:', error);
+      }
+    };
+
+    //컴포넌트가 마운트될 때 가게 정보를 불러오도록 호출
+    fetchData();
+  }, []); // 빈 배열을 전달하여 컴포넌트가 마운트될 때 한 번만 실행
 
   
   const handleImageUpload = (e) => {
@@ -65,8 +67,8 @@ const StoreInfoEdit = () => {
 
   const handleUpdate = async () => {
     try {
-      // 서버에 업데이트 요청을 보내는 부분
-      // const response = await axios.put('서버의 업데이트 API URL', updatedStoreInfo);
+      //서버에 업데이트 요청을 보내는 부분
+      const response = await axios.put('서버의 업데이트 API URL', updatedStoreInfo);
 
       // 업데이트 성공 시 로직
       setStoreInfo(updatedStoreInfo);
@@ -90,17 +92,16 @@ const StoreInfoEdit = () => {
 
     try {
       // 서버에 새로운 메뉴 추가 요청을 보내는 부분
+
+      const id = localStorage.getItem('storeId');
       const response = await axios.post(`api/stores/${id}`, newMenuItem, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'application/json',
         },
       });
-
-      // 새로운 메뉴 추가 성공 시 로직
-      console.log('메뉴 추가 성공:', response.data);
-
-      // 모달 닫기
+        // 새로운 메뉴 추가 성공 시 로직
+        console.log('메뉴 추가 성공:', response.data);
       setAddMenuModalOpen(false);
     } catch (error) {
       // 메뉴 추가 실패 시 에러 처리 로직

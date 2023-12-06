@@ -39,7 +39,12 @@ const MyPage = () => {
 
   useEffect(() => {
     // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
-    axios.get('/api/member')
+    axios.get('/api/user', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
       .then(response => {
         setUserInfo(response.data);
         return response;
@@ -47,11 +52,16 @@ const MyPage = () => {
       .then(response => console.log(response.data))
       .catch(error => console.log(error));
 
-    axios.get('/api/orders')
-      .then(response => {
-        setOrderHistory(response.data);
+      axios.get('/api/orders', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
       })
-      .catch(error => console.log(error));
+        .then(response => {
+          setOrderHistory(response.data);
+        })
+        .catch(error => console.log(error));
   }, []);
 
   const handleUpdate = async () => {

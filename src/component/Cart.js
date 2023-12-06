@@ -52,10 +52,14 @@ const Cart = () => {
           </div>
         </div>
       ))}
+       <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button>
       <div className="total-price">
         <span>총 주문 금액: {calculateTotalPrice()}원</span>
       </div>
-      <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button>
+     
+      <Link to="/payment" className="order-button">
+        주문하러 가기
+      </Link>
     </div>
   );
 };

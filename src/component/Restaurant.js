@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import axios from 'axios';
 import './Restaurant.css';
 
@@ -10,11 +10,32 @@ const Restaurant = () => {
   const [isLiked, setIsLiked] = useState(false); // 하트 상태 추가
   const [likeCount, setLikeCount] = useState(100); // 찜 수 상태 추가
 
+  const [restaurantInfo, setRestaurantInfo] = useState({
+    name: '',
+    image: '',
+    rating: 0,
+    reviewCount: 0,
+    minOrderAmount: 0,
+  });
+  const [reviews, setReviews] = useState([]);
+
   const menuList = [
     { id: 1, name: '엽기떡볶이', price: 15000, image: 'https://picsum.photos/seed/picsum/800/300' },
     { id: 2, name: '엽기닭볶음탕', price: 23000, image: 'https://picsum.photos/seed/picsum/800/300' },
     // 다른 메뉴들도 추가할 수 있습니다.
   ];
+  useEffect(() => {
+    // 음식점 정보를 서버에서 가져오는 부분
+    axios.get('/api/restaurant') // 서버의 API 엔드포인트에 따라 수정
+      .then(response => setRestaurantInfo(response.data))
+      .catch(error => console.error('Error fetching restaurant info:', error));
+
+    // 리뷰 정보를 서버에서 가져오는 부분
+    axios.get('/api/reviews') // 서버의 API 엔드포인트에 따라 수정
+      .then(response => setReviews(response.data))
+      .catch(error => console.error('Error fetching reviews:', error));
+  }, []);
+
  
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
@@ -33,20 +54,20 @@ const Restaurant = () => {
   };
 
   // 가게 정보
-  const restaurantInfo = {
-    name: '엽기떡볶이',
-    image: 'https://picsum.photos/seed/picsum/800/300', // 더미 이미지 URL 예시
-    rating: 4.8,
-    reviewCount: 300,
-    minOrderAmount: 15000,
-  };
+  // const restaurantInfo = {
+  //   name: '엽기떡볶이',
+  //   image: 'https://picsum.photos/seed/picsum/800/300', // 더미 이미지 URL 예시
+  //   rating: 4.8,
+  //   reviewCount: 300,
+  //   minOrderAmount: 15000,
+  // };
 
   // 리뷰 섹션
-  const reviews = [
-    { id: 1, user: 'user1', content: '맛있어요!', rating: 5 },
-    { id: 2, user: 'user2', content: '좋아요!', rating: 4.5 },
-    // 다른 리뷰들도 추가할 수 있습니다.
-  ];
+  // const reviews = [
+  //   { id: 1, user: 'user1', content: '맛있어요!', rating: 5 },
+  //   { id: 2, user: 'user2', content: '좋아요!', rating: 4.5 },
+  //   // 다른 리뷰들도 추가할 수 있습니다.
+  // ];
 
   return (
     <div className="Restaurant">

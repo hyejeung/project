@@ -1,5 +1,6 @@
+
 .signup-container {
-  max-width: 400px;
+  max-width: 600px;
   margin: 50px auto;
   padding: 20px;
   border: 1px solid #ccc;
@@ -7,6 +8,12 @@
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+
+.error-message {
+  color: red;
+  margin-top: 5px;
+}
+
 
 h2 {
   text-align: center;
