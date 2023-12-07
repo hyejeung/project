@@ -1,6 +1,6 @@
 // app.js
 
-import React, { useState, useEffect, createContext, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
 import MyPage from './component/Mypage';
 import Wishlist from './component/Wishlist';
@@ -99,6 +99,7 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
 };
 
 const App = () => {
+  
   const [restaurants, setRestaurants] = useState([
     '엽기떡볶이',
     '교촌치킨',

@@ -1,13 +1,12 @@
 
 // MenuNavbar.js
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import './MenuNavbar.css';
 
 const MenuNavbar = () => {
   const { handleLogout } = useAuth();
-  const navigate = useNavigate();
   const location = useLocation();
   const { id } = useParams();
   const { category } = useParams();
@@ -69,8 +68,7 @@ const MenuNavbar = () => {
         >
           마이페이지
         </Link>
-       
-        <Link to="/login">로그아웃</Link>
+        <Link to="/login" className="nav-link" onClick={handleLogout}>로그아웃</Link>
       </div>
     </header>
   );

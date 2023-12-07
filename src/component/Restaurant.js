@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
+import { useParams } from 'react-router';
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -24,33 +25,43 @@ const Restaurant = () => {
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
 
-  useEffect(() => {
-    const id = localStorage.getItem('storeId');
-  
-    axios.get(`api/stores/${id}`)
-      .then(response => setMenuList(response.data))
+  const { id } = useParams();
+
+  useEffect(() => {  
+    axios.get(`/api/stores/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
   
-    axios.get('/api/restaurant', {
+    axios.get(`/api/items/${id}`, {
       params: {
         offset: offset,
         limit: perPage,
+        size: 5
+      },
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
       },
     })
       .then(response => {
-        setRestaurantInfo(response.data);
+        setMenuList(response.data.content);
         setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
   
-    axios.get('/api/reviews', {
-      params: {
-        offset: offset,
-        limit: perPage,
-      },
-    })
-      .then(response => setReviews(response.data))
-      .catch(error => console.error('Error fetching reviews:', error));
+    // axios.get('/api/reviews', {
+    //   params: {
+    //     offset: offset,
+    //     limit: perPage,
+    //   },
+    // })
+    //   .then(response => setReviews(response.data))
+    //   .catch(error => console.error('Error fetching reviews:', error));
   }, [offset, perPage]);
 
   const handleMenuButtonClick = (menu) => {
@@ -59,7 +70,30 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-    // 이전 코드 유지
+
+    // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
+    const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // 새로 추가할 아이템
+    const newItem = {
+      item_id: selectedMenu.id,
+      price: selectedMenu.price,
+      amount: quantity,
+    };
+
+    // 이미 장바구니에 있는 아이템이라면 수량을 더함
+    const existingItemIndex = existingCartData.findIndex(item => item.item_id === newItem.item_id);
+    if (existingItemIndex !== -1) {
+      existingCartData[existingItemIndex].amount += newItem.amount;
+    } else {
+      // 장바구니에 없는 아이템이라면 새로 추가
+      existingCartData.push(newItem);
+    }
+
+    // 새로운 장바구니 데이터를 로컬 스토리지에 저장
+    localStorage.setItem('cart', JSON.stringify(existingCartData));
+
+    // 모달을 닫음
     setModalOpen(false);
   };
 
@@ -72,6 +106,7 @@ const Restaurant = () => {
     setCurrentPage(pageNumber);
     setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
+
   return (
     <div className="Restaurant">
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
@@ -105,9 +140,9 @@ const Restaurant = () => {
           <h3>메뉴</h3>
           <ul>
             {menuList.map((menu) => (
-              <li key={menu.id} onClick={() => handleMenuButtonClick(menu)}>
-                <img src={menu.image} alt={menu.name} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
-                {menu.name} - {menu.price}원
+              <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
+                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
+                {menu.itemName} - {menu.price}원
               </li>
             ))}
           </ul>
@@ -160,10 +195,10 @@ const Restaurant = () => {
   totalItemsCount={totalData}
   pageRangeDisplayed={5}
   onChange={handlePageChange}
-  prevPageText="<<"
-  nextPageText=">>"
-  firstPageText="<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">"   // 수정: 마지막 페이지로 이동하는 버튼
+  prevPageText="<"
+  nextPageText=">"
+  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
   itemClass="page-item"
   linkClass="page-link"
   innerClass="pagination"

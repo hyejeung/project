@@ -6,16 +6,7 @@ import ReviewModal from './ReviewModal';
 
 
 const MyPage = () => {
-  const [userInfo, setUserInfo] = useState({
-    username: '사용자 이름',
-    email: 'abc@google.com',
-    phoneNumber: '010-1234-5678',
-    password: '********',
-    gender: '남성',
-    points: 1000,
-    grade: 'gold',
-    address: '서울특별시 성북구 서경로 123번지',
-  });
+  const [userInfo, setUserInfo] = useState({});
 
   const [orderHistory, setOrderHistory] = useState([
     {
