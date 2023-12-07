@@ -1,5 +1,6 @@
 //mypage 리뷰작성 모달
 import React, { useState } from 'react';
+import axios from 'axios';
 
 const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
   const [rating, setRating] = useState(0);
@@ -16,6 +17,19 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
   const handleSubmit = () => {
     // 여기서 리뷰 작성 로직을 수행하고, 부모 컴포넌트로 전달
     onSubmit({ rating, comment });
+
+    axios.post('/api/review', {
+      content: comment,
+      rating: rating
+    }, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(response => console.log(response.data))
+    .catch(error => console.log(error));
+
     // 모달 닫기
     onClose();
   };

@@ -323,7 +323,7 @@ const StoreInfoEdit = () => {
           <div className="order-list">
             <div className="order-item" onClick={openNewMenuItemModal}>
               <span>엽기떡볶이</span>
-              <span>15000원</span>
+              <span>1500원</span>
               <span className="status">판매중</span>
             </div>
 

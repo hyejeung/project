@@ -58,6 +58,7 @@ const MenuDetail = () => {
         <h3>상품 정보</h3>
         <p>가격: {editedProductInfo.price}원</p>
         <img src={editedProductInfo.image} alt={editedProductInfo.name} />
+        {/* <img class="temp_img" alt='이미지' src='/img/temp2.png'></img> */}
         <p>상세 정보: {editedProductInfo.description}</p>
         <p>판매상태: {editedProductInfo.availability ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
       </div>
