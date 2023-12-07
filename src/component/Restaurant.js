@@ -79,14 +79,14 @@ const Restaurant = () => {
 
     // 새로 추가할 아이템
     const newItem = {
-      user_id: userId,
-      item_id: selectedMenu.id,
+    
+      itemId: selectedMenu.itemId,
       price: selectedMenu.price,
       amount: quantity,
     };
 
     // 이미 장바구니에 있는 아이템이라면 수량을 더함
-    const existingItemIndex = existingCartData.findIndex(item => item.item_id === newItem.item_id);
+    const existingItemIndex = existingCartData.findIndex(item => item.itemId === newItem.itemId);
     if (existingItemIndex !== -1) {
       existingCartData[existingItemIndex].amount += newItem.amount;
     } else {

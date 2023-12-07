@@ -1,6 +1,6 @@
 // ManagerMain.js
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './ManagerMain.css';
@@ -15,11 +15,11 @@ const ManagerMain = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
   const [totalOrders, setTotalOrders] = useState(100);
-  const [setOrders] = useState([]);
+ 
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
-  const { orders,updateOrders } = useAuth(); // orders 및 updateOrders 추가
+  const { orderContext,updateOrders } = useAuth(); // orders 및 updateOrders 추가
 
   const [perPage] = useState(5); // 페이지당 항목 수
   const [offset, setOffset] = useState(0);
@@ -32,24 +32,45 @@ const ManagerMain = () => {
   const [likeCount, setLikeCount] = useState(100);
 
   const storeId = state && state.storeId;
+  const [orders, setOrders] = useState([]);
+  const [processingOrders, setProcessingOrders] = useState([]);
 
+  // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get(`/api/orders?storeId=${storeId}`);
-        setTotalOrders(response.data.length);
-        setOrders(response.data);
-      } catch (error) {
-        console.error('주문 목록을 불러오는 데 실패했습니다:', error.message);
-      }
-    };
+    const storeId = localStorage.getItem('storeId');
+    console.log('storeId:', storeId);
 
-    fetchOrders();
-  }, [storeId]);
+    // SSE 이벤트 수신
+    const sse = new EventSource(`/api/connect`);
+
+    sse.addEventListener('connect', async (event) => {
+      const { data: receiveConnectData } = event;
+      console.log('connect event data: ', receiveConnectData);
+    });
+
+    sse.addEventListener('newOrder', e => {
+      const orderData = JSON.parse(e.data);
+      console.log("newOrder event data: ", orderData);
+      setOrders((prevOrders) => [...prevOrders, orderData]);
+    });
+
+    sse.addEventListener('processingOrder', e => {
+      const orderData = JSON.parse(e.data);
+      console.log("processingOrder event data: ", orderData);
+      setProcessingOrders((prevOrders) => [...prevOrders, orderData]);
+    });
+  }, []);
 
   const processOrder = (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
     // 주문 처리 로직 추가
+    axios.patch(`/api/orders/${orderId}/${status}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .catch(error => console.error('Error fetching menu list:', error));
   };
 
   const indexOfLastOrder = (currentPage + 1) * ordersPerPage;
@@ -77,9 +98,9 @@ const ManagerMain = () => {
       </div>
 
       {selectedTab === 'processing' && (
-        <ProcessingOrders orders={currentOrders} processOrder={processOrder} />
+        <ProcessingOrders orders={orders} processOrder={processOrder} />
       )}
-      {selectedTab === 'inProgress' && <InProgressOrders orders={currentOrders} />}
+      {selectedTab === 'inProgress' && <InProgressOrders orders={processingOrders} processOrder={processOrder} />}
       {selectedTab === 'cancelled' && <CancelledOrders orders={currentOrders} />}
       {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
 
