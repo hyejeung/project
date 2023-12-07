@@ -3,11 +3,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './MyPage.css'; // 스타일링을 위한 CSS 파일을 import
 import ReviewModal from './ReviewModal';
-
+import Pagination from 'react-js-pagination';
 
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({});
-
+  const [activeTab, setActiveTab] = useState('orderHistory'); // 'orderHistory' 또는 'userInfo'
+  
+ 
   const [orderHistory, setOrderHistory] = useState([
     {
       id: 1,
@@ -26,7 +28,8 @@ const MyPage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null); // 선택한 주문 정보를 담는 상태
   const [reviewOrder, setReviewOrder] = useState(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
 
   useEffect(() => {
     // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
@@ -92,9 +95,10 @@ const MyPage = () => {
     setModalOpen(false);
   };
 
-  const viewOrderHistory = () => {
-    setSelectedOrder(orderHistory.length > 0 ? orderHistory[0] : null);
-  setOrderHistoryModalOpen(true);
+  const viewOrderHistory = (order) => {
+    setSelectedOrder(order);
+    setReviewOrder(null);
+    setActiveTab('orderHistory');
   };
 
   const closeOrderHistoryModal = () => {
@@ -135,23 +139,77 @@ const MyPage = () => {
     console.log('리뷰 삭제 함수 호출', order, item);
   };
   
-  
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
-    <div className="my-page-container">
+     <div className="my-page-container">
       <h2>마이페이지</h2>
-      <p>사용자 이름: {userInfo.name}</p>
-      <p>Email: {userInfo.email}</p>
-      <p>전화번호: {userInfo.phone}</p>
-      <p>비밀번호: {userInfo.password}</p>
-      <p>성별: {userInfo.gender}</p>
-      <p>적립금: {userInfo.points} 포인트</p>
-      <p>등급: {userInfo.grade}</p>
-      <p>주소: {userInfo.address}</p>
-     <button onClick={() => viewOrderHistory(orderHistory[0])}>주문내역</button> 
-     
-      <button onClick={openModal}>회원정보 수정</button>
-      <button onClick={handleWithdrawal}>회원탈퇴</button>
+      <div className="tab-navigation">
+        <button onClick={() => setActiveTab('orderHistory')}>주문 내역</button>
+        <button onClick={() => setActiveTab('userInfo')}>회원 정보</button>
+      </div>
+
+      {activeTab === 'orderHistory' && (
+        <>
+          <h3>주문 내역</h3>
+          {/* 주문 내역에 관련된 UI 및 로직 추가 */}
+          {/* 예시로 첫 번째 주문 내역을 기준으로 보여주겠습니다. */}
+          {orderHistory.length > 0 && (
+            <div>
+              <h4>주문일자: {orderHistory[0].date}</h4>
+              <ul>
+                {orderHistory[0].items.map((item) => (
+                  <li key={item.id}>
+                    {item.name} - 수량: {item.quantity} - 가격: {item.price }원
+                    {item.reviewed ? (
+                      <>
+                        <button onClick={() => openReviewModal(orderHistory[0], item)}>리뷰 수정</button>
+                        <button>리뷰 삭제</button>
+                      </>
+                    ) : (
+                      <button onClick={() => openReviewModal(orderHistory[0])}>리뷰 쓰기</button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <Pagination
+                activePage={currentPage}
+                itemsCountPerPage={itemsPerPage}
+                totalItemsCount={orderHistory.length}
+                pageRangeDisplayed={5}
+                onChange={handlePageChange}
+                prevPageText="<"
+                nextPageText=">"
+                firstPageText="<<"
+                lastPageText=">>"
+                itemClass="page-item"
+                linkClass="page-link"
+                innerClass="pagination"
+              />
+            </div>
+          )}
+        </>
+      )}
+
+      {activeTab === 'userInfo' && (
+        <>
+          <h3>회원 정보</h3>
+          {/* 회원 정보에 관련된 UI 및 로직 추가 */}
+          {/* 현재 유저 정보를 기준으로 보여주겠습니다. */}
+          <p>사용자 이름: {userInfo.name}</p>
+          <p>Email: {userInfo.email}</p>
+          <p>전화번호: {userInfo.phone}</p>
+          <p>비밀번호: {userInfo.password}</p>
+          <p>성별: {userInfo.gender}</p>
+          <p>적립금: {userInfo.points} 포인트</p>
+          <p>등급: {userInfo.grade}</p>
+          <p>주소: {userInfo.address}</p>
+          <button onClick={openModal}>회원정보 수정</button>
+          <button onClick={handleWithdrawal}>회원탈퇴</button>
+        </>
+      )}
       
 
 

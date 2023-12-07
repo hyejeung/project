@@ -3,6 +3,8 @@ import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 import { useParams } from 'react-router';
+import { useAuth } from '../AuthContext'; // AuthContext 불러오기
+
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,6 +28,7 @@ const Restaurant = () => {
   const [menuList, setMenuList] = useState([]);
 
   const { id } = useParams();
+  const { userId } = useAuth(); // 사용자 ID 불러오기
 
   useEffect(() => {  
     axios.get(`/api/stores/${id}`, {
@@ -62,7 +65,7 @@ const Restaurant = () => {
     // })
     //   .then(response => setReviews(response.data))
     //   .catch(error => console.error('Error fetching reviews:', error));
-  }, [offset, perPage]);
+  }, [offset, perPage,userId]);
 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
@@ -76,6 +79,7 @@ const Restaurant = () => {
 
     // 새로 추가할 아이템
     const newItem = {
+      user_id: userId,
       item_id: selectedMenu.id,
       price: selectedMenu.price,
       amount: quantity,

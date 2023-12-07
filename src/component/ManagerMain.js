@@ -2,22 +2,34 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import ReactPaginate from 'react-paginate';
+import Pagination from 'react-js-pagination';
 import './ManagerMain.css';
 import ProcessingOrders from './ProcessingOrders';
 import InProgressOrders from './InProgressOrders';
 import CancelledOrders from './CancelledOrders';
 import DeliveredOrders from './DeliveredOrders';
+import { useAuth } from '../AuthContext';
 
 const ManagerMain = () => {
   const [selectedTab, setSelectedTab] = useState('processing');
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
   const [totalOrders, setTotalOrders] = useState(100);
-  const [orders, setOrders] = useState([]);
+  const [setOrders] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { state } = location;
+  const { orders,updateOrders } = useAuth(); // orders 및 updateOrders 추가
+
+  const [perPage] = useState(5); // 페이지당 항목 수
+  const [offset, setOffset] = useState(0);
+  const [totalData, setTotalData] = useState(100);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedMenu, setSelectedMenu] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(100);
 
   const storeId = state && state.storeId;
 
@@ -48,6 +60,10 @@ const ManagerMain = () => {
     const selectedPage = data.selected;
     setCurrentPage(selectedPage);
   };
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
+  };
 
   return (
     <div className="managermain-container">
@@ -67,27 +83,20 @@ const ManagerMain = () => {
       {selectedTab === 'cancelled' && <CancelledOrders orders={currentOrders} />}
       {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
 
-      <ReactPaginate
-         prevPageText="<"
-         nextPageText=">"
-         firstPageText="<<"
-         lastPageText=">>"
-        breakLabel={'...'}
-        breakClassName={'break-me'}
-        pageCount={Math.ceil(totalOrders / ordersPerPage)}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageClick}
-        containerClassName={'pagination'}
-        subContainerClassName={'pages pagination'}
-        activeClassName={'active'}
-        pageClassName={'page-item'}
-        pageLinkClassName={'page-link'}
-        previousClassName={'page-item'}
-        previousLinkClassName={'page-link'}
-        nextClassName={'page-item'}
-        nextLinkClassName={'page-link'}
-      />
+      <Pagination
+  activePage={currentPage}
+  itemsCountPerPage={perPage}
+  totalItemsCount={totalData}
+  pageRangeDisplayed={5}
+  onChange={handlePageChange}
+  prevPageText="<"
+  nextPageText=">"
+  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+  itemClass="page-item"
+  linkClass="page-link"
+  innerClass="pagination"
+/>
     </div>
   );
 };
