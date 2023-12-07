@@ -16,22 +16,12 @@ const ManagerMain = () => {
   const [ordersPerPage] = useState(10);
   const [totalOrders, setTotalOrders] = useState(100);
  
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { state } = location;
   const { orderContext,updateOrders } = useAuth(); // orders 및 updateOrders 추가
 
   const [perPage] = useState(5); // 페이지당 항목 수
   const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState(null);
-  const [quantity, setQuantity] = useState(1);
 
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(100);
-
-  const storeId = state && state.storeId;
   const [orders, setOrders] = useState([]);
   const [processingOrders, setProcessingOrders] = useState([]);
 
