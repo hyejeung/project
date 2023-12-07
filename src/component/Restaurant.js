@@ -3,6 +3,10 @@ import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 
+// Axios 설정에 공통 헤더 추가
+axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('access_token');
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage] = useState(5); // 페이지당 항목 수
@@ -13,7 +17,7 @@ const Restaurant = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState('menu');
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(100);
+  const [likeCount, setLikeCount] = useState(50);
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     image: '',
@@ -26,11 +30,11 @@ const Restaurant = () => {
 
   useEffect(() => {
     const id = localStorage.getItem('storeId');
-  
+
     axios.get(`api/stores/${id}`)
       .then(response => setMenuList(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
-  
+
     axios.get('/api/restaurant', {
       params: {
         offset: offset,
@@ -39,11 +43,11 @@ const Restaurant = () => {
     })
       .then(response => {
         setRestaurantInfo(response.data);
-        setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
+        setTotalData(response.data.totalData);
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
-  
-    axios.get('/api/reviews', {
+
+    axios.get('/api/review', {
       params: {
         offset: offset,
         limit: perPage,
@@ -160,10 +164,10 @@ const Restaurant = () => {
   totalItemsCount={totalData}
   pageRangeDisplayed={5}
   onChange={handlePageChange}
-  prevPageText="<<"
-  nextPageText=">>"
-  firstPageText="<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">"   // 수정: 마지막 페이지로 이동하는 버튼
+  prevPageText="<"
+  nextPageText=">"
+  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
   itemClass="page-item"
   linkClass="page-link"
   innerClass="pagination"

@@ -4,8 +4,12 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import './CategoryPage.css'; 
 
+
+
 const CategoryPage = () => {
   const { category } = useParams();
+
+
 
   // category를 기반으로 해당 카테고리의 레스토랑 목록을 가져오는 로직을 구현해야 합니다.
   // 여기에서는 임시로 하드코딩된 음식점 목록을 사용합니다.
