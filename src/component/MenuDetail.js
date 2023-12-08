@@ -1,29 +1,63 @@
-// MenuDetail.js
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import './MenuDetail.css';
 
-import React, { useState } from 'react';
- import './MenuDetail.css'; // MenuDetail.css 파일이 필요하다면 추가하세요.
-
-const MenuDetail = () => {
+const MenuDetail = ({ itemId }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editedProductInfo, setEditedProductInfo] = useState({
-    name: '엽기떡볶이',
-    price: 15000,
-    image: 'url_to_image', // 실제 이미지 URL로 교체
-    description: '...',
-    availability: true, // 추가: 품절 여부
+    itemName: '',
+    price: 0,
+    image: '',
+    details: '',
+    status: '', // 또는 'SOLD_OUT'로 초기화
   });
 
-  const [storeInfo, setStoreInfo] = useState({
-    name: '가게 이름',
-    location: '가게 위치',
-    phoneNumber: '가게 전화번호',
-    representativeImage: 'https://picsum.photos/id/237/200/300', // 샘플 이미지 URL
-    details: '상세 내용',
-    openingTime: '영업 오픈 시간',
-    closingTime: '영업 종료 시간',
-  });
-  const [previewUrl, setPreviewUrl] = useState(storeInfo.representativeImage);
-  const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMenuDetails = async () => {
+      try {
+        const response = await axios.get(`/api/items/${itemId}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'application/json',
+          },
+        });
+        setEditedProductInfo(response.data);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('메뉴 상세 정보를 불러오는 중 오류 발생:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchMenuDetails();
+  }, [itemId]);
+
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.put(`/api/items/${itemId}`, {
+        itemName: editedProductInfo.itemName,
+        price: editedProductInfo.price,
+        image: editedProductInfo.image,
+        details: editedProductInfo.details,
+        status: editedProductInfo.status,
+      }, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('상품 정보 수정 성공:', response.data);
+      closeEditModal();
+      // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
+    } catch (error) {
+      console.error('상품 정보 수정 실패:', error);
+    }
+  };
+
+  const [previewUrl, setPreviewUrl] = useState(editedProductInfo.image);
+  const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...editedProductInfo });
   const openEditModal = () => {
     setEditModalOpen(true);
   };
@@ -32,34 +66,29 @@ const MenuDetail = () => {
     setEditModalOpen(false);
   };
 
-  const handleUpdate = () => {
-    // 여기에서 상품 정보를 업데이트하는 로직을 수행
-    // const response = await updateProductInfo(editedProductInfo);
-    closeEditModal();
-    // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
-  };
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
 
     if (file) {
       const imageUrl = URL.createObjectURL(file);
       setPreviewUrl(imageUrl);
-      setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: imageUrl });
+      setUpdatedStoreInfo({ ...updatedStoreInfo, image: imageUrl });
     }
   };
 
   return (
     <div className="MenuDetail">
-      <h2>{editedProductInfo.name}</h2>
+      <h2>{editedProductInfo.itemName}</h2>
 
       {/* 상품에 대한 정보 */}
       <div>
         <h3>상품 정보</h3>
+        <p>이름: {editedProductInfo.itemName}</p>
         <p>가격: {editedProductInfo.price}원</p>
-        <img src={editedProductInfo.image} alt={editedProductInfo.name} />
-        <p>상세 정보: {editedProductInfo.description}</p>
-        <p>판매상태: {editedProductInfo.availability ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
+        <p>이미지: {editedProductInfo.image}</p>
+        <img src={editedProductInfo.image} alt={editedProductInfo.itemName} />
+        <p>상세 정보: {editedProductInfo.details}</p>
+        <p>판매상태: {editedProductInfo.status}</p>
       </div>
 
       {/* 수정 버튼 */}
@@ -68,7 +97,6 @@ const MenuDetail = () => {
           수정
         </button>
         <button className="delete-button">삭제</button>
-        {/* <button className="soldout-button">매진</button> */}
       </div>
 
       {/* 수정 모달 */}
@@ -81,10 +109,8 @@ const MenuDetail = () => {
               <input
                 type="text"
                 id="editedName"
-                value={editedProductInfo.name}
-                onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, name: e.target.value })
-                }
+                value={editedProductInfo.itemName}
+                onChange={(e) => setEditedProductInfo({ ...editedProductInfo, itemName: e.target.value })}
               />
             </div>
             <div>
@@ -93,44 +119,36 @@ const MenuDetail = () => {
                 type="text"
                 id="editedPrice"
                 value={editedProductInfo.price}
-                onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, price: e.target.value })
-                }
+                onChange={(e) => setEditedProductInfo({ ...editedProductInfo, price: e.target.value })}
               />
             </div>
             <div>
               <label htmlFor="editedImage"> 상품 이미지 </label>
               <input
-                  type="file"
-                  id="editedRepresentativeImage"
-                  onChange={handleImageUpload}
-                />
-              </div>
-
+                type="file"
+                id="editedImage"
+                onChange={handleImageUpload}
+              />
+            </div>
             <div>
-              <label htmlFor="editedDescription"> 상세 정보</label>
+              <label htmlFor="editedDetails"> 상세 정보</label>
               <textarea
-                id="editedDescription"
-                value={editedProductInfo.description}
+                id="editedDetails"
+                value={editedProductInfo.details}
                 onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, description: e.target.value })
+                  setEditedProductInfo({ ...editedProductInfo, details: e.target.value })
                 }
               />
             </div>
             <div>
-              <label htmlFor="editedAvailability"> 판매상태</label>
+              <label htmlFor="editedStatus"> 판매상태</label>
               <select
-                id="editedAvailability"
-                value={editedProductInfo.availability}
-                onChange={(e) =>
-                  setEditedProductInfo({
-                    ...editedProductInfo,
-                    availability: e.target.value === 'true',
-                  })
-                }
+                id="editedStatus"
+                value={editedProductInfo.status}
+                onChange={(e) => setEditedProductInfo({ ...editedProductInfo, status: e.target.value })}
               >
-                <option value={true}>판매중</option>
-                <option value={false}>품절</option>
+                <option value="SALE">판매중</option>
+                <option value="SOLD_OUT">품절</option>
               </select>
             </div>
             <div>

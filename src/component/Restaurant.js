@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
@@ -31,6 +32,9 @@ const Restaurant = () => {
   const { userId } = useAuth(); // 사용자 ID 불러오기
 
   useEffect(() => {  
+
+    const userCartKey = `cart_${userId}`;
+    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
     axios.get(`/api/stores/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -73,9 +77,12 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
+    
+    const userCartKey = `cart_${userId}`;
+    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
 
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
-    const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
+   // const existingCartData = JSON.parse(localStorage.getItem('userId')) || [];
 
     // 새로 추가할 아이템
     const newItem = {

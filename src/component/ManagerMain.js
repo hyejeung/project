@@ -1,6 +1,5 @@
 // ManagerMain.js
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './ManagerMain.css';
@@ -14,24 +13,9 @@ const ManagerMain = () => {
   const [selectedTab, setSelectedTab] = useState('processing');
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
-  const [totalOrders, setTotalOrders] = useState(100);
- 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const { state } = location;
-  const { orderContext,updateOrders } = useAuth(); // orders 및 updateOrders 추가
-
+  const { updateOrders } = useAuth(); // orderContext 삭제
   const [perPage] = useState(5); // 페이지당 항목 수
-  const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [selectedMenu, setSelectedMenu] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-
-  const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(100);
-
-  const storeId = state && state.storeId;
   const [orders, setOrders] = useState([]);
   const [processingOrders, setProcessingOrders] = useState([]);
 
@@ -52,14 +36,16 @@ const ManagerMain = () => {
       const orderData = JSON.parse(e.data);
       console.log("newOrder event data: ", orderData);
       setOrders((prevOrders) => [...prevOrders, orderData]);
+      updateOrders(storeId, [...orders, orderData]); // 여기에서 updateOrders를 호출하여 주문 데이터를 업데이트
     });
 
     sse.addEventListener('processingOrder', e => {
       const orderData = JSON.parse(e.data);
       console.log("processingOrder event data: ", orderData);
       setProcessingOrders((prevOrders) => [...prevOrders, orderData]);
+      updateOrders(storeId, [...orders, orderData]); // 여기에서 updateOrders를 호출하여 주문 데이터를 업데이트
     });
-  }, []);
+  }, [orders, updateOrders]);
 
   const processOrder = (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
@@ -83,7 +69,7 @@ const ManagerMain = () => {
   };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
+    // setOffset((pageNumber - 1) * perPage); // 이 줄은 현재 사용되지 않는 것 같아 주석 처리했습니다.
   };
 
   return (
@@ -105,19 +91,19 @@ const ManagerMain = () => {
       {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
 
       <Pagination
-  activePage={currentPage}
-  itemsCountPerPage={perPage}
-  totalItemsCount={totalData}
-  pageRangeDisplayed={5}
-  onChange={handlePageChange}
-  prevPageText="<"
-  nextPageText=">"
-  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-  itemClass="page-item"
-  linkClass="page-link"
-  innerClass="pagination"
-/>
+        activePage={currentPage}
+        itemsCountPerPage={perPage}
+        totalItemsCount={totalData}
+        pageRangeDisplayed={5}
+        onChange={handlePageChange}
+        prevPageText="<"
+        nextPageText=">"
+        firstPageText="<<"
+        lastPageText=">>"
+        itemClass="page-item"
+        linkClass="page-link"
+        innerClass="pagination"
+      />
     </div>
   );
 };
