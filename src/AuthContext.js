@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('store_id');
     localStorage.removeItem('user_id'); // 사용자 ID 제거
     setIsLoggedIn(false);
     setUserId(null); // 사용자 ID 초기화
