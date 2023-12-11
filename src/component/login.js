@@ -39,6 +39,11 @@ const Login = () => {
       navigate('/');
     }
 
+    function success_store() {
+      login();
+      navigate('/managermain');
+    }
+
     function success_admin() {
       login();
       navigate('/managermain');
@@ -59,10 +64,14 @@ const Login = () => {
       if (response.status === 200 || response.status === 201) {
           localStorage.setItem('access_token', response.data.token);
           localStorage.setItem('store_id', response.data.storeId);
+          localStorage.setItem('user_id', response.data.id);
 
-          if (response.data.role === 'ROLE_ADMIN') {
+          if (response.data.role === 'ROLE_STORE') {
             //해당 유저의 음식점이 있으면 true, 없으면 false
 
+            return success_store();
+          }
+          else if (response.data.role === 'ROLE_ADMIN') {
             return success_admin();
           }
           else {

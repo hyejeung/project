@@ -28,7 +28,7 @@ const Restaurant = () => {
   const [menuList, setMenuList] = useState([]);
 
   const { id } = useParams();
-  const { userId } = useAuth(); // 사용자 ID 불러오기
+  const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
   useEffect(() => {  
     axios.get(`/api/stores/${id}`, {
@@ -73,15 +73,12 @@ const Restaurant = () => {
   };
 
   const handleAddToCart = () => {
-
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
-    const existingCartData = JSON.parse(localStorage.getItem('cart')) || [];
+    const existingCartData = JSON.parse(localStorage.getItem(userId)) || [];
 
     // 새로 추가할 아이템
     const newItem = {
-    
       itemId: selectedMenu.itemId,
-      price: selectedMenu.price,
       amount: quantity,
     };
 
@@ -95,7 +92,7 @@ const Restaurant = () => {
     }
 
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
-    localStorage.setItem('cart', JSON.stringify(existingCartData));
+    localStorage.setItem(userId, JSON.stringify(existingCartData));
 
     // 모달을 닫음
     setModalOpen(false);

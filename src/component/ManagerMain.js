@@ -27,8 +27,18 @@ const ManagerMain = () => {
 
   // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
-    const storeId = localStorage.getItem('storeId');
+    const storeId = localStorage.getItem('store_id');
     console.log('storeId:', storeId);
+
+    //페이지가 새로고침 되거나 할 때 get으로 불러오기
+    axios.get(`/api/orders/${storeId}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+    .then(res => setOrders(res.data))
+    .catch(error => console.error('Error fetching menu list:', error));
 
     // SSE 이벤트 수신
     const sse = new EventSource(`/api/connect`);
