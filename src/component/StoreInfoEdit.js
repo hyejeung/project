@@ -9,32 +9,41 @@ const StoreInfoEdit = () => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isNewMenuItemModalOpen, setNewMenuItemModalOpen] = useState(false);
   const [isAddMenuModalOpen, setAddMenuModalOpen] = useState(false);
-  const [storeInfo, setStoreInfo] = useState({
-    name: '가게 이름',
-    location: '가게 위치',
-    phoneNumber: '가게 전화번호',
-    representativeImage: 'https://picsum.photos/id/237/200/300',
-    details: '상세 내용',
-    openingTime: '영업 오픈 시간',
-    closingTime: '영업 종료 시간',
-  });
+  const [storeInfo, setStoreInfo] = useState({});
   const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
-  const [previewUrl, setPreviewUrl] = useState(storeInfo.representativeImage);
+  const [previewUrl, setPreviewUrl] = useState('https://picsum.photos/id/237/200/300');
 
+  // 새로운 상태 추가
+  const [selectedMenuItem, setSelectedMenuItem] = useState({});
+
+  const [itemInfo, setItemInfo] = useState({});
   const [newMenuItem, setNewMenuItem] = useState({
-    name: '',
-    price: '',
-    status: '판매중',
-    image: '',
-    details: '',
+    itemStatus: 'SALE',
   });
+  const [file, setFile] = useState(null);
+  const storeId = localStorage.getItem('store_id');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const storeId = localStorage.getItem('storeId');
-        const response = await axios.get(`api/stores/${storeId}`);
+        const response = await axios.get(`/api/store/${storeId}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'application/json',
+          },
+        });
         setStoreInfo(response.data);
+        setUpdatedStoreInfo(response.data);
+
+        const res = await axios.get(`/api/items/${storeId}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'application/json',
+          },
+        });
+
+        setItemInfo(res.data.content);
+        console.log('서버에서 받아온 item 정보', itemInfo);
       } catch (error) {
         console.error('가게 정보 불러오기 실패:', error);
       }
@@ -43,14 +52,18 @@ const StoreInfoEdit = () => {
     fetchData();
   }, []);
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
+  const handleMenuClick = (menuItem) => {
+    // 메뉴 클릭 시 해당 메뉴의 정보를 selectedMenuItem 상태에 저장
+    setSelectedMenuItem(menuItem);
+    // 모달 열기
+    setNewMenuItemModalOpen(true);
+  };
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewUrl(imageUrl);
-      setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: imageUrl });
-    }
+  const handleImageUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    console.log('file:', selectedFile);
   };
 
   const openEditModal = () => {
@@ -61,12 +74,21 @@ const StoreInfoEdit = () => {
     setEditModalOpen(false);
   };
 
-  const handleUpdate = async () => {
+  //가게 정보 수정
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
     try {
-      const response = await axios.put('서버의 업데이트 API URL', updatedStoreInfo);
+      const id = localStorage.getItem('store_id');
+      const response = await axios.put(`/api/store/${id}`, updatedStoreInfo, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
+
       setStoreInfo(updatedStoreInfo);
       closeEditModal();
-      console.log('시간 출력', typeof storeInfo.openingTime, storeInfo.closingTime);
     } catch (error) {
       console.error('업데이트 실패:', error);
     }
@@ -80,18 +102,30 @@ const StoreInfoEdit = () => {
     }));
   };
 
+  //메뉴 추가
   const handleAddMenu = async (e) => {
     e.preventDefault();
 
+    console.log('새로운 메뉴 정보:', newMenuItem);
+
     try {
-      const id = localStorage.getItem('storeId');
-      const response = await axios.post(`api/stores/${id}`, newMenuItem, {
+      const formData = new FormData();
+      formData.append('file', file); // 이미지 파일 추가
+      formData.append('itemName', newMenuItem.itemName); // 텍스트 데이터 추가
+      formData.append('price', newMenuItem.price); // 텍스트 데이터 추가
+      formData.append('content', newMenuItem.content);
+      formData.append('itemStatus', newMenuItem.itemStatus);
+
+      const id = localStorage.getItem('store_id');
+      const response = await axios.post(`api/items/${id}`, formData, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
         },
       });
+
       console.log('메뉴 추가 성공:', response.data);
+      setItemInfo((prevItem) => [...prevItem, newMenuItem]);
       setAddMenuModalOpen(false);
     } catch (error) {
       console.error('메뉴 추가 실패:', error);
@@ -114,6 +148,7 @@ const StoreInfoEdit = () => {
     setNewMenuItemModalOpen(false);
   };
 
+  //activeTab === 'storeInfo' 에서 가게 정보가 출력되어야함
   return (
     <div className="storeinfoedit-container">
       <h1>가게 정보</h1>
@@ -124,62 +159,27 @@ const StoreInfoEdit = () => {
 
       {activeTab === 'storeInfo' && (
         <>
-          <h2>가게 정보 수정</h2>
+          <h2>가게 정보</h2>
           <form>
             <div>
               <label htmlFor="name">가게 이름</label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={updatedStoreInfo.name}
-                onChange={handleChange}
-              />
+              <p>{storeInfo.name}</p>
             </div>
             <div>
-              <label htmlFor="location">가게 위치</label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={updatedStoreInfo.location}
-                onChange={handleChange}
-              />
+              <label htmlFor="address">가게 위치</label>
+              <p>{storeInfo.address}</p>
             </div>
             <div>
-              <label htmlFor="phoneNumber">가게 전화번호</label>
-              <input
-                type="text"
-                id="phoneNumber"
-                name="phoneNumber"
-                value={updatedStoreInfo.phoneNumber}
-                onChange={handleChange}
-              />
+              <label htmlFor="phone">가게 전화번호</label>
+              <p>{storeInfo.phone}</p>
             </div>
-
             <div>
-              <label htmlFor="details">상세 내용</label>
-              <textarea
-                id="details"
-                name="details"
-                value={updatedStoreInfo.details}
-                onChange={handleChange}
-              />
+              <label htmlFor="content">상세 내용</label>
+              <p>{storeInfo.content}</p>
             </div>
-
             <div>
               <label htmlFor="editedRepresentativeImage"> 대표 사진</label>
-              <input
-                type="text"
-                id="editedRepresentativeImage"
-                value={updatedStoreInfo.representativeImage}
-                onChange={(e) =>
-                  setUpdatedStoreInfo({
-                    ...updatedStoreInfo,
-                    representativeImage: e.target.value,
-                  })
-                }
-              />
+              <p>{storeInfo.picture}</p>
             </div>
             {previewUrl && (
               <div>
@@ -192,29 +192,17 @@ const StoreInfoEdit = () => {
               </div>
             )}
             <div>
-              <label htmlFor="openingTime">영업 오픈 시간</label>
-              <input
-                type="text"
-                id="openingTime"
-                name="openingTime"
-                value={updatedStoreInfo.openingTime}
-                onChange={handleChange}
-              />
+              <label htmlFor="openTime">영업 오픈 시간</label>
+              <p>{storeInfo.openTime}</p>
             </div>
-
             <div>
-              <label htmlFor="closingTime">영업 종료 시간</label>
-              <input
-                type="text"
-                id="closingTime"
-                name="closingTime"
-                value={updatedStoreInfo.closingTime}
-                onChange={handleChange}
-              />
+              <label htmlFor="closeTime">영업 종료 시간</label>
+              <p>{storeInfo.closeTime}</p>
             </div>
             <button type="button" onClick={openEditModal}>
               가게 정보 수정
             </button>
+
             {isEditModalOpen && (
             <div className="modal-overlay">
               <div className="modal">
@@ -235,9 +223,9 @@ const StoreInfoEdit = () => {
                   <input
                     type="text"
                     id="editedLocation"
-                    value={updatedStoreInfo.location}
+                    value={updatedStoreInfo.address}
                     onChange={(e) =>
-                      setUpdatedStoreInfo({ ...updatedStoreInfo, location: e.target.value })
+                      setUpdatedStoreInfo({ ...updatedStoreInfo, address: e.target.value })
                     }
                   />
                 </div>
@@ -246,11 +234,11 @@ const StoreInfoEdit = () => {
                   <input
                     type="text"
                     id="editedPhoneNumber"
-                    value={updatedStoreInfo.phoneNumber}
+                    value={updatedStoreInfo.phone}
                     onChange={(e) =>
                       setUpdatedStoreInfo({
                         ...updatedStoreInfo,
-                        phoneNumber: e.target.value,
+                        phone: e.target.value,
                       })
                     }
                   />
@@ -269,11 +257,11 @@ const StoreInfoEdit = () => {
                   <label htmlFor="editedDetails"> 상세 내용</label>
                   <textarea
                     id="editedDetails"
-                    value={updatedStoreInfo.details}
+                    value={updatedStoreInfo.content}
                     onChange={(e) =>
                       setUpdatedStoreInfo({
                         ...updatedStoreInfo,
-                        details: e.target.value,
+                        content: e.target.value,
                       })
                     }
                   />
@@ -283,11 +271,11 @@ const StoreInfoEdit = () => {
                   <input
                     type="time"
                     id="editedOpeningTime"
-                    value={updatedStoreInfo.openingTime}
+                    value={updatedStoreInfo.openTime}
                     onChange={(e) =>
                       setUpdatedStoreInfo({
                         ...updatedStoreInfo,
-                        openingTime: e.target.value,
+                        openTime: e.target.value,
                       })
                     }
                   />
@@ -297,11 +285,11 @@ const StoreInfoEdit = () => {
                   <input
                     type="time"
                     id="editedClosingTime"
-                    value={updatedStoreInfo.closingTime}
+                    value={updatedStoreInfo.closeTime}
                     onChange={(e) =>
                       setUpdatedStoreInfo({
                         ...updatedStoreInfo,
-                        closingTime: e.target.value,
+                        closeTime: e.target.value,
                       })
                     }
                   />
@@ -321,18 +309,13 @@ const StoreInfoEdit = () => {
         <>
           <h2>메뉴 관리</h2>
           <div className="order-list">
-            <div className="order-item" onClick={openNewMenuItemModal}>
-              <span>엽기떡볶이</span>
-              <span>1500원</span>
-              <span className="status">판매중</span>
+            {itemInfo.map((item) => (
+              <div className="order-item" onClick={() => handleMenuClick(item)}>
+              <span>{item.itemName}</span>
+              <span>{item.price}</span>
+              <span className="status">{item.itemStatus}</span>
             </div>
-
-            <div className="order-item">
-              <span>엽기오뎅</span>
-              <span>20000원</span>
-              <span className="status">품절</span>
-            </div>
-            {/* 다른 상품들도 유사하게 작성 */}
+            ))}
           </div>
 
           <div className="add-menu-link">
@@ -349,9 +332,9 @@ const StoreInfoEdit = () => {
                     <input
                       type="text"
                       id="menuName"
-                      value={newMenuItem.name}
+                      value={newMenuItem.itemName}
                       onChange={(e) =>
-                        setNewMenuItem({ ...newMenuItem, name: e.target.value })
+                        setNewMenuItem({ ...newMenuItem, itemName: e.target.value })
                       }
                     />
                   </div>
@@ -380,9 +363,9 @@ const StoreInfoEdit = () => {
                     <label htmlFor="menuDetails">상세 정보:</label>
                     <textarea
                       id="menuDetails"
-                      value={newMenuItem.details}
+                      value={newMenuItem.content}
                       onChange={(e) =>
-                        setNewMenuItem({ ...newMenuItem, details: e.target.value })
+                        setNewMenuItem({ ...newMenuItem, content: e.target.value })
                       }
                     />
                   </div>
@@ -400,7 +383,7 @@ const StoreInfoEdit = () => {
           {isNewMenuItemModalOpen && (
             <div className="modal-overlay">
               <div className="modal">
-                <MenuDetail />
+                <MenuDetail selectedItem={selectedMenuItem} storeId={storeId}/>
                 <button className="close-button" onClick={closeNewMenuItemModal}>
                   닫기
                 </button>

@@ -15,8 +15,11 @@ const Restaurant = () => {
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState('menu');
+
+  //isLiked로 즐겨찾기 음식점인지 확인, likeCount로 이 음식점을 즐겨찾기 한 사람들 수 저장
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(100);
+  const [likeCount, setLikeCount] = useState(0);
+
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     image: '',
@@ -30,7 +33,7 @@ const Restaurant = () => {
   const { id } = useParams();
   const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
-  useEffect(() => {  
+  useEffect(() => {
     axios.get(`/api/stores/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -39,7 +42,7 @@ const Restaurant = () => {
     })
       .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
-  
+
     axios.get(`/api/items/${id}`, {
       params: {
         offset: offset,
@@ -56,7 +59,7 @@ const Restaurant = () => {
         setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
-  
+
     // axios.get('/api/reviews', {
     //   params: {
     //     offset: offset,
@@ -65,7 +68,18 @@ const Restaurant = () => {
     // })
     //   .then(response => setReviews(response.data))
     //   .catch(error => console.error('Error fetching reviews:', error));
-  }, [offset, perPage,userId]);
+
+    axios.get(`/api/bookmark/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        setIsLiked(response.data.status);
+        setLikeCount(response.data.count);
+      })
+  }, [offset, perPage, userId]);
 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
@@ -98,9 +112,32 @@ const Restaurant = () => {
     setModalOpen(false);
   };
 
+  //isLiked = true 이면 찜목록 추가 코드, false이면 찜목록 삭제 코드
   const handleLike = () => {
     setIsLiked(!isLiked);
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    console.log('isLiked:', isLiked);
+
+    if (isLiked === false) {
+      axios.post(`/api/bookmark/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .then (response => {console.log(response.data)})
+      .catch (error => console.error('Error bookmark add', error));
+    }
+    else if (isLiked === true) {
+      axios.delete(`/api/bookmark/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .catch (error => console.error('Error bookmark delete', error));
+    }
   };
 
   const handlePageChange = (pageNumber) => {
@@ -190,20 +227,20 @@ const Restaurant = () => {
         </div>
       )}
 
-<Pagination
-  activePage={currentPage}
-  itemsCountPerPage={perPage}
-  totalItemsCount={totalData}
-  pageRangeDisplayed={5}
-  onChange={handlePageChange}
-  prevPageText="<"
-  nextPageText=">"
-  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-  itemClass="page-item"
-  linkClass="page-link"
-  innerClass="pagination"
-/>
+      <Pagination
+        activePage={currentPage}
+        itemsCountPerPage={perPage}
+        totalItemsCount={totalData}
+        pageRangeDisplayed={5}
+        onChange={handlePageChange}
+        prevPageText="<"
+        nextPageText=">"
+        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+        itemClass="page-item"
+        linkClass="page-link"
+        innerClass="pagination"
+      />
     </div>
   );
 };

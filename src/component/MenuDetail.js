@@ -1,29 +1,19 @@
 // MenuDetail.js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
  import './MenuDetail.css'; // MenuDetail.css 파일이 필요하다면 추가하세요.
 
-const MenuDetail = () => {
+const MenuDetail = ({ selectedItem, onClose }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [editedProductInfo, setEditedProductInfo] = useState({
-    name: '엽기떡볶이',
-    price: 15000,
-    image: 'url_to_image', // 실제 이미지 URL로 교체
-    description: '...',
-    availability: true, // 추가: 품절 여부
-  });
+  const [editedProductInfo, setEditedProductInfo] = useState({});
 
-  const [storeInfo, setStoreInfo] = useState({
-    name: '가게 이름',
-    location: '가게 위치',
-    phoneNumber: '가게 전화번호',
-    representativeImage: 'https://picsum.photos/id/237/200/300', // 샘플 이미지 URL
-    details: '상세 내용',
-    openingTime: '영업 오픈 시간',
-    closingTime: '영업 종료 시간',
-  });
-  const [previewUrl, setPreviewUrl] = useState(storeInfo.representativeImage);
-  const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
+  // 선택된 메뉴 정보가 변경될 때마다 상태 업데이트
+  useEffect(() => {
+    setEditedProductInfo(selectedItem);
+
+    console.log(selectedItem.picture);
+  }, [selectedItem]);
+
   const openEditModal = () => {
     setEditModalOpen(true);
   };
@@ -42,25 +32,20 @@ const MenuDetail = () => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
 
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewUrl(imageUrl);
-      setUpdatedStoreInfo({ ...updatedStoreInfo, representativeImage: imageUrl });
-    }
   };
 
   return (
     <div className="MenuDetail">
-      <h2>{editedProductInfo.name}</h2>
+      <h2>{editedProductInfo.itemName}</h2>
 
       {/* 상품에 대한 정보 */}
       <div>
         <h3>상품 정보</h3>
         <p>가격: {editedProductInfo.price}원</p>
-        <img src={editedProductInfo.image} alt={editedProductInfo.name} />
+        <img src={`${editedProductInfo.picture}`} alt={editedProductInfo.name} />
         {/* <img class="temp_img" alt='이미지' src='/img/temp2.png'></img> */}
-        <p>상세 정보: {editedProductInfo.description}</p>
-        <p>판매상태: {editedProductInfo.availability ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
+        <p>상세 정보: {editedProductInfo.content}</p>
+        <p>판매상태: {editedProductInfo.itemStatus ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
       </div>
 
       {/* 수정 버튼 */}
@@ -112,9 +97,9 @@ const MenuDetail = () => {
               <label htmlFor="editedDescription"> 상세 정보</label>
               <textarea
                 id="editedDescription"
-                value={editedProductInfo.description}
+                value={editedProductInfo.content}
                 onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, description: e.target.value })
+                  setEditedProductInfo({ ...editedProductInfo, content: e.target.value })
                 }
               />
             </div>
@@ -122,11 +107,11 @@ const MenuDetail = () => {
               <label htmlFor="editedAvailability"> 판매상태</label>
               <select
                 id="editedAvailability"
-                value={editedProductInfo.availability}
+                value={editedProductInfo.itemStatus}
                 onChange={(e) =>
                   setEditedProductInfo({
                     ...editedProductInfo,
-                    availability: e.target.value === 'true',
+                    itemStatus: e.target.value === 'true',
                   })
                 }
               >
