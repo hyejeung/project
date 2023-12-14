@@ -2,9 +2,9 @@
 
 /* Payment 컴포넌트 전체에 대한 스타일 */
 .payment-container {
-    max-width: 1000px; /* 크기 조절 */
+    max-width: 1000px;
     margin: 0 auto;
-    padding: 30px; /* 여백 조절 */
+    padding: 30px;
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #fff;
@@ -27,32 +27,47 @@
 
 .request-section,
 .payment-method-section {
-    margin-bottom: 15px; /* 여백 조절 */
+    margin-bottom: 15px;
 }
 
 textarea,
 select {
     width: 100%;
-    padding: 12px; /* 패딩 조절 */
+    padding: 12px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-top: 8px;
 }
 
 /* 예상 소요시간 및 총 결제금액 섹션 스타일 */
 .summary-section {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 30px; /* 여백 조절 */
+    margin-bottom: 30px;
 }
 
 /* 결제 버튼 스타일 */
 .pay-button {
     background-color: #4CAF50;
     color: #fff;
-    padding: 15px; /* 크기 조절 */
+    padding: 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+}
+
+/* 다음 우편번호 모달 */
+.daum-postcode-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
 /* 추가적인 스타일은 필요에 따라 추가 */

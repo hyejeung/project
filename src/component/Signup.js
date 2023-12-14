@@ -42,11 +42,17 @@ const Signup = () => {
   const [genderError, setGenderError] = useState('');
   const [memberTypeError, setMemberTypeError] = useState('');
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isPasswordMatched, setIsPasswordMatched] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     setAddress('');
   }, [isAddressModalOpen]);
+  
+  useEffect(() => {
+    // 비밀번호 확인이 변경될 때마다 일치 여부를 확인하고 상태 업데이트
+    setIsPasswordMatched(newPassword === confirmPassword);
+  }, [newPassword, confirmPassword]);
 
   const handleSignup = () => {
     if (!isValidEmail(email)) {
@@ -183,13 +189,15 @@ const Signup = () => {
         {emailError && <p className="error-message">{emailError}</p>}
       </div>
       <div>
-        <label htmlFor="newPassword">비밀번호</label>
+      <label htmlFor="newPassword">비밀번호</label>
         <input
           type="password"
           id="newPassword"
           value={newPassword}
           onChange={(e) => {
             setNewPassword(e.target.value);
+            // 비밀번호 확인 창이 있고, 비밀번호가 일치할 때 체크 표시
+            setIsPasswordMatched(newPassword !== '' && e.target.value === confirmPassword);
             isValidPassword(e.target.value)
               ? setPasswordError('')
               : setPasswordError('비밀번호는 8자리 이상이어야 하며, 특수문자를 포함해야 합니다.');
@@ -199,17 +207,25 @@ const Signup = () => {
       </div>
       <div>
         <label htmlFor="confirmPassword">비밀번호 확인</label>
-        <input
-          type="password"
-          id="confirmPassword"
-          value={confirmPassword}
-          onChange={(e) => {
-            setConfirmPassword(e.target.value);
-            e.target.value === newPassword
-              ? setConfirmPasswordError('')
-              : setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
-          }}
-        />
+        <div style={{ position: 'relative' }}>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              setIsPasswordMatched(newPassword !== '' && newPassword === e.target.value);
+              e.target.value === newPassword
+                ? setConfirmPasswordError('')
+                : setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
+            }}
+          />
+          {isPasswordMatched && (
+            <span style={{ position: 'absolute', right: '5px', top: '30%', transform: 'translateY(-50%)', color: 'green' }}>
+              ✔
+            </span>
+          )}
+        </div>
         {confirmPasswordError && <p className="error-message">{confirmPasswordError}</p>}
       </div>
       <div>
@@ -258,7 +274,7 @@ const Signup = () => {
           <label>성별 선택</label>
           <div>
             <label htmlFor="FEMALE">
-              여성
+             <span>여성</span> 
               <input
                 type="radio"
                 id="FEMALE"
@@ -271,7 +287,7 @@ const Signup = () => {
           </div>
           <div>
             <label htmlFor="MALE">
-              남성
+            <span>남성</span> 
               <input
                 type="radio"
                 id="MALE"
@@ -287,7 +303,7 @@ const Signup = () => {
           <label>회원 유형 선택</label>
           <div>
             <label htmlFor="ROLE_USER">
-              일반 회원
+            <span>일반 회원</span> 
               <input
                 type="radio"
                 id="ROLE_USER"
@@ -300,7 +316,7 @@ const Signup = () => {
           </div>
           <div>
             <label htmlFor="ROLE_ADMIN">
-              가맹점
+            <span>가맹점</span> 
               <input
                 type="radio"
                 id="ROLE_ADMIN"

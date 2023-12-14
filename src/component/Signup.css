@@ -1,4 +1,3 @@
-
 .signup-container {
   max-width: 600px;
   margin: 50px auto;
@@ -67,6 +66,7 @@ h2 {
 .gender-options input,
 .member-type-options input {
   margin-left: 5px;
+  margin-top: 15px; /* 라디오 버튼을 5px 만큼 아래로 내립니다. */
 }
 
 
