@@ -76,21 +76,17 @@ const Cart = () => {
             <span className="price">가격: {item.price}원</span>
           </div>
           <div className="item-actions">
-            <input
-              type="number"
-              min="1"
-              value={item.amount}
-              onChange={(e) => updateQuantity(index, item.item_id, parseInt(e.target.value, 10))}
-            />
+            <button onClick={() => updateQuantity(index, item.item_id, Math.max(1, item.amount - 1))}>-</button>
+            <button onClick={() => updateQuantity(index, item.item_id, item.amount + 1)}>+</button>
             <button onClick={() => removeItem(index)}>삭제</button>
           </div>
         </div>
       ))}
-       {/* <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button> */}
+      {/* <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button> */}
       <div className="total-price">
         <span>총 주문 금액: {calculateTotalPrice()}원</span>
       </div>
-     
+
       <Link to="/payment" className="order-button">
         주문하러 가기
       </Link>

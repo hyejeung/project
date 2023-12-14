@@ -15,7 +15,7 @@ const ManagerMain = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
   const [totalOrders, setTotalOrders] = useState(100);
-  const { orderContext,updateOrders } = useAuth(); // orders 및 updateOrders 추가
+  const { orderContext, updateOrders } = useAuth(); // orders 및 updateOrders 추가
   const [perPage] = useState(5); // 페이지당 항목 수
   const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
@@ -36,8 +36,23 @@ const ManagerMain = () => {
           'Content-Type': 'application/json',
         },
       });
-      setOrders(response.data);
-      setTotalData(response.data.length); // 전체 주문 수 업데이트
+
+      const allOrders = response.data;
+
+      console.log('allOrders data:', allOrders);
+
+      // 주문 상태에 따라 필터링하여 저장
+      const orders = allOrders.filter(order => order.orderStatus === 'ORDER');
+      const processingOrders = allOrders.filter(order => order.orderStatus === 'READY');
+      const cancelOrders = allOrders.filter(order => order.orderStatus === 'CANCEL');
+      const compOrders = allOrders.filter(order => order.orderStatus === 'COMP');
+
+      setOrders(orders);
+      setProcessingOrders(processingOrders);
+      setCancelOrders(cancelOrders);
+      setCompOrders(compOrders);
+
+      setTotalData(allOrders.length); // 전체 주문 수 업데이트
     } catch (error) {
       console.error('Error fetching orders:', error);
     }
@@ -65,6 +80,8 @@ const ManagerMain = () => {
 
     sse.addEventListener('newOrder', handleSseEvent('newOrder', setOrders));
     sse.addEventListener('processingOrder', handleSseEvent('processingOrder', setProcessingOrders));
+    sse.addEventListener('cancelOrder', handleSseEvent('cancelOrder', setCancelOrders));
+    sse.addEventListener('compOrder', handleSseEvent('compOrder', setCompOrders));
 
     return () => {
       sse.close(); // SSE 연결 정리
@@ -87,7 +104,7 @@ const ManagerMain = () => {
       if (status === 'READY') {
         setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
       } else if (status === 'CANCEL') {
-        // setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
+        setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
         setProcessingOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
       } else if (status === 'COMP') {
         setProcessingOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
@@ -125,23 +142,23 @@ const ManagerMain = () => {
         <ProcessingOrders orders={orders} processOrder={processOrder} />
       )}
       {selectedTab === 'inProgress' && <InProgressOrders orders={processingOrders} processOrder={processOrder} />}
-      {selectedTab === 'cancelled' && <CancelledOrders orders={currentOrders} />}
-      {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
+      {selectedTab === 'cancelled' && <CancelledOrders orders={cancelOrders} />}
+      {selectedTab === 'delivered' && <DeliveredOrders orders={compOrders} />}
 
       <Pagination
-  activePage={currentPage}
-  itemsCountPerPage={perPage}
-  totalItemsCount={totalData}
-  pageRangeDisplayed={5}
-  onChange={handlePageChange}
-  prevPageText="<"
-  nextPageText=">"
-  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-  itemClass="page-item"
-  linkClass="page-link"
-  innerClass="pagination"
-/>
+        activePage={currentPage}
+        itemsCountPerPage={perPage}
+        totalItemsCount={totalData}
+        pageRangeDisplayed={5}
+        onChange={handlePageChange}
+        prevPageText="<"
+        nextPageText=">"
+        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+        itemClass="page-item"
+        linkClass="page-link"
+        innerClass="pagination"
+      />
     </div>
   );
 };

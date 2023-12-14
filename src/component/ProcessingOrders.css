@@ -1,0 +1,6 @@
+.process-buttons {
+    position: relative;
+    right: 10px; /* 원하는 위치로 조정 */
+    display: flex;
+    gap: 10px;
+  }

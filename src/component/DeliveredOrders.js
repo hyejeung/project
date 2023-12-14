@@ -2,19 +2,21 @@
 
 import React from 'react';
 
-const DeliveredOrders = () => {
+const DeliveredOrders = ({ orders }) => {
   return (
     <div className="order-list">
         <h2>배달 완료</h2>
-      <div className="order-item">
-        <span>배달완료된 주문 1</span>
-        <span>20000원</span>
-      </div>
-
-      <div className="order-item">
-        <span>배달완료된 주문 2</span>
-        <span>25000원</span>
-      </div>
+        {orders.map((order) => (
+        <div className='order-item' key={order.order_id}>
+          {order.orderItems.map((item) => (
+            <div key={item.itemName}>
+              <span>메뉴명: {item.itemName}</span>
+              <span>수량: {item.count}</span>
+              <span>가격: {item.orderPrice}원</span>
+            </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 };

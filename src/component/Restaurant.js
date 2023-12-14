@@ -47,7 +47,7 @@ const Restaurant = () => {
       params: {
         offset: offset,
         limit: perPage,
-        size: 5
+        size: 20
       },
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -118,9 +118,10 @@ const Restaurant = () => {
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
 
     console.log('isLiked:', isLiked);
+    console.log('store_id', id);
 
     if (isLiked === false) {
-      axios.post(`/api/bookmark/${id}`, {
+      axios.post(`/api/bookmark/${id}`, null, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'application/json',
@@ -167,7 +168,7 @@ const Restaurant = () => {
         <h3>배달 팁</h3>
         <p>3000원</p>
       </div>
-      <div>
+      <div className='menu-buttons'>
         <button onClick={() => setSelectedTab('menu')}>메뉴</button>
         <button onClick={() => setSelectedTab('info')}>정보</button>
         <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
@@ -179,7 +180,8 @@ const Restaurant = () => {
           <ul>
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
-                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
+                <img src={`http://localhost:8080/${menu.picture}`} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
+                {/* <img src={`http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} /> */}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}

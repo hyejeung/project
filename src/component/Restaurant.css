@@ -187,3 +187,11 @@ body {
   color: #fff;
 }
 
+.menu-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.menu-buttons button {
+  width: 100px;
+}

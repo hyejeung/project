@@ -1,9 +1,10 @@
 // MenuDetail.js
 
 import React, { useState, useEffect } from 'react';
- import './MenuDetail.css'; // MenuDetail.css 파일이 필요하다면 추가하세요.
+import './MenuDetail.css';
+import axios from 'axios';
 
-const MenuDetail = ({ selectedItem, onClose }) => {
+const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editedProductInfo, setEditedProductInfo] = useState({});
 
@@ -34,6 +35,31 @@ const MenuDetail = ({ selectedItem, onClose }) => {
 
   };
 
+  const handleDelete = async () => {
+    const confirmWithdrawal = window.confirm('아이템을 삭제하시겠습니까?');
+
+    if (confirmWithdrawal) {
+      try {
+        // 서버의 삭제 엔드포인트로 DELETE 요청 보내기
+        const id = editedProductInfo.itemId; // 상품의 ID 가져오기
+        await axios.delete(`/api/items/${id}`, {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          },
+        });
+
+        // 삭제 성공 시 추가적인 로직을 수행할 수 있습니다.
+        // itemInfo 상태를 업데이트하여 삭제한 상품을 제외한 목록을 다시 설정
+        setItemInfo((prevItem) => prevItem.filter(item => item.itemId !== id));
+
+        // 모달 닫기
+        closeEditModal();
+      } catch (error) {
+        console.error('상품 삭제 실패:', error);
+      }
+    }
+  };
+
   return (
     <div className="MenuDetail">
       <h2>{editedProductInfo.itemName}</h2>
@@ -42,8 +68,8 @@ const MenuDetail = ({ selectedItem, onClose }) => {
       <div>
         <h3>상품 정보</h3>
         <p>가격: {editedProductInfo.price}원</p>
-        <img src={`${editedProductInfo.picture}`} alt={editedProductInfo.name} />
-        {/* <img class="temp_img" alt='이미지' src='/img/temp2.png'></img> */}
+        <img src={`http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} />
+        {/* <img class="temp_img" alt='이미지' src='http://localhost:8080/upload\itemImg\231214\bba55e70-170f-4f97-aefc-0cde1dfc1655_만두.jpg'></img> */}
         <p>상세 정보: {editedProductInfo.content}</p>
         <p>판매상태: {editedProductInfo.itemStatus ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
       </div>
@@ -53,7 +79,7 @@ const MenuDetail = ({ selectedItem, onClose }) => {
         <button className="edit-button" onClick={openEditModal}>
           수정
         </button>
-        <button className="delete-button">삭제</button>
+        <button className="delete-button" onClick={handleDelete}>삭제</button>
         {/* <button className="soldout-button">매진</button> */}
       </div>
 
@@ -87,11 +113,11 @@ const MenuDetail = ({ selectedItem, onClose }) => {
             <div>
               <label htmlFor="editedImage"> 상품 이미지 </label>
               <input
-                  type="file"
-                  id="editedRepresentativeImage"
-                  onChange={handleImageUpload}
-                />
-              </div>
+                type="file"
+                id="editedRepresentativeImage"
+                onChange={handleImageUpload}
+              />
+            </div>
 
             <div>
               <label htmlFor="editedDescription"> 상세 정보</label>
