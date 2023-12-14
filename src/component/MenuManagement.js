@@ -52,7 +52,7 @@ const MenuManagement = () => {
       <div className="order-list">
         <div className="order-item">
           <span onClick={openMenuDetailModal}>엽기떡볶이</span>
-          <span>15000원</span>
+          <span>1500원</span>
         </div>
 
         <div className="order-item">

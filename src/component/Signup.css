@@ -52,7 +52,7 @@ h2 {
 .member-type-options {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start; /* 세로 정렬 추가 */
+  align-items: center; /* 세로 정렬 추가 */
   margin-bottom: 10px;
 }
 
@@ -60,6 +60,7 @@ h2 {
 .member-type-options label {
   display: flex;
   align-items: center;
+ 
   margin-right: 15px; /* 각 항목 사이의 간격 조절 */
 }
 
@@ -84,4 +85,9 @@ button {
 
 button:hover {
   background-color: #45a049;
+}
+.gender-options label span,
+.member-type-options label span {
+  margin-right: 5px; /* 라벨 텍스트와 라디오 버튼 사이의 간격을 조절할 수 있습니다. */
+  white-space: nowrap; /* 텍스트가 길어져도 줄 바꿈을 하지 않도록 설정합니다. */
 }

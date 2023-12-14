@@ -63,13 +63,16 @@ const Login = () => {
       console.log('서버 응답:', response); //테스트 코드
       if (response.status === 200 || response.status === 201) {
           localStorage.setItem('access_token', response.data.token);
-          localStorage.setItem('storeId', response.data.storeId);
+          localStorage.setItem('store_id', response.data.storeId);
+          localStorage.setItem('user_id', response.data.id);
 
-          if (response.data.role === 'ROLE_ADMIN') {
-            return success_admin();
-          }
-          else if (response.data.role === 'ROLE_STORE') {
+          if (response.data.role === 'ROLE_STORE') {
+            //해당 유저의 음식점이 있으면 true, 없으면 false
+
             return success_store();
+          }
+          else if (response.data.role === 'ROLE_ADMIN') {
+            return success_admin();
           }
           else {
             return success_user();

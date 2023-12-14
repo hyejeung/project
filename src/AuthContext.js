@@ -1,50 +1,35 @@
-// AuthContext.js
+// authcontext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
+    // 새로고침 시 로컬 스토리지에서 로그인 상태, 사용자 ID, 주문 데이터를 가져옴
     const storedLoginStatus = localStorage.getItem('access_token');
-    const storedUserId = localStorage.getItem('user_id');
-    const storedStoreId = localStorage.getItem('store_id'); // store_id를 가져옴
-    const storedOrders = JSON.parse(localStorage.getItem(`orders_${storedUserId}`)) || [];
 
-    if (storedLoginStatus && storedUserId) {
+    if (storedLoginStatus) {
       setIsLoggedIn(true);
-      setUserId(storedUserId);
-      setOrders(storedOrders);
     }
   }, []);
 
   const login = () => {
-    const storedUserId = localStorage.getItem('user_id');
-    if (localStorage.getItem('access_token') && storedUserId) {
+    if (localStorage.getItem('access_token')) {
       setIsLoggedIn(true);
-      setUserId(storedUserId);
     }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('store_id');
     localStorage.removeItem('user_id');
-    localStorage.removeItem('store_id'); 
     setIsLoggedIn(false);
-    setUserId(null);
-  };
-
-  const updateOrders = (newOrders) => {
-    setOrders(newOrders);
-    const storedUserId = localStorage.getItem('user_id');
-    localStorage.setItem(`orders_${storedUserId}`, JSON.stringify(newOrders));
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, handleLogout, userId, orders, updateOrders }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, handleLogout }}>
       {children}
     </AuthContext.Provider>
   );

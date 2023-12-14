@@ -1,5 +1,6 @@
 // ManagerMain.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './ManagerMain.css';
@@ -13,17 +14,41 @@ const ManagerMain = () => {
   const [selectedTab, setSelectedTab] = useState('processing');
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
-  const { updateOrders } = useAuth(); // orderContext 삭제
+  const [totalOrders, setTotalOrders] = useState(100);
+  const { orderContext,updateOrders } = useAuth(); // orders 및 updateOrders 추가
   const [perPage] = useState(5); // 페이지당 항목 수
+  const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
+
+  //[접수대기, 처리중, 주문 취소, 배달 완료] 4가지 상태 state
   const [orders, setOrders] = useState([]);
   const [processingOrders, setProcessingOrders] = useState([]);
+  const [cancelOrders, setCancelOrders] = useState([]);
+  const [compOrders, setCompOrders] = useState([]);
+
+  //초기 주문 목록을 가져오는 함수
+  const fetchOrders = useCallback(async () => {
+    try {
+      const storeId = localStorage.getItem('store_id');
+      const response = await axios.get(`/api/orders/${storeId}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
+      setOrders(response.data);
+      setTotalData(response.data.length); // 전체 주문 수 업데이트
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchOrders(); // 초기 주문 목록 가져오기
+  }, [fetchOrders]);
 
   // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
-    const storeId = localStorage.getItem('storeId');
-    console.log('storeId:', storeId);
-
     // SSE 이벤트 수신
     const sse = new EventSource(`/api/connect`);
 
@@ -32,31 +57,44 @@ const ManagerMain = () => {
       console.log('connect event data: ', receiveConnectData);
     });
 
-    sse.addEventListener('newOrder', e => {
+    const handleSseEvent = (eventName, setFunction) => (e) => {
       const orderData = JSON.parse(e.data);
-      console.log("newOrder event data: ", orderData);
-      setOrders((prevOrders) => [...prevOrders, orderData]);
-      updateOrders(storeId, [...orders, orderData]); // 여기에서 updateOrders를 호출하여 주문 데이터를 업데이트
-    });
+      console.log(`${eventName} event data: `, orderData);
+      setFunction((prevOrders) => [...prevOrders, orderData]);
+    };
 
-    sse.addEventListener('processingOrder', e => {
-      const orderData = JSON.parse(e.data);
-      console.log("processingOrder event data: ", orderData);
-      setProcessingOrders((prevOrders) => [...prevOrders, orderData]);
-      updateOrders(storeId, [...orders, orderData]); // 여기에서 updateOrders를 호출하여 주문 데이터를 업데이트
-    });
-  }, [orders, updateOrders]);
+    sse.addEventListener('newOrder', handleSseEvent('newOrder', setOrders));
+    sse.addEventListener('processingOrder', handleSseEvent('processingOrder', setProcessingOrders));
 
-  const processOrder = (orderId, status) => {
+    return () => {
+      sse.close(); // SSE 연결 정리
+    };
+
+  }, [setOrders, setProcessingOrders]);
+
+  const processOrder = async (orderId, status) => {
     console.log(`주문 ID ${orderId}를 ${status} 상태로 처리합니다.`);
-    // 주문 처리 로직 추가
-    axios.patch(`/api/orders/${orderId}/${status}`, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        'Content-Type': 'application/json',
-      },
-    })
-      .catch(error => console.error('Error fetching menu list:', error));
+    try {
+      await axios.patch(`/api/orders/${orderId}/${status}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
+      // fetchOrders(); // 주문 처리 후 목록 다시 불러오기
+
+      // 주문 처리 후 해당 주문을 목록에서 제거
+      if (status === 'READY') {
+        setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
+      } else if (status === 'CANCEL') {
+        // setOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
+        setProcessingOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
+      } else if (status === 'COMP') {
+        setProcessingOrders((prevOrders) => prevOrders.filter((order) => order.order_id !== orderId));
+      }
+    } catch (error) {
+      console.error('Error processing order:', error);
+    }
   };
 
   const indexOfLastOrder = (currentPage + 1) * ordersPerPage;
@@ -69,7 +107,7 @@ const ManagerMain = () => {
   };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // setOffset((pageNumber - 1) * perPage); // 이 줄은 현재 사용되지 않는 것 같아 주석 처리했습니다.
+    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
 
   return (
@@ -91,19 +129,19 @@ const ManagerMain = () => {
       {selectedTab === 'delivered' && <DeliveredOrders orders={currentOrders} />}
 
       <Pagination
-        activePage={currentPage}
-        itemsCountPerPage={perPage}
-        totalItemsCount={totalData}
-        pageRangeDisplayed={5}
-        onChange={handlePageChange}
-        prevPageText="<"
-        nextPageText=">"
-        firstPageText="<<"
-        lastPageText=">>"
-        itemClass="page-item"
-        linkClass="page-link"
-        innerClass="pagination"
-      />
+  activePage={currentPage}
+  itemsCountPerPage={perPage}
+  totalItemsCount={totalData}
+  pageRangeDisplayed={5}
+  onChange={handlePageChange}
+  prevPageText="<"
+  nextPageText=">"
+  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+  itemClass="page-item"
+  linkClass="page-link"
+  innerClass="pagination"
+/>
     </div>
   );
 };

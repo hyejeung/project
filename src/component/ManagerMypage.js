@@ -1,85 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
-import './ManagerMypage.css';
+import './ManagerMypage.css'; // Import the CSS file for styling
 
 const ManagerMypage = () => {
-  const [userInfo, setUserInfo] = useState({
-    name: '사용자 이름',
-    email: 'abc@google.com',
-    phone: '010-1234-5678',
-    password: '********',
-    gender: '남성',
-    point: 1000,
-    grade: 'gold',
-    address: '서울특별시 성북구 서경로 123번지',
-  });
+  const [userInfo, setUserInfo] = useState({});
 
   const [isModalOpen, setModalOpen] = useState(false);
-
-  // 수정된 부분: 수정 완료 버튼을 눌렀을 때만 상태 업데이트
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
 
   useEffect(() => {
-    // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
     axios.get('/api/user', {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         'Content-Type': 'application/json',
       },
     })
-      .then(response => {
+      .then((response) => {
         setUserInfo(response.data);
-        // 수정된 부분: 모달이 열릴 때만 상태 초기화
-        setUpdatedUserInfo(response.data);
+        setUpdatedUserInfo(response.data); // Initialize updatedUserInfo with current user info
         return response;
       })
-      .catch(error => console.log(error));
-
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
   }, []);
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put('/api/user', updatedUserInfo, {
+      // Logic to update user information
+      // 예: const response = await updateUser(updatedUserInfo);
+      const response = await axios.put('api/user', updatedUserInfo, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'application/json',
         },
       });
-  
-      console.log('업데이트 성공:', response.data); // 추가한 로그
-  
-      setUserInfo(response.data);
-      setModalOpen(false); // 수정 성공 시 모달 닫기
+
+      setUserInfo(updatedUserInfo);
+      setModalOpen(false); // Close the modal after successful update
+      // Additional logic to handle successful update
     } catch (error) {
       console.error('사용자 정보 업데이트 실패:', error.message);
       // 에러 핸들링 로직 추가
     }
   };
 
-  const handleWithdrawal = async () => {
+  const handleWithdrawal = () => {
     const confirmWithdrawal = window.confirm('정말로 회원을 탈퇴하시겠습니까?');
 
     if (confirmWithdrawal) {
       try {
-        // 서버로 DELETE 요청을 보내 회원탈퇴 수행
-        await axios.delete('api/user', {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-            'Content-Type': 'application/json',
-          },
-        });
-
-        // 회원탈퇴 성공 시 추가적인 로직 수행
-        console.log('회원탈퇴가 완료되었습니다.');
-        // 예를 들어, 로그아웃 또는 리다이렉트 등을 수행할 수 있습니다.
+        // Logic for user withdrawal
+        // 예: const response = await withdrawUser();
+        // Additional logic to handle successful withdrawal
       } catch (error) {
         console.error('회원탈퇴 실패:', error.message);
         // 에러 핸들링 로직 추가
       }
     }
   };
-
 
   const openModal = () => {
     setModalOpen(true);
@@ -95,12 +73,14 @@ const ManagerMypage = () => {
       <p>사용자 이름: {userInfo.name}</p>
       <p>Email: {userInfo.email}</p>
       <p>전화번호: {userInfo.phone}</p>
-      {/* <p>비밀번호: {userInfo.password}</p> */}
       <p>성별: {userInfo.gender}</p>
       <p>주소: {userInfo.address}</p>
-      <button onClick={openModal}>회원정보 수정</button>
-      <button onClick={handleWithdrawal}>회원탈퇴</button>
+      <div className="button-container">
+        <span><button onClick={openModal}>회원정보 수정</button></span>
+        <span><button onClick={handleWithdrawal}>회원탈퇴</button></span>
+      </div>
 
+      {/* 수정 모달 */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -116,7 +96,7 @@ const ManagerMypage = () => {
                 }
               />
             </div>
-            <div>
+            {/* <div>
               <label htmlFor="updatedEmail">이메일</label>
               <input
                 type="text"
@@ -126,7 +106,7 @@ const ManagerMypage = () => {
                   setUpdatedUserInfo({ ...updatedUserInfo, email: e.target.value })
                 }
               />
-            </div>
+            </div> */}
             <div>
               <label htmlFor="updatedPhoneNumber"> 전화번호</label>
               <input

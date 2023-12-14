@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 import { useParams } from 'react-router';
-import { useAuth } from '../AuthContext';
+import { useAuth } from '../AuthContext'; // AuthContext 불러오기
+
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5);
+  const [perPage] = useState(5); // 페이지당 항목 수
   const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedTab, setSelectedTab] = useState('menu');
+
+  //isLiked로 즐겨찾기 음식점인지 확인, likeCount로 이 음식점을 즐겨찾기 한 사람들 수 저장
   const [isLiked, setIsLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(100);
+  const [likeCount, setLikeCount] = useState(0);
+
   const [restaurantInfo, setRestaurantInfo] = useState({
     name: '',
     image: '',
@@ -26,63 +29,11 @@ const Restaurant = () => {
   });
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
-  const [bookmarkList, setBookmarkList] = useState([]);
+
   const { id } = useParams();
-  const { userId } = useAuth();
-
-  // 함수 선언
-  const handleMenuButtonClick = (menu) => {
-    setModalOpen(true);
-    setSelectedMenu(menu);
-  };
-
- 
-  const handleAddToCart = () => {
-    const userCartKey = `cart_${userId}`; // userId를 사용하여 키 생성
-    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
-
-    const newItem = {
-      itemId: selectedMenu.itemId,
-      name: selectedMenu.itemName,
-      price: selectedMenu.price,
-      amount: quantity,
-      storeId: selectedMenu.storeId,
-    };
-
-    const existingItemIndex = existingCartData.findIndex(item => item.itemId === newItem.itemId);
-    if (existingItemIndex !== -1) {
-      existingCartData[existingItemIndex].amount += newItem.amount;
-    } else {
-      existingCartData.push(newItem);
-    }
-
-    localStorage.setItem(userCartKey, JSON.stringify(existingCartData));
-    setModalOpen(false);
-  };
-
+  const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
   useEffect(() => {
-    const userCartKey = `cart_${userId}`;
-    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
-  
-    axios.get(`/api/bookmark/${id}`, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
-        setIsLiked(response.data.isLiked);
-        setLikeCount(response.data.likeCount);
-      })
-      .catch(error => console.error('Error fetching bookmark info:', error));
-  
-    // 여기에서 로컬 스토리지에서 찜 상태 가져오기
-    const storedIsLiked = localStorage.getItem('isLiked_' + id);
-    if (storedIsLiked !== null) {
-      setIsLiked(storedIsLiked === 'true');
-    }
-  
     axios.get(`/api/stores/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -91,7 +42,7 @@ const Restaurant = () => {
     })
       .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
-  
+
     axios.get(`/api/items/${id}`, {
       params: {
         offset: offset,
@@ -104,55 +55,102 @@ const Restaurant = () => {
       },
     })
       .then(response => {
-        const menuData = response.data.content.map(menu => ({
-          ...menu,
-          name: menu.itemName,
-        }));
-        setMenuList(menuData);
-        setTotalData(response.data.totalData);
+        setMenuList(response.data.content);
+        setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
-  }, [offset, perPage, userId, id]);  // id 추가
 
-  const handleLike = () => {
-    const newIsLiked = !isLiked;
+    // axios.get('/api/reviews', {
+    //   params: {
+    //     offset: offset,
+    //     limit: perPage,
+    //   },
+    // })
+    //   .then(response => setReviews(response.data))
+    //   .catch(error => console.error('Error fetching reviews:', error));
 
-    axios.post(`/api/bookmark/${id}`, null, {
+    axios.get(`/api/bookmark/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         'Content-Type': 'application/json',
       },
     })
       .then(response => {
-        localStorage.setItem('isLiked_' + id, newIsLiked); 
-        setIsLiked(newIsLiked);
-
-        if (newIsLiked) {
-          setLikeCount(likeCount + 1);
-        } else {
-          setLikeCount(likeCount - 1);
-        }
-
-        // 로컬 스토리지에 찜 상태 저장
-        localStorage.setItem('isLiked_' + id, newIsLiked);
+        setIsLiked(response.data.status);
+        setLikeCount(response.data.count);
       })
-      .catch(error => console.error('Error adding/removing restaurant to/from bookmarks:', error));
+  }, [offset, perPage, userId]);
+
+  const handleMenuButtonClick = (menu) => {
+    setModalOpen(true);
+    setSelectedMenu(menu);
   };
+
+  const handleAddToCart = () => {
+    // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
+    const existingCartData = JSON.parse(localStorage.getItem(userId)) || [];
+
+    // 새로 추가할 아이템
+    const newItem = {
+      itemId: selectedMenu.itemId,
+      amount: quantity,
+    };
+
+    // 이미 장바구니에 있는 아이템이라면 수량을 더함
+    const existingItemIndex = existingCartData.findIndex(item => item.itemId === newItem.itemId);
+    if (existingItemIndex !== -1) {
+      existingCartData[existingItemIndex].amount += newItem.amount;
+    } else {
+      // 장바구니에 없는 아이템이라면 새로 추가
+      existingCartData.push(newItem);
+    }
+
+    // 새로운 장바구니 데이터를 로컬 스토리지에 저장
+    localStorage.setItem(userId, JSON.stringify(existingCartData));
+
+    // 모달을 닫음
+    setModalOpen(false);
+  };
+
+  //isLiked = true 이면 찜목록 추가 코드, false이면 찜목록 삭제 코드
+  const handleLike = () => {
+    setIsLiked(!isLiked);
+    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
+
+    console.log('isLiked:', isLiked);
+
+    if (isLiked === false) {
+      axios.post(`/api/bookmark/${id}`, null, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .then (response => {console.log(response.data)})
+      .catch (error => console.error('Error bookmark add', error));
+    }
+    else if (isLiked === true) {
+      axios.delete(`/api/bookmark/${id}`, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .catch (error => console.error('Error bookmark delete', error));
+    }
+  };
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    setOffset((pageNumber - 1) * perPage);
+    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
-
 
   return (
     <div className="Restaurant">
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
-        <button
-          onClick={handleLike}
-          style={{ color: isLiked ? 'red' : 'black' }}
-        >
+        <button onClick={handleLike}>
           {isLiked ? '❤️' : '🤍'}
         </button>
         <span role="img" aria-label="heart"> {likeCount}</span>
@@ -181,6 +179,7 @@ const Restaurant = () => {
           <ul>
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
+                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}
@@ -236,8 +235,8 @@ const Restaurant = () => {
         onChange={handlePageChange}
         prevPageText="<"
         nextPageText=">"
-        firstPageText="<<"
-        lastPageText=">>"
+        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
         itemClass="page-item"
         linkClass="page-link"
         innerClass="pagination"
