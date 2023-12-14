@@ -11,6 +11,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedLoginStatus = localStorage.getItem('access_token');
     const storedUserId = localStorage.getItem('user_id');
+    const storedStoreId = localStorage.getItem('store_id'); // store_id를 가져옴
     const storedOrders = JSON.parse(localStorage.getItem(`orders_${storedUserId}`)) || [];
 
     if (storedLoginStatus && storedUserId) {
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }) => {
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_id');
+    localStorage.removeItem('store_id'); 
     setIsLoggedIn(false);
     setUserId(null);
   };

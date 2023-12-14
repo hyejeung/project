@@ -1,67 +1,76 @@
+// MenuDetail.js
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import './MenuDetail.css';
-
-const MenuDetail = ({ itemId }) => {
+const MenuDetail = ({ menu }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
-  const [editedProductInfo, setEditedProductInfo] = useState({
+  const { itemId } = useParams();
+  const [menuDetail, setMenuDetail] = useState({
     itemName: '',
     price: 0,
-    image: '',
-    details: '',
-    status: '', // 또는 'SOLD_OUT'로 초기화
+    storeId: 0,
+    image: null,
+    storeName: '',
+    content: '',
+    status: '',
   });
-
+  const [editedProductInfo, setEditedProductInfo] = useState({ ...menuDetail });
   const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
+    console.log('useEffect: ', menuDetail?.itemName);
+
     const fetchMenuDetails = async () => {
       try {
-        const response = await axios.get(`/api/items/${itemId}`, {
-          headers: {
-            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-            'Content-Type': 'application/json',
-          },
-        });
-        setEditedProductInfo(response.data);
-        setIsLoading(false);
+        if (itemId) {
+          const response = await axios.get(`/api/items/${itemId}`, {
+            headers: {
+              Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+              'Content-Type': 'application/json',
+            },
+          });
+
+          console.log('Response from server:', response.data);
+
+          if (response.data) {
+            const menuData = response.data;
+            setMenuDetail(menuData);
+            setEditedProductInfo({ ...menuData });
+          }
+        }
       } catch (error) {
         console.error('메뉴 상세 정보를 불러오는 중 오류 발생:', error);
-        setIsLoading(false);
       }
     };
 
     fetchMenuDetails();
-  }, [itemId]);
+  }, [itemId, menuDetail?.itemName]);
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(`/api/items/${itemId}`, {
-        itemName: editedProductInfo.itemName,
-        price: editedProductInfo.price,
-        image: editedProductInfo.image,
-        details: editedProductInfo.details,
-        status: editedProductInfo.status,
-      }, {
+      const response = await axios.post(`/api/items/${itemId}`, editedProductInfo, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'application/json',
         },
       });
+
       console.log('상품 정보 수정 성공:', response.data);
-      closeEditModal();
-      // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
+
+      setMenuDetail(response.data);
+      setModalOpen(false);
     } catch (error) {
-      console.error('상품 정보 수정 실패:', error);
+      console.error('상품 정보 수정 실패:', error.response);
+      // 에러 핸들링 로직 추가
     }
   };
 
-  const [previewUrl, setPreviewUrl] = useState(editedProductInfo.image);
-  const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...editedProductInfo });
   const openEditModal = () => {
+    setEditedProductInfo({ ...menu }); // 수정된 부분: menu 대신 menuDetail을 사용합니다.
     setEditModalOpen(true);
   };
-
   const closeEditModal = () => {
     setEditModalOpen(false);
   };
@@ -70,28 +79,28 @@ const MenuDetail = ({ itemId }) => {
     const file = e.target.files[0];
 
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreviewUrl(imageUrl);
-      setUpdatedStoreInfo({ ...updatedStoreInfo, image: imageUrl });
+      setEditedProductInfo({ ...editedProductInfo, picture: file });
     }
   };
 
   return (
     <div className="MenuDetail">
-      <h2>{editedProductInfo.itemName}</h2>
+      <h2>{menu.itemName}</h2>
 
-      {/* 상품에 대한 정보 */}
       <div>
         <h3>상품 정보</h3>
-        <p>이름: {editedProductInfo.itemName}</p>
-        <p>가격: {editedProductInfo.price}원</p>
-        <p>이미지: {editedProductInfo.image}</p>
-        <img src={editedProductInfo.image} alt={editedProductInfo.itemName} />
-        <p>상세 정보: {editedProductInfo.details}</p>
-        <p>판매상태: {editedProductInfo.status}</p>
+        <p>이름: {menu.itemName}</p>
+        <p>가격: {menu.price}원</p>
+        {menuDetail.image && (
+          <div>
+            <p>이미지: {menu.image.name}</p>
+            <img src={URL.createObjectURL(menuDetail.image)} alt={menuDetail.itemName} />
+          </div>
+        )}
+        <p>상세 정보: {menu.content}</p>
+        <p>판매상태: {menu.status}</p>
       </div>
 
-      {/* 수정 버튼 */}
       <div className="action-buttons">
         <button className="edit-button" onClick={openEditModal}>
           수정
@@ -99,7 +108,6 @@ const MenuDetail = ({ itemId }) => {
         <button className="delete-button">삭제</button>
       </div>
 
-      {/* 수정 모달 */}
       {isEditModalOpen && (
         <div className="modal-overlay">
           <div className="modal">
@@ -134,10 +142,8 @@ const MenuDetail = ({ itemId }) => {
               <label htmlFor="editedDetails"> 상세 정보</label>
               <textarea
                 id="editedDetails"
-                value={editedProductInfo.details}
-                onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, details: e.target.value })
-                }
+                value={editedProductInfo.content}
+                onChange={(e) => setEditedProductInfo({ ...editedProductInfo, details: e.target.value })}
               />
             </div>
             <div>
@@ -162,4 +168,4 @@ const MenuDetail = ({ itemId }) => {
   );
 };
 
-export default MenuDetail;
+export default MenuDetail; 

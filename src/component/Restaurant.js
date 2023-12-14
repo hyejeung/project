@@ -1,15 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 import { useParams } from 'react-router';
-import { useAuth } from '../AuthContext'; // AuthContext 불러오기
-
+import { useAuth } from '../AuthContext';
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage] = useState(5); // 페이지당 항목 수
+  const [perPage] = useState(5);
   const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,14 +26,63 @@ const Restaurant = () => {
   });
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
-
+  const [bookmarkList, setBookmarkList] = useState([]);
   const { id } = useParams();
-  const { userId } = useAuth(); // 사용자 ID 불러오기
+  const { userId } = useAuth();
 
-  useEffect(() => {  
+  // 함수 선언
+  const handleMenuButtonClick = (menu) => {
+    setModalOpen(true);
+    setSelectedMenu(menu);
+  };
 
+ 
+  const handleAddToCart = () => {
+    const userCartKey = `cart_${userId}`; // userId를 사용하여 키 생성
+    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
+
+    const newItem = {
+      itemId: selectedMenu.itemId,
+      name: selectedMenu.itemName,
+      price: selectedMenu.price,
+      amount: quantity,
+      storeId: selectedMenu.storeId,
+    };
+
+    const existingItemIndex = existingCartData.findIndex(item => item.itemId === newItem.itemId);
+    if (existingItemIndex !== -1) {
+      existingCartData[existingItemIndex].amount += newItem.amount;
+    } else {
+      existingCartData.push(newItem);
+    }
+
+    localStorage.setItem(userCartKey, JSON.stringify(existingCartData));
+    setModalOpen(false);
+  };
+
+
+  useEffect(() => {
     const userCartKey = `cart_${userId}`;
     const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
+  
+    axios.get(`/api/bookmark/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        setIsLiked(response.data.isLiked);
+        setLikeCount(response.data.likeCount);
+      })
+      .catch(error => console.error('Error fetching bookmark info:', error));
+  
+    // 여기에서 로컬 스토리지에서 찜 상태 가져오기
+    const storedIsLiked = localStorage.getItem('isLiked_' + id);
+    if (storedIsLiked !== null) {
+      setIsLiked(storedIsLiked === 'true');
+    }
+  
     axios.get(`/api/stores/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -56,74 +104,55 @@ const Restaurant = () => {
       },
     })
       .then(response => {
-        setMenuList(response.data.content);
-        setTotalData(response.data.totalData); // 수정: 전체 항목의 수 설정
+        const menuData = response.data.content.map(menu => ({
+          ...menu,
+          name: menu.itemName,
+        }));
+        setMenuList(menuData);
+        setTotalData(response.data.totalData);
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
-  
-    // axios.get('/api/reviews', {
-    //   params: {
-    //     offset: offset,
-    //     limit: perPage,
-    //   },
-    // })
-    //   .then(response => setReviews(response.data))
-    //   .catch(error => console.error('Error fetching reviews:', error));
-  }, [offset, perPage,userId]);
-
-  const handleMenuButtonClick = (menu) => {
-    setModalOpen(true);
-    setSelectedMenu(menu);
-  };
-
-  const handleAddToCart = () => {
-    
-    const userCartKey = `cart_${userId}`;
-    const existingCartData = JSON.parse(localStorage.getItem(userCartKey)) || [];
-
-    // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
-   // const existingCartData = JSON.parse(localStorage.getItem('userId')) || [];
-
-    // 새로 추가할 아이템
-    const newItem = {
-    
-      itemId: selectedMenu.itemId,
-      price: selectedMenu.price,
-      amount: quantity,
-    };
-
-    // 이미 장바구니에 있는 아이템이라면 수량을 더함
-    const existingItemIndex = existingCartData.findIndex(item => item.itemId === newItem.itemId);
-    if (existingItemIndex !== -1) {
-      existingCartData[existingItemIndex].amount += newItem.amount;
-    } else {
-      // 장바구니에 없는 아이템이라면 새로 추가
-      existingCartData.push(newItem);
-    }
-
-    // 새로운 장바구니 데이터를 로컬 스토리지에 저장
-    localStorage.setItem('cart', JSON.stringify(existingCartData));
-
-    // 모달을 닫음
-    setModalOpen(false);
-  };
+  }, [offset, perPage, userId, id]);  // id 추가
 
   const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
-  };
+    const newIsLiked = !isLiked;
 
+    axios.post(`/api/bookmark/${id}`, null, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        localStorage.setItem('isLiked_' + id, newIsLiked); 
+        setIsLiked(newIsLiked);
+
+        if (newIsLiked) {
+          setLikeCount(likeCount + 1);
+        } else {
+          setLikeCount(likeCount - 1);
+        }
+
+        // 로컬 스토리지에 찜 상태 저장
+        localStorage.setItem('isLiked_' + id, newIsLiked);
+      })
+      .catch(error => console.error('Error adding/removing restaurant to/from bookmarks:', error));
+  };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
+    setOffset((pageNumber - 1) * perPage);
   };
+
 
   return (
     <div className="Restaurant">
       <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
-        <button onClick={handleLike}>
+        <button
+          onClick={handleLike}
+          style={{ color: isLiked ? 'red' : 'black' }}
+        >
           {isLiked ? '❤️' : '🤍'}
         </button>
         <span role="img" aria-label="heart"> {likeCount}</span>
@@ -152,7 +181,6 @@ const Restaurant = () => {
           <ul>
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
-                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}
@@ -200,20 +228,20 @@ const Restaurant = () => {
         </div>
       )}
 
-<Pagination
-  activePage={currentPage}
-  itemsCountPerPage={perPage}
-  totalItemsCount={totalData}
-  pageRangeDisplayed={5}
-  onChange={handlePageChange}
-  prevPageText="<"
-  nextPageText=">"
-  firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-  lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-  itemClass="page-item"
-  linkClass="page-link"
-  innerClass="pagination"
-/>
+      <Pagination
+        activePage={currentPage}
+        itemsCountPerPage={perPage}
+        totalItemsCount={totalData}
+        pageRangeDisplayed={5}
+        onChange={handlePageChange}
+        prevPageText="<"
+        nextPageText=">"
+        firstPageText="<<"
+        lastPageText=">>"
+        itemClass="page-item"
+        linkClass="page-link"
+        innerClass="pagination"
+      />
     </div>
   );
 };

@@ -48,11 +48,17 @@ header {
   background-color: #555; /* 호버 시 어두운 회색으로 수정 */
 }
 
-.main-slider {
-  margin: 20px; /* 슬라이더의 외부 여백 설정 */
+.restaurants {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch; /* 세로폭이 늘어나도록 설정 */
+  padding: 20px;
 }
 
 .restaurant-card {
+  flex: 0 0 calc(25% - 20px); /* 한 줄에 4개의 카드가 들어가도록 설정 */
+  margin: 10px;
   background-color: #fff; /* 음식점 카드 배경색 */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
   border-radius: 8px;

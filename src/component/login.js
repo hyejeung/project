@@ -39,6 +39,11 @@ const Login = () => {
       navigate('/');
     }
 
+    function success_store() {
+      login();
+      navigate('/managermain');
+    }
+
     function success_admin() {
       login();
       navigate('/managermain');
@@ -61,9 +66,10 @@ const Login = () => {
           localStorage.setItem('storeId', response.data.storeId);
 
           if (response.data.role === 'ROLE_ADMIN') {
-            //해당 유저의 음식점이 있으면 true, 없으면 false
-
             return success_admin();
+          }
+          else if (response.data.role === 'ROLE_STORE') {
+            return success_store();
           }
           else {
             return success_user();
