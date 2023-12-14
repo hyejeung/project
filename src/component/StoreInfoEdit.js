@@ -205,9 +205,9 @@ const StoreInfoEdit = () => {
               <div>
                 <h3>사진 미리보기</h3>
                 <img
-                  src={previewUrl}
+                  src={`http://localhost:8080/${storeInfo.picture}`}
                   alt="대표 사진 미리보기"
-                  style={{ width: '200px', height: '300px' }}
+                  style={{ width: '400px', height: '300px' }}
                 />
               </div>
             )}

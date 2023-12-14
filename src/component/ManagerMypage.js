@@ -44,14 +44,21 @@ const ManagerMypage = () => {
     }
   };
 
-  const handleWithdrawal = () => {
+  const handleWithdrawal = async () => {
     const confirmWithdrawal = window.confirm('정말로 회원을 탈퇴하시겠습니까?');
 
     if (confirmWithdrawal) {
       try {
-        // Logic for user withdrawal
-        // 예: const response = await withdrawUser();
-        // Additional logic to handle successful withdrawal
+        // 서버로 DELETE 요청을 보내 회원탈퇴 수행
+        await axios.delete('api/user', {
+          headers: {
+            Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+            'Content-Type': 'application/json',
+          },
+        });
+
+        // 회원탈퇴 성공 시 추가적인 로직 수행
+        console.log('회원탈퇴가 완료되었습니다.');
       } catch (error) {
         console.error('회원탈퇴 실패:', error.message);
         // 에러 핸들링 로직 추가

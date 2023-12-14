@@ -51,16 +51,32 @@ h2 {
 .gender-options,
 .member-type-options {
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start; /* 세로 정렬 추가 */
-  margin-bottom: 10px;
+  align-items: center; /* 세로 정렬 추가 */
+  margin-top: 10px;
 }
 
 .gender-options label,
 .member-type-options label {
   display: flex;
   align-items: center;
-  margin-right: 15px; /* 각 항목 사이의 간격 조절 */
+  margin-right: 20px; /* 각 항목 사이의 간격 조절 */
+  cursor: pointer;
+}
+
+/* 선택된 상태의 스타일 */
+.gender-options label input:checked + span,
+.member-type-options label input:checked + span,
+.radio-options label input:checked + span {
+  border-color: #007bff; /* 선택되었을 때의 테두리 색상 */
+  background-color: #e6f7ff; /* 선택되었을 때의 배경색 */
+}
+
+/* 추가 스타일 */
+.gender-options span,
+.member-type-options span,
+.radio-options span {
+  display: inline-block; /* inline-block으로 설정하여 한 줄에 표시 */
+  padding-left: 8px; /* 좌측 패딩을 조절하여 라디오 버튼과 간격을 주세요 */
 }
 
 .gender-options input,
@@ -84,4 +100,30 @@ button {
 
 button:hover {
   background-color: #45a049;
+}
+
+.radio-input-group {
+  margin-bottom: 16px;
+}
+
+.radio-options {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.radio-options label {
+  display: flex;
+  align-items: center;
+  margin-right: 40px; /* 라디오 버튼과 라벨 간격 조절 */
+  cursor: pointer;
+}
+
+/* 선택된 상태의 스타일 */
+.radio-options label input:checked + span {
+  border-color: #007bff; /* 선택되었을 때의 테두리 색상 */
+  background-color: #e6f7ff; /* 선택되었을 때의 배경색 */
+}
+
+.error-message {
+  color: red;
 }

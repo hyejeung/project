@@ -12,8 +12,8 @@ import Signup from './component/Signup';
 import SnsSignup from './component/SnsSignup';
 import Navbar from './component/Navbar';
 import ManagerMain from './component/ManagerMain';
-import StoreInfoEdit from './component/StoreInfoEdit';  
-import AddMenu from './component/AddMenu'; 
+import StoreInfoEdit from './component/StoreInfoEdit';
+import AddMenu from './component/AddMenu';
 import CategoryPage from './component/CategoryPage';
 import Register from './component/Register';
 import MenuManagement from './component/MenuManagement';
@@ -41,7 +41,7 @@ const Category = ({ name }) => {
   );
 };
 
-const RestaurantCard = ({ id, name }) => {
+const RestaurantCard = ({ id, name, picture, rating }) => {
   const navigate = useNavigate();
 
   const handleRestaurantClick = () => {
@@ -51,14 +51,16 @@ const RestaurantCard = ({ id, name }) => {
 
   return (
     <div className="restaurant-card" onClick={handleRestaurantClick}>
-      {name}
+      <img src={picture} alt={`사진: ${name}`} />
+      <h3>{name}</h3>
+      <p>평점: {rating}</p>
     </div>
   );
 };
 
 const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, handleLogout, isLoggedIn }) => {
- 
- const settings = {
+
+  const settings = {
     dots: true,
     infinite: true,
     speed: 500,
@@ -71,7 +73,7 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
       <Navigation handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <main>
         <div className="categories">
-        <Link to="/category/배달" className="category">배달</Link>
+          <Link to="/category/배달" className="category">배달</Link>
           <Link to="/category/한식" className="category">한식</Link>
           <Link to="/category/분식" className="category">분식</Link>
           <Link to="/category/일식" className="category">일식</Link>
@@ -83,14 +85,15 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
           <Link to="/category/도시락" className="category">도시락</Link>
           <Link to="/category/디저트" className="category">디저트</Link>
         </div>
-        <Slider className="main-slider" {...settings}>
-          {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} id={restaurant.id} name={restaurant.name} />
-          ))}
-        </Slider>
         <div className="restaurants">
           {restaurants.map((restaurant) => (
-            <RestaurantCard key={restaurant.id} id={restaurant.id} name={restaurant.name} />
+            <RestaurantCard
+              key={restaurant.id}
+              id={restaurant.id}
+              name={restaurant.name}
+              picture={restaurant.picture}  // 가게의 사진을 전달
+              rating={restaurant.rating}    // 가게의 평점을 전달
+            />
           ))}
         </div>
       </main>
@@ -99,7 +102,7 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
 };
 
 const App = () => {
-  
+
   const [restaurants, setRestaurants] = useState([
     '엽기떡볶이',
     '교촌치킨',
@@ -119,64 +122,64 @@ const App = () => {
         'Content-Type': 'application/json',
       },
     })
-    .then(response => {
-      setRestaurants(response.data)
-      return response;
-    })
-    .then(response => console.log(response.data))
-    .catch(error => console.log(error))
+      .then(response => {
+        setRestaurants(response.data)
+        return response;
+      })
+      .then(response => console.log(response.data))
+      .catch(error => console.log(error))
   }, []);
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
     // 검색어에 따라 음식점을 필터링하거나 서버에 검색 요청을 보낼 수 있는 로직
   };
-  
+
   return (
     <Router>
       <AuthProvider>
-      {/* Navbar를 모든 페이지에 표시 */}
-      <Navbar handleSearchChange={handleSearchChange} />
-      <MenuNavbar handleSearchChange={handleSearchChange} />
-      <Routes>
-        {/* 메인페이지 */}
-        <Route
-          path="/"
-          element={
-            <>
-              <MainPage
-                restaurants={restaurants}
-                searchQuery={searchQuery}
-                handleSearchChange={handleSearchChange}
-              />
-            </>
-          }
-        />
+        {/* Navbar를 모든 페이지에 표시 */}
+        <Navbar handleSearchChange={handleSearchChange} />
+        <MenuNavbar handleSearchChange={handleSearchChange} />
+        <Routes>
+          {/* 메인페이지 */}
+          <Route
+            path="/"
+            element={
+              <>
+                <MainPage
+                  restaurants={restaurants}
+                  searchQuery={searchQuery}
+                  handleSearchChange={handleSearchChange}
+                />
+              </>
+            }
+          />
 
-       {/* 나머지 페이지 */}
-       <Route path="/mypage" element={<MyPage />} />
-        <Route path="/restaurant/:id" element={<Restaurant />} />
+          {/* 나머지 페이지 */}
+          <Route path="/mypage" element={<MyPage />} />
+          <Route path="/restaurant/:id" element={<Restaurant />} />
 
-        {/* 로그인 페이지 - Navbar를 표시하지 않음 */}
-        <Route path="/login" element={<Login />} />
+          {/* 로그인 페이지 - Navbar를 표시하지 않음 */}
+          <Route path="/login" element={<Login />} />
 
-        <Route path="/wishlist" element={<Wishlist />} />
+          <Route path="/wishlist" element={<Wishlist />} />
 
-        {/* 장바구니 페이지 - Navbar를 표시하지 않음 */}
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/payment" element={<Payment />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/sns-signup" element={<SnsSignup />} />
-        <Route path="/managermain" element={<ManagerMain />} />
-        <Route path="/store-info-edit" element={<StoreInfoEdit />} /> 
-        <Route path="/add-menu" element={<AddMenu />} />
-        <Route path="/category/:category" element={<CategoryPage />} />
-        <Route path="/manager-mypage" element={<ManagerMypage />} />
-        <Route path="/menu-management" element={<MenuManagement />} />
-        <Route path="/general-manager" element={<GeneralManager />} />
-        <Route path="/sales" element={<Sales />} />
-      </Routes>
+          {/* 장바구니 페이지 - Navbar를 표시하지 않음 */}
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/sns-signup" element={<SnsSignup />} />
+          <Route path="/managermain" element={<ManagerMain />} />
+          <Route path="/store-info-edit" element={<StoreInfoEdit />} />
+          <Route path="/add-menu" element={<AddMenu />} />
+          <Route path="/category/:category" element={<CategoryPage />} />
+          <Route path="/manager-mypage" element={<ManagerMypage />} />
+          <Route path="/menu-management" element={<MenuManagement />} />
+          <Route path="/general-manager" element={<GeneralManager />} />
+          <Route path="/sales" element={<Sales />} />
+        </Routes>
       </AuthProvider>
     </Router>
   );
