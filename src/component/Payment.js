@@ -6,7 +6,7 @@ import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import './Payment.css';
 
-const Payment = ({ totalPayment }) => {
+const Payment = ({  }) => {
   const location = useLocation();
   const totalPayment = location.state ? location.state.totalPayment : 0;
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
