@@ -1,7 +1,7 @@
 // Register.js
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Register.css'; // 필요한 스타일 파일을 import
 import axios from 'axios';
 
@@ -13,14 +13,10 @@ const Register = () => {
   const handleRegister = async () => {
     try {
       const formData = new FormData();
-      formData.append('storeName', newStoreInfo.name);
-      formData.append('address', newStoreInfo.address);
-      formData.append('phone', newStoreInfo.phone);
       formData.append('file', file);
-      formData.append('content', newStoreInfo.content);
-      formData.append('openTime', newStoreInfo.openTime);
-      formData.append('closeTime', newStoreInfo.closeTime);
-      formData.append('minOrderPrice', newStoreInfo.minOrderPrice);
+      formData.append('store', new Blob([JSON.stringify(newStoreInfo)], {
+        type: "application/json"
+      }));
 
       // /api/store 엔드포인트로 POST 요청
       const response = await axios.post('/api/store', formData, {

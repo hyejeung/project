@@ -164,10 +164,6 @@ const Restaurant = () => {
         <h3>예상 배달 시간</h3>
         <p>30분</p>
       </div>
-      <div>
-        <h3>배달 팁</h3>
-        <p>3000원</p>
-      </div>
       <div className='menu-buttons'>
         <button onClick={() => setSelectedTab('menu')}>메뉴</button>
         <button onClick={() => setSelectedTab('info')}>정보</button>
@@ -181,7 +177,6 @@ const Restaurant = () => {
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
                 <img src={`http://localhost:8080/${menu.picture}`} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
-                {/* <img src={`http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} /> */}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}

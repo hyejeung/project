@@ -59,6 +59,8 @@ const StoreInfoEdit = () => {
   }, []);
 
   const handleMenuClick = (menuItem) => {
+    console.log('상세정보 모달의 data', menuItem);
+
     // 메뉴 클릭 시 해당 메뉴의 정보를 selectedMenuItem 상태에 저장
     setSelectedMenuItem(menuItem);
     // 모달 열기
@@ -117,10 +119,9 @@ const StoreInfoEdit = () => {
     try {
       const formData = new FormData();
       formData.append('file', file); // 이미지 파일 추가
-      formData.append('itemName', newMenuItem.itemName); // 텍스트 데이터 추가
-      formData.append('price', newMenuItem.price); // 텍스트 데이터 추가
-      formData.append('content', newMenuItem.content);
-      formData.append('itemStatus', newMenuItem.itemStatus);
+      formData.append('item', new Blob([JSON.stringify(newMenuItem)], {
+        type: "application/json"
+      }));
 
       const id = localStorage.getItem('store_id');
       const response = await axios.post(`api/items/${id}`, formData, {

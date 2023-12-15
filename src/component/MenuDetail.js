@@ -7,6 +7,7 @@ import axios from 'axios';
 const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
   const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [editedProductInfo, setEditedProductInfo] = useState({});
+  const [file, setFile] = useState(null);
 
   // 선택된 메뉴 정보가 변경될 때마다 상태 업데이트
   useEffect(() => {
@@ -23,16 +24,38 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
     setEditModalOpen(false);
   };
 
-  const handleUpdate = () => {
-    // 여기에서 상품 정보를 업데이트하는 로직을 수행
-    // const response = await updateProductInfo(editedProductInfo);
-    closeEditModal();
-    // 업데이트 성공에 대한 추가적인 로직을 수행할 수 있습니다.
+  const handleUpdate = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file); // 'file'은 서버에서 요청을 처리하는 데 사용된 매개변수 이름입니다.
+      formData.append('item', new Blob([JSON.stringify(editedProductInfo)], {
+        type: "application/json"
+      }));
+
+      console.log('editInfo:', editedProductInfo);
+
+      const id = editedProductInfo.itemId;
+      const response = await axios.put(`/api/items/${id}`, editedProductInfo, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      // 응답을 처리하거나 필요한 경우 추가적인 로직을 수행합니다.
+      console.log('상품이 성공적으로 업데이트되었습니다:', response.data);
+
+      // 수정 모달 닫기
+      closeEditModal();
+    } catch (error) {
+      console.error('상품 업데이트 실패:', error);
+      // 오류를 적절하게 처리합니다.
+    }
   };
 
   const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
   };
 
   const handleDelete = async () => {
@@ -70,7 +93,7 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
         <p>가격: {editedProductInfo.price}원</p>
         <img src={`http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} />
         <p>상세 정보: {editedProductInfo.content}</p>
-        <p>판매상태: {editedProductInfo.itemStatus ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
+        <p>판매상태: {editedProductInfo.itemStatus === 'SALE' ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
       </div>
 
       {/* 수정 버튼 */}
@@ -92,9 +115,9 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
               <input
                 type="text"
                 id="editedName"
-                value={editedProductInfo.name}
+                value={editedProductInfo.itemName}
                 onChange={(e) =>
-                  setEditedProductInfo({ ...editedProductInfo, name: e.target.value })
+                  setEditedProductInfo({ ...editedProductInfo, itemName: e.target.value })
                 }
               />
             </div>
@@ -136,12 +159,12 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
                 onChange={(e) =>
                   setEditedProductInfo({
                     ...editedProductInfo,
-                    itemStatus: e.target.value === 'true',
+                    itemStatus: e.target.value,
                   })
                 }
               >
-                <option value={true}>판매중</option>
-                <option value={false}>품절</option>
+                <option value='SALE'>판매중</option>
+                <option value='SOLD'>품절</option>
               </select>
             </div>
             <div>
