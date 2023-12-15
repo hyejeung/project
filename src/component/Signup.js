@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaumPostcode from 'react-daum-postcode';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEnvelope, faLock, faPhone, faMapMarkerAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import './Signup.css';
 
@@ -168,7 +170,8 @@ const Signup = () => {
     <div className="signup-container">
       <h2>회원가입</h2>
       <div className="email-container">
-        <label htmlFor="email">이메일</label>
+        <label htmlFor="email">  <FontAwesomeIcon icon={faEnvelope} className="icon" />
+        이메일</label>
         <div className="email-input-container">
           <input
             type="text"
@@ -189,10 +192,14 @@ const Signup = () => {
         {emailError && <p className="error-message">{emailError}</p>}
       </div>
       <div>
-      <label htmlFor="newPassword">비밀번호</label>
+      <label htmlFor="newPassword">
+          <FontAwesomeIcon icon={faLock} className="icon" />
+          비밀번호
+        </label>
         <input
           type="password"
           id="newPassword"
+          placeholder="비밀번호를 입력하세요"
           value={newPassword}
           onChange={(e) => {
             setNewPassword(e.target.value);
@@ -206,11 +213,15 @@ const Signup = () => {
         {passwordError && <p className="error-message">{passwordError}</p>}
       </div>
       <div>
-        <label htmlFor="confirmPassword">비밀번호 확인</label>
+      <label htmlFor="confirmPassword">
+          <FontAwesomeIcon icon={faLock} className="icon" />
+          비밀번호 확인
+        </label>
         <div style={{ position: 'relative' }}>
           <input
             type="password"
             id="confirmPassword"
+            placeholder="비밀번호를 다시 입력하세요"
             value={confirmPassword}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
@@ -220,7 +231,7 @@ const Signup = () => {
                 : setConfirmPasswordError('비밀번호가 일치하지 않습니다.');
             }}
           />
-          {isPasswordMatched && (
+          {isPasswordMatched && confirmPassword !== '' && (
             <span style={{ position: 'absolute', right: '5px', top: '30%', transform: 'translateY(-50%)', color: 'green' }}>
               ✔
             </span>
@@ -229,16 +240,23 @@ const Signup = () => {
         {confirmPasswordError && <p className="error-message">{confirmPasswordError}</p>}
       </div>
       <div>
-        <label htmlFor="newUsername">닉네임</label>
+      <label htmlFor="newUsername">
+          <FontAwesomeIcon icon={faUser} className="icon" />
+          닉네임
+        </label>
         <input
           type="text"
           id="newUsername"
+          placeholder="닉네임을 입력하세요"
           value={newUsername}
           onChange={(e) => setNewUsername(e.target.value)}
         />
       </div>
       <div>
-  <label htmlFor="phoneNumber">전화번호</label>
+      <label htmlFor="phoneNumber">
+          <FontAwesomeIcon icon={faPhone} className="icon" />
+          전화번호
+        </label>
   <input
     type="text"
     id="phoneNumber"
@@ -254,7 +272,10 @@ const Signup = () => {
   {phoneNumberError && <p className="error-message">{phoneNumberError}</p>}
 </div>
       <div className="address-container">
-        <label htmlFor="address">주소</label>
+      <label htmlFor="address">
+          <FontAwesomeIcon icon={faMapMarkerAlt} className="icon" />
+          주소
+        </label>
         <div className="address-input-container">
           <input
             type="text"

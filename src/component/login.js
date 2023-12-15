@@ -127,14 +127,14 @@ const Login = () => {
           로그인
         </button>
       </div>
-      <div>
+      {/* <div>
         <Link to="/sns-signup">
           <button className="social-button-google" onClick={() => handleSocialLogin('Google')}>Google로 로그인</button>
         </Link>
         <Link to="/sns-signup">
           <button className="social-button-facebook" onClick={() => handleSocialLogin('Facebook')}>Facebook으로 로그인</button>
         </Link>
-      </div>
+      </div> */}
       <div className="signup-text">
         아직 회원이 아니신가요? <Link to="/signup">회원가입</Link>
       </div>
