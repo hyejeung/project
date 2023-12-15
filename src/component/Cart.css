@@ -59,6 +59,7 @@
   width: auto;
   margin-top: 10px;
   font-size: 14px;
+  text-decoration: none; /* 링크의 밑줄 제거 */
 }
 
 .order-button:hover {
