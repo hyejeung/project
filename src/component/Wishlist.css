@@ -9,7 +9,7 @@
 }
 
 .wishlist-container h2 {
-  color: #4caf50; 
+  color: #4caf50;
   font-size: 24px;
   margin-bottom: 20px;
 }
@@ -24,9 +24,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px; /* 간격 크게a 조절 */
+  margin-bottom: 40px;
   background-color: #f8f8f8;
-  padding: 40px; /* 높이 크게 조절 */
+  padding: 40px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease-in-out;
@@ -34,7 +34,7 @@
 }
 
 .wishlist-container li:hover {
-  background-color: #c1e7c3; /* 더 진한 초록색으로 변경 */
+  background-color: #c1e7c3;
 }
 
 .restaurant-info {
@@ -45,7 +45,8 @@
   font-size: 20px;
   font-weight: bold;
   color: #333;
-  margin-bottom: 20px; /* 가게 이름 간격 추가 */
+  margin-bottom: 20px;
+  text-decoration: none;
 }
 
 .order-link {
@@ -70,4 +71,6 @@
 
 .order-link:hover {
   text-decoration: underline;
-}
+} 
+
+

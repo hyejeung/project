@@ -371,8 +371,10 @@ const MyPage = () => {
                       {/* 각 아이템에 대한 리뷰 상태 확인 */}
                       {item.reviewed ? (
                         <>
-                          <button>리뷰 수정</button>
-                          <button>리뷰 삭제</button>
+                        <button className="update-review">리뷰수정</button>
+                        <button className="delete-review">리뷰삭제</button>
+                      
+
                         </>
                       ) : (
                         <button onClick={() => openReviewModal(selectedOrder)}>리뷰 쓰기</button>

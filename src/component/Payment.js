@@ -1,12 +1,14 @@
 // Payment.js
 
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import './Payment.css';
 
-const Payment = () => {
- 
+const Payment = ({ totalPayment }) => {
+  const location = useLocation();
+  const totalPayment = location.state ? location.state.totalPayment : 0;
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState('');
   const [request, setRequest] = useState('');
@@ -19,7 +21,12 @@ const Payment = () => {
   const fetchUserAddress = async () => {
     setIsLoadingAddress(true);
     try {
-      const response = await axios.get('/api/user');
+      const response = await axios.get('/api/user', {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      });
       setUserAddress(response.data.address);
     } catch (error) {
       console.error('Error fetching user address:', error);
@@ -116,8 +123,7 @@ const Payment = () => {
           <span>30분</span>
         </div>
         <div className="total-price">
-          <span>총 결제 금액:</span>
-          <span>16000원</span> {/* 여기에 실제 총 결제 금액을 동적으로 출력 */}
+          <span>총 결제 금액: {totalPayment}원</span>
         </div>
       </div>
       {/* 결제 버튼 */}
@@ -128,4 +134,4 @@ const Payment = () => {
   );
 };
 
-export default Payment
+export default Payment;

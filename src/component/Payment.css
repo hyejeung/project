@@ -1,3 +1,4 @@
+
 /* Payment.css */
 
 /* Payment 컴포넌트 전체에 대한 스타일 */
@@ -14,9 +15,24 @@
 /* 배송지 정보 섹션 스타일 */
 .address-section {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     margin-bottom: 20px;
 }
+
+.load-address-button,
+.new-address-button {
+    flex-basis: 30%; /* 동일한 너비로 설정 */
+    padding: 10px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+ .new-address-button {
+    margin-left: 4%; /* 약간의 간격을 두기 위해 margin 추가 */
+} 
 
 /* 추가 정보 섹션 스타일 */
 .additional-info-section {

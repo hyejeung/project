@@ -57,7 +57,7 @@ const RestaurantCard = ({ id, name, picture, rating }) => {
     </div>
   );
 };
-const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, handleLogout, isLoggedIn }) => {
+const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, handleLogout, isLoggedIn, setTotalPayment }) => {
  
  const settings = {
     dots: true,
@@ -119,7 +119,8 @@ const App = () => {
     '서브웨이'
   ]);
   const [searchQuery, setSearchQuery] = useState('');
-
+  const [totalPayment, setTotalPayment] = useState(0); // 추가된 부분
+  
   useEffect(() => {
     axios.get('/api/stores', {
       headers: {
@@ -156,6 +157,7 @@ const App = () => {
                 restaurants={restaurants}
                 searchQuery={searchQuery}
                 handleSearchChange={handleSearchChange}
+                setTotalPayment={setTotalPayment} // 추가된 부분
               />
             </>
           }

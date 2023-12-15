@@ -1,29 +1,32 @@
+// cart.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Cart.css';
 import axios from 'axios';
 
-const Cart = () => {
+const Cart = ( setTotalPayment) => {
   const [cartItems, setCartItems] = useState([]);
 
+  //const [totalPayment, setTotalPayment] = useState(0);
   const userId = localStorage.getItem('user_id');
   console.log('userId:', userId);
 
   useEffect(() => {
     console.log(localStorage.getItem(userId));
 
-    //장바구니 정보로 서버에서 필요한 정보들 가져오기
-    axios.post('/api/cart', localStorage.getItem(userId), {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        'Content-Type': 'application/json',
-      },
-    })
-      .then(response => {
+    // 장바구니 정보로 서버에서 필요한 정보들 가져오기
+    axios
+      .post('/api/cart', localStorage.getItem(userId), {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
         setCartItems(response.data);
       })
-      .then(response => console.log(response.data))
-      .catch(error => console.log(error));
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
   }, []);
 
   const calculateTotalPrice = () => {
@@ -61,10 +64,12 @@ const Cart = () => {
 
   const navigate = useNavigate();
 
-  const handleRestaurantClick = (restaurantId) => {
-    navigate(`/restaurant/${restaurantId}`);
+  const handleCheckout = () => {
+    const totalPayment = calculateTotalPrice();
+    setTotalPayment(totalPayment); // 부모 컴포넌트로 직접 totalPayment를 전달
+    navigate('/payment', { state: { totalPayment } });
   };
-
+  
   return (
     <div className="cart-container">
       <h2>장바구니</h2>
@@ -86,12 +91,10 @@ const Cart = () => {
           </div>
         </div>
       ))}
-       {/* <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button> */}
       <div className="total-price">
         <span>총 주문 금액: {calculateTotalPrice()}원</span>
       </div>
-     
-      <Link to="/payment" className="order-button">
+      <Link to="/payment" className="order-button" onClick={handleCheckout}>
         주문하러 가기
       </Link>
     </div>
