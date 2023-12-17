@@ -51,7 +51,7 @@ const RestaurantCard = ({ id, name, picture, rating }) => {
 
   return (
     <div className="restaurant-card" onClick={handleRestaurantClick}>
-      <img src={picture} alt={`사진: ${name}`} />
+      <img src={`http://localhost:8080/${picture}`} alt={`사진: ${name}`} style={{ width: '200px', height: '200px' }} />
       <h3>{name}</h3>
       <p>평점: {rating}</p>
     </div>
@@ -103,16 +103,7 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
 
 const App = () => {
 
-  const [restaurants, setRestaurants] = useState([
-    '엽기떡볶이',
-    '교촌치킨',
-    '반올림피자샵',
-    '배스킨라빈스',
-    '원할머니보쌈',
-    '홍콩반점',
-    '버거킹',
-    '서브웨이'
-  ]);
+  const [restaurants, setRestaurants] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {

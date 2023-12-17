@@ -169,6 +169,16 @@ const StoreInfoEdit = () => {
     setNewMenuItemModalOpen(false);
   };
 
+  // StoreInfoEdit.js에서 이미지 업데이트 처리
+  const handleMenuDetailClose = (newImageUrl) => {
+    console.log('MenuDetail에서 전달받은 img:', newImageUrl);
+    // 이미지 URL을 받아와서 상태 업데이트
+    setSelectedMenuItem((prevInfo) => ({
+      ...prevInfo,
+      picture: newImageUrl,
+    }));
+  };
+
   //activeTab === 'storeInfo' 에서 가게 정보가 출력되어야함
   return (
     <div className="storeinfoedit-container">
@@ -206,7 +216,7 @@ const StoreInfoEdit = () => {
               <div>
                 <h3>사진 미리보기</h3>
                 <img
-                  src={`http://localhost:8080/${storeInfo.picture}`}
+                  src={file ? URL.createObjectURL(file) : `http://localhost:8080/${storeInfo.picture}`}
                   alt="대표 사진 미리보기"
                   style={{ width: '400px', height: '300px' }}
                 />
@@ -404,7 +414,7 @@ const StoreInfoEdit = () => {
           {isNewMenuItemModalOpen && (
             <div className="modal-overlay">
               <div className="modal">
-                <MenuDetail selectedItem={selectedMenuItem} storeId={storeId} setItemInfo={setItemInfo} />
+                <MenuDetail selectedItem={selectedMenuItem} storeId={storeId} setItemInfo={setItemInfo} onClose={handleMenuDetailClose}/>
                 <button className="close-button" onClick={closeNewMenuItemModal}>
                   닫기
                 </button>

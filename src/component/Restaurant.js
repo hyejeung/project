@@ -20,13 +20,7 @@ const Restaurant = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const [restaurantInfo, setRestaurantInfo] = useState({
-    name: '',
-    image: '',
-    rating: 0,
-    reviewCount: 0,
-    minOrderAmount: 0,
-  });
+  const [restaurantInfo, setRestaurantInfo] = useState({});
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
 
@@ -34,7 +28,7 @@ const Restaurant = () => {
   const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
   useEffect(() => {
-    axios.get(`/api/stores/${id}`, {
+    axios.get(`/api/store/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         'Content-Type': 'application/json',
@@ -42,6 +36,8 @@ const Restaurant = () => {
     })
       .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
+
+    console.log('get store:', restaurantInfo);
 
     axios.get(`/api/items/${id}`, {
       params: {
@@ -148,7 +144,7 @@ const Restaurant = () => {
 
   return (
     <div className="Restaurant">
-      <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
+      <img src={`http://localhost:8080/${restaurantInfo.picture}`} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
         <button onClick={handleLike}>

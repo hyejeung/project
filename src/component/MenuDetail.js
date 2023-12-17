@@ -20,7 +20,8 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
     setEditModalOpen(true);
   };
 
-  const closeEditModal = () => {
+  const closeEditModal = (picture) => {
+    onClose(picture); // 이미지 URL 전달
     setEditModalOpen(false);
   };
 
@@ -35,7 +36,7 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
       console.log('editInfo:', editedProductInfo);
 
       const id = editedProductInfo.itemId;
-      const response = await axios.put(`/api/items/${id}`, editedProductInfo, {
+      const response = await axios.put(`/api/items/${id}`, formData, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'multipart/form-data',
@@ -46,7 +47,7 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
       console.log('상품이 성공적으로 업데이트되었습니다:', response.data);
 
       // 수정 모달 닫기
-      closeEditModal();
+      closeEditModal(response.data.picture);
     } catch (error) {
       console.error('상품 업데이트 실패:', error);
       // 오류를 적절하게 처리합니다.
@@ -91,7 +92,7 @@ const MenuDetail = ({ selectedItem, onClose, setItemInfo }) => {
       <div>
         <h3>상품 정보</h3>
         <p>가격: {editedProductInfo.price}원</p>
-        <img src={`http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} />
+        <img src={file ? URL.createObjectURL(file) : `http://localhost:8080/${editedProductInfo.picture}`} alt={editedProductInfo.name} />
         <p>상세 정보: {editedProductInfo.content}</p>
         <p>판매상태: {editedProductInfo.itemStatus === 'SALE' ? '판매중' : '품절'}</p> {/* 추가: 품절 여부 표시 */}
       </div>

@@ -1,3 +1,5 @@
+/* mypage.css */
+
 .my-page-container {
   max-width: 800px;
   margin: 50px auto;
@@ -8,15 +10,15 @@
   background-color: #fff;
   box-sizing: border-box;
   text-align: center;
-  height: 100%; /* 높이를 100%로 설정 */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 요소들을 수직으로 균등하게 배치 */
-  align-items: center; /* 수직 방향으로 가운데 정렬 추가 */
+  justify-content: space-between;
+  align-items: center;
 }
 
 .my-page-container h2 {
-  color: #4caf50; /* 초록색으로 변경 */
+  color: #4caf50;
   font-size: 28px;
   margin-bottom: 20px;
 }
@@ -44,7 +46,25 @@
 .my-page-container button:hover {
   background: #45a049;
 }
-/* mypage.css */
+
+.my-page-container ul {
+  list-style: none;
+  padding: 0;
+}
+
+.my-page-container ul li {
+  margin-bottom: 10px;
+}
+
+.my-page-container ul li .order-info {
+  display: flex;
+  align-items: center;
+}
+
+.my-page-container ul li .order-info .order-date {
+  margin-right: 10px;
+  font-weight: bold;
+}
 
 .mypage-modal-overlay {
   position: fixed;
@@ -78,7 +98,7 @@
 
 .mypage-modal button {
   padding: 10px 18px;
-  margin: 8px;
+  margin: 8px 10px; 
   background: #4caf50;
   color: #fff;
   border: none;
@@ -97,8 +117,30 @@
 .mypage-modal button.update-review,
 .mypage-modal button.delete-review {
   display: inline-block;
+  margin-right: 10px; /* 버튼 사이의 간격을 조절합니다. */
+  margin-bottom: 10px; /* 버튼과 하단의 간격을 조절합니다. */
+  padding: 8px 14px; /* 버튼의 크기를 조절합니다. */
 }
 
 .mypage-modal button.update-review.burger-king {
   margin-right: 4%;
+}
+.my-page-container .tab-navigation button {
+  margin-right: 10px; /* 버튼 사이의 간격을 조절합니다. */
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 8px 14px;
+  background: #0ed80e; /* 버튼 배경색 수정 */
+  color: #fff; /* 버튼 텍스트 색상 수정 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.my-page-container .tab-navigation button:hover {
+  background: #09ce3a; /* 버튼 호버 시 배경색 수정 */
 }
