@@ -2,6 +2,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMotorcycle } from '@fortawesome/free-solid-svg-icons';
 
 const Navbar = ({ handleSearchChange }) => {
   const { isLoggedIn, handleLogout } = useAuth();
@@ -14,14 +16,13 @@ const Navbar = ({ handleSearchChange }) => {
     location.pathname === '/sns-signup' ||
     location.pathname === '/signup' ||
     location.pathname === '/add-menu' ||
-    location.pathname === '/store-info-edit'||
-    location.pathname === '/menu-management'||
-    location.pathname === '/menu-detail'||
-    location.pathname === '/sales'||
-    location.pathname === '/manager-mypage'||
-    location.pathname === '/general-manager'||
+    location.pathname === '/store-info-edit' ||
+    location.pathname === '/menu-management' ||
+    location.pathname === '/menu-detail' ||
+    location.pathname === '/sales' ||
+    location.pathname === '/manager-mypage' ||
+    location.pathname === '/general-manager' ||
     location.pathname === '/register'
-
   ) {
     return null;
   }
@@ -31,6 +32,7 @@ const Navbar = ({ handleSearchChange }) => {
       <div className="header-left">
         {/* "배달및 주문서비스"를 클릭 가능한 링크로 만듭니다. */}
         <Link to="/" className="nav-link">
+          <FontAwesomeIcon icon={faMotorcycle} size="2x" /> {/* 크기 지정 (2배) */}
           <h1>배달및 주문서비스</h1>
         </Link>
       </div>
@@ -46,7 +48,9 @@ const Navbar = ({ handleSearchChange }) => {
           장바구니
         </Link>
         {isLoggedIn ? (
-          <Link to="/login" className="nav-link" onClick={handleLogout}>로그아웃</Link>
+          <Link to="/login" className="nav-link" onClick={handleLogout}>
+            로그아웃
+          </Link>
         ) : (
           <Link to="/login" className="nav-link">
             로그인

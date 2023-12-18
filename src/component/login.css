@@ -92,6 +92,7 @@ input {
 .signup-text {
   margin-top: 16px;
   color: #333;
+  text-decoration: none; 
 }
 
 .signup-text:hover {

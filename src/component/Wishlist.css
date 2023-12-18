@@ -14,6 +14,13 @@
   margin-bottom: 20px;
 }
 
+.wishlist-container p {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .wishlist-container ul {
   list-style-type: none;
   padding: 0;
@@ -71,6 +78,4 @@
 
 .order-link:hover {
   text-decoration: underline;
-} 
-
-
+}

@@ -55,6 +55,9 @@ const Payment = ({  }) => {
     setIsLoadAddressClicked(false);
     setIsAddressModalOpen(true);
   };
+  const handleModalClose = () => {
+    setIsAddressModalOpen(false);
+  };
 
   const handleAddressSelect = (data) => {
     setSelectedAddress(data.address);
@@ -99,6 +102,9 @@ const Payment = ({  }) => {
       {/* 다음 우편번호 모달 */}
       {isAddressModalOpen && (
         <div className="daum-postcode-modal">
+            <button className="modal-close-button" onClick={handleModalClose}>
+            x
+          </button>
           <DaumPostcode onComplete={handleAddressSelect} autoClose animation height={500} />
         </div>
       )}
