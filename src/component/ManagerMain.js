@@ -1,6 +1,5 @@
 // ManagerMain.js
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './ManagerMain.css';
@@ -8,16 +7,12 @@ import ProcessingOrders from './ProcessingOrders';
 import InProgressOrders from './InProgressOrders';
 import CancelledOrders from './CancelledOrders';
 import DeliveredOrders from './DeliveredOrders';
-import { useAuth } from '../AuthContext';
 
 const ManagerMain = () => {
   const [selectedTab, setSelectedTab] = useState('processing');
   const [currentPage, setCurrentPage] = useState(0);
   const [ordersPerPage] = useState(10);
-  const [totalOrders, setTotalOrders] = useState(100);
-  const { orderContext, updateOrders } = useAuth(); // orders 및 updateOrders 추가
   const [perPage] = useState(5); // 페이지당 항목 수
-  const [offset, setOffset] = useState(0);
   const [totalData, setTotalData] = useState(100);
 
   //[접수대기, 처리중, 주문 취소, 배달 완료] 4가지 상태 state
@@ -124,7 +119,6 @@ const ManagerMain = () => {
   };
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
 
   return (
@@ -138,9 +132,7 @@ const ManagerMain = () => {
         <button onClick={() => setSelectedTab('delivered')}>배달완료</button>
       </div>
 
-      {selectedTab === 'processing' && (
-        <ProcessingOrders orders={orders} processOrder={processOrder} />
-      )}
+      {selectedTab === 'processing' && (<ProcessingOrders orders={orders} processOrder={processOrder} />)}
       {selectedTab === 'inProgress' && <InProgressOrders orders={processingOrders} processOrder={processOrder} />}
       {selectedTab === 'cancelled' && <CancelledOrders orders={cancelOrders} />}
       {selectedTab === 'delivered' && <DeliveredOrders orders={compOrders} />}

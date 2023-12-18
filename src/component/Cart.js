@@ -5,13 +5,12 @@ import axios from 'axios';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-
+  const [quantityValues, setQuantityValues] = useState({}); // 각 아이템의 수량 상태를 관리
+  const [priceValues, setPriceValues] = useState({}); // 각 아이템의 가격 상태를 관리
   const userId = localStorage.getItem('user_id');
-  console.log('userId:', userId);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(localStorage.getItem(userId));
-
     //장바구니 정보로 서버에서 필요한 정보들 가져오기
     axios.post('/api/cart', localStorage.getItem(userId), {
       headers: {
@@ -21,13 +20,25 @@ const Cart = () => {
     })
       .then(response => {
         setCartItems(response.data);
+        console.log(response.data);
       })
-      .then(response => console.log(response.data))
       .catch(error => console.log(error));
-  }, []);
+  }, [userId]);
+
+  useEffect(() => {
+    // cartItems가 변경될 때마다 quantityValues, priceValues 초기화
+    const initialQuantityValues = {};
+    const initialPriceValues = {};
+    cartItems.forEach((item) => {
+      initialQuantityValues[item.item_id] = item.amount;
+      initialPriceValues[item.item_id] = item.price;
+    });
+    setQuantityValues(initialQuantityValues);
+    setPriceValues(initialPriceValues);
+  }, [cartItems]);
 
   const calculateTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.amount, 0);
+    return Object.values(priceValues).reduce((total, price) => total + price, 0);
   };
 
   const removeItem = (index) => {
@@ -44,22 +55,23 @@ const Cart = () => {
     updatedCartItems[index].count = newQuantity;
     setCartItems(updatedCartItems);
 
+    setQuantityValues((prevQuantityValues) => ({
+      ...prevQuantityValues,
+      [itemId]: newQuantity,
+    }));
+
+    setPriceValues((prevPriceValues) => ({
+      ...prevPriceValues,
+      [itemId]: updatedCartItems[index].price * newQuantity,
+    }));
+
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
     const existingCartData = JSON.parse(localStorage.getItem(userId)) || [];
-
-    // 새로 추가할 아이템
-    const newItem = {
-      itemId: itemId,
-      amount: newQuantity,
-    };
-
-    existingCartData[index].amount = newItem.amount;
+    existingCartData[index].amount = newQuantity;
 
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
     localStorage.setItem(userId, JSON.stringify(existingCartData));
   };
-
-  const navigate = useNavigate();
 
   const handleRestaurantClick = (restaurantId) => {
     navigate(`/restaurant/${restaurantId}`);
@@ -72,12 +84,12 @@ const Cart = () => {
         <div className="cart-item" key={index}>
           <div className="item-info">
             <span className="menu-name">{item.name}</span>
-            <span className="quantity">수량: {item.amount}</span>
+            <span className="quantity">수량: {quantityValues[item.item_id]}</span>
             <span className="price">가격: {item.price}원</span>
           </div>
           <div className="item-actions">
-            <button onClick={() => updateQuantity(index, item.item_id, Math.max(1, item.amount - 1))}>-</button>
-            <button onClick={() => updateQuantity(index, item.item_id, item.amount + 1)}>+</button>
+            <button onClick={() => updateQuantity(index, item.item_id, Math.max(1, quantityValues[item.item_id] - 1))}>-</button>
+            <button onClick={() => updateQuantity(index, item.item_id, quantityValues[item.item_id] + 1)}>+</button>
             <button onClick={() => removeItem(index)}>삭제</button>
           </div>
         </div>

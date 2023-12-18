@@ -37,8 +37,6 @@ const Restaurant = () => {
       .then(response => setRestaurantInfo(response.data))
       .catch(error => console.error('Error fetching menu list:', error));
 
-    console.log('get store:', restaurantInfo);
-
     axios.get(`/api/items/${id}`, {
       params: {
         offset: offset,
@@ -56,14 +54,14 @@ const Restaurant = () => {
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
 
-    // axios.get('/api/reviews', {
-    //   params: {
-    //     offset: offset,
-    //     limit: perPage,
-    //   },
-    // })
-    //   .then(response => setReviews(response.data))
-    //   .catch(error => console.error('Error fetching reviews:', error));
+    axios.get(`/api/review/${}`, {
+      params: {
+        offset: offset,
+        limit: perPage,
+      },
+    })
+      .then(response => setReviews(response.data))
+      .catch(error => console.error('Error fetching reviews:', error));
 
     axios.get(`/api/bookmark/${id}`, {
       headers: {
@@ -154,7 +152,7 @@ const Restaurant = () => {
       </div>
       <div>
         <h3>최소 주문 금액</h3>
-        <p>{restaurantInfo.minOrderAmount}원</p>
+        <p>{restaurantInfo.minOrderPrice}원</p>
       </div>
       <div>
         <h3>예상 배달 시간</h3>
@@ -185,7 +183,7 @@ const Restaurant = () => {
           <h3>가게 정보</h3>
           <p>별점: {restaurantInfo.rating}</p>
           <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
-          <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+          <p>최소 주문 금액: {restaurantInfo.minOrderPrice}원</p>
         </div>
       )}
       {selectedTab === 'reviews' && (

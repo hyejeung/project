@@ -144,3 +144,9 @@
 .my-page-container .tab-navigation button:hover {
   background: #09ce3a; /* 버튼 호버 시 배경색 수정 */
 }
+
+.review-button-container {
+  display: flex;
+  gap: 1px;
+  /* margin-top: 10px; */
+}

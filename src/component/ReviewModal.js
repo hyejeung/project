@@ -1,37 +1,65 @@
 //mypage 리뷰작성 모달
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
-  const [rating, setRating] = useState(0);
-  const [comment, setComment] = useState('');
+const ReviewModal = ({ isOpen, onClose, onSubmit, order }) => {
+  const [newReview, setNewReview] = useState({
+    id: null,
+    rating: 1
+  });
+  const [file, setFile] = useState(null);
+  const [isSubmitClicked, setIsSubmitClicked] = useState(false);
 
   const handleRatingChange = (value) => {
-    setRating(value);
+    setNewReview({ ...newReview, rating: value });
   };
 
   const handleCommentChange = (e) => {
-    setComment(e.target.value);
+    setNewReview({ ...newReview, content: e.target.value })
   };
 
-  const handleSubmit = () => {
-    // 여기서 리뷰 작성 로직을 수행하고, 부모 컴포넌트로 전달
-    onSubmit({ rating, comment });
+  const handleSubmit = async () => {
+    try {
+      console.log('order 값:', order);
 
-    axios.post('/api/review', {
-      content: comment,
-      rating: rating
-    }, {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        'Content-Type': 'application/json',
-      },
-    })
-    .then(response => console.log(response.data))
-    .catch(error => console.log(error));
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('review', new Blob([JSON.stringify(newReview)], {
+        type: "application/json"
+      }));
 
-    // 모달 닫기
-    onClose();
+      const response = await axios.post(`/api/review/${order.orderId}`, formData, {
+        headers: {
+          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const reviewData = response.data;
+
+      setNewReview(prevReview => ({ ...prevReview, id: reviewData.id }));
+
+      alert('리뷰 등록에 성공했습니다.');
+
+      // 리뷰 작성이 완료된 경우에만 true로 설정
+      setIsSubmitClicked(true);
+    } catch (error) {
+      console.error('리뷰 등록 오류:', error);
+      alert('리뷰 등록 중 오류가 발생했습니다.');
+    }
+  };
+
+  useEffect(() => {
+    // 작성 완료 버튼이 클릭된 경우에만 실행
+    if (isSubmitClicked) {
+      onSubmit(newReview);
+      onClose();
+    }
+  }, [isSubmitClicked, newReview]);
+
+  const handleImageUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
   };
 
   return (
@@ -40,7 +68,7 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
         <h2>리뷰 작성</h2>
         <div>
           <label htmlFor="rating">별점 선택</label>
-          <select id="rating" value={rating} onChange={(e) => handleRatingChange(Number(e.target.value))}>
+          <select id="rating" value={newReview.rating} onChange={(e) => handleRatingChange(Number(e.target.value))}>
             <option value={1}>1점</option>
             <option value={2}>2점</option>
             <option value={3}>3점</option>
@@ -49,10 +77,20 @@ const ReviewModal = ({ isOpen, onClose, onSubmit }) => {
           </select>
         </div>
         <div>
-          <label htmlFor="comment">리뷰 작성</label>
+          <label htmlFor="menuImage">리뷰 사진 </label>
+          <div>
+            <input
+              type="file"
+              id="editedRepresentativeImage"
+              onChange={handleImageUpload}
+            />
+          </div>
+        </div>
+        <div>
+          <label htmlFor="content">리뷰 작성</label>
           <textarea
-            id="comment"
-            value={comment}
+            id="content"
+            value={newReview.content}
             onChange={handleCommentChange}
             placeholder="리뷰를 작성해주세요."
           />
