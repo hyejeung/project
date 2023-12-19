@@ -28,20 +28,23 @@ header {
 }
 
 .categories {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  padding: 1rem;
+  display: flex;
+  overflow-x: auto; /* 가로 스크롤을 허용하도록 설정 */
+  padding: 10px; /* 좌우 여백 추가 */
+  gap: 20px; /* 간격을 더 늘림 */
   background-color: #f2f2f2;
 }
 
 .category {
+  flex: 1; /* 각 카테고리가 동일한 너비를 갖도록 수정 */
   background-color: #808080; /* 회색 배경색으로 수정 */
   color: white;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 15px; /* 패딩을 늘림 */
+  border-radius: 8px; /* 더 둥근 모양으로 */
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
+  white-space: nowrap; /* 텍스트가 길어져도 줄 바꿈을 하지 않도록 설정 */
+  text-decoration: none; /* 링크의 밑줄 제거 */
 }
 
 .category:hover {

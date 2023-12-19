@@ -46,7 +46,7 @@ const Login = () => {
 
     function success_admin() {
       login();
-      navigate('/managermain');
+      navigate('/general-manager');
     }
 
     function fail() {
@@ -68,7 +68,6 @@ const Login = () => {
 
           if (response.data.role === 'ROLE_STORE') {
             //해당 유저의 음식점이 있으면 true, 없으면 false
-
             return success_store();
           }
           else if (response.data.role === 'ROLE_ADMIN') {

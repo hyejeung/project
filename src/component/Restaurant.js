@@ -3,8 +3,6 @@ import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 import { useParams } from 'react-router';
-import { useAuth } from '../AuthContext'; // AuthContext 불러오기
-
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,14 +52,19 @@ const Restaurant = () => {
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
 
-    axios.get(`/api/review/${}`, {
-      params: {
-        offset: offset,
-        limit: perPage,
+    axios.get(`/api/review/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
       },
     })
-      .then(response => setReviews(response.data))
-      .catch(error => console.error('Error fetching reviews:', error));
+      .then(response => {
+        setReviews(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching reviews:', error);
+        setReviews([]);
+      });
 
     axios.get(`/api/bookmark/${id}`, {
       headers: {
@@ -73,7 +76,7 @@ const Restaurant = () => {
         setIsLiked(response.data.status);
         setLikeCount(response.data.count);
       })
-  }, [offset, perPage, userId]);
+  }, []);
 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
@@ -121,8 +124,8 @@ const Restaurant = () => {
           'Content-Type': 'application/json',
         },
       })
-      .then (response => {console.log(response.data)})
-      .catch (error => console.error('Error bookmark add', error));
+        .then(response => { console.log(response.data) })
+        .catch(error => console.error('Error bookmark add', error));
     }
     else if (isLiked === true) {
       axios.delete(`/api/bookmark/${id}`, {
@@ -131,7 +134,7 @@ const Restaurant = () => {
           'Content-Type': 'application/json',
         },
       })
-      .catch (error => console.error('Error bookmark delete', error));
+        .catch(error => console.error('Error bookmark delete', error));
     }
   };
 
@@ -170,11 +173,37 @@ const Restaurant = () => {
           <ul>
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
-                <img src={`http://localhost:8080/${menu.picture}`} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
+                {menu.picture != "" ? (
+                  <img src={`http://localhost:8080/${menu.picture}`}
+                    alt={menu.itemName}
+                    style={{ width: '150px', height: '150px', marginRight: '10px' }}
+                  />
+                ) : (
+                  <img
+                    src={`http://localhost:8080/upload\\itemImg\\231215\\NoImage.avif`}
+                    alt="No Image"
+                    style={{ width: '150px', height: '150px', marginRight: '10px' }}
+                  />
+                )}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}
           </ul>
+
+          <Pagination
+            activePage={currentPage}
+            itemsCountPerPage={perPage}
+            totalItemsCount={totalData}
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+            prevPageText="<"
+            nextPageText=">"
+            firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+            lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+            itemClass="page-item"
+            linkClass="page-link"
+            innerClass="pagination"
+          />
         </div>
       )}
 
@@ -182,17 +211,19 @@ const Restaurant = () => {
         <div>
           <h3>가게 정보</h3>
           <p>별점: {restaurantInfo.rating}</p>
-          <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
+          <p>리뷰 수: {reviews.length}개</p>
           <p>최소 주문 금액: {restaurantInfo.minOrderPrice}원</p>
         </div>
       )}
-      {selectedTab === 'reviews' && (
+
+      {selectedTab === 'reviews' && Array.isArray(reviews) && (
         <div>
           <h3>리뷰</h3>
           {reviews.map((review) => (
             <div key={review.id}>
-              <p>{review.user}</p>
+              <p>{review.userName}</p>
               <p>{review.content}</p>
+              <p>주문 상품: {review.itemNames.join(', ')}</p>
               <p>별점: {review.rating}</p>
             </div>
           ))}
@@ -217,21 +248,6 @@ const Restaurant = () => {
           </div>
         </div>
       )}
-
-      <Pagination
-        activePage={currentPage}
-        itemsCountPerPage={perPage}
-        totalItemsCount={totalData}
-        pageRangeDisplayed={5}
-        onChange={handlePageChange}
-        prevPageText="<"
-        nextPageText=">"
-        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-        itemClass="page-item"
-        linkClass="page-link"
-        innerClass="pagination"
-      />
     </div>
   );
 };

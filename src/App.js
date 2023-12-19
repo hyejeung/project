@@ -73,7 +73,6 @@ const MainPage = ({ restaurants, searchQuery, handleSearchChange, handleLogin, h
       <Navigation handleSearchChange={handleSearchChange} isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
       <main>
         <div className="categories">
-          <Link to="/category/배달" className="category">배달</Link>
           <Link to="/category/한식" className="category">한식</Link>
           <Link to="/category/분식" className="category">분식</Link>
           <Link to="/category/일식" className="category">일식</Link>

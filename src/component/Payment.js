@@ -5,10 +5,8 @@ import DaumPostcode from 'react-daum-postcode';
 import axios from 'axios';
 import './Payment.css';
 
-const Payment = ({ location }) => {
-  console.log('location:', location);
+const Payment = ({ totalPrice }) => {
 
-  const totalPrice = location?.state?.totalPrice || 0;
   console.log('totalPrice:', totalPrice);
   
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);

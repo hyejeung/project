@@ -9,7 +9,6 @@ const generateRandomData = (length, max) => {
   return Array.from({ length }, () => Math.floor(Math.random() * max));
 };
 
-
 const generateWeeklyData = () => {
   // Assuming today is Sunday
   const today = new Date();
@@ -38,9 +37,8 @@ const generateYearlySalesData = (years, max) => {
   });
 };
 
-
 const Sales = () => {
-  const [salesType, setSalesType] = useState('yearly');
+  const [salesType, setSalesType] = useState('daily');
   const [yearlySales, setYearlySales] = useState(generateYearlySalesData(8, 5000)); // Assuming 8 years of data
 
   const [monthlySales, setMonthlySales] = useState(generateRandomData(12, 5000));
@@ -58,6 +56,22 @@ const Sales = () => {
   const chartRef = useRef(null);
 
   useEffect(() => {
+
+    //판매 정보 데이터를 가져오는 코드
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/menu-sales', {
+          // Add headers or parameters as needed
+        });
+
+        setMenuSales(response.data); // Assuming the server returns an array of menu sales data
+      } catch (error) {
+        console.error('Error fetching menu sales:', error);
+      }
+    };
+
+    fetchData();
+
     if (chartRef.current) {
       chartRef.current.destroy();
     }
