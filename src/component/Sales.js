@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
 import './Sales.css';
 
 const generateRandomData = (length, max) => {
@@ -145,7 +146,7 @@ const Sales = () => {
       </div>
       <div>
         <hr />
-        <p>선택한 날짜: {selectedDate.toLocaleDateString()}</p>
+        <p>선택한 날짜: {selectedDate.toISOString().split('T')[0]}</p>
         {/* 달력 컴포넌트 추가 */}
         <input type="date" value={selectedDate.toISOString().split('T')[0]} onChange={(e) => handleDateChange(new Date(e.target.value))} />
         <ul>

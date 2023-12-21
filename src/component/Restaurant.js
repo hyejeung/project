@@ -25,6 +25,8 @@ const Restaurant = () => {
   const { id } = useParams();
   const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
+  let totalPrice;
+
   useEffect(() => {
     axios.get(`/api/store/${id}`, {
       headers: {
@@ -143,6 +145,12 @@ const Restaurant = () => {
     setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
 
+  //리뷰 별점 평균 구하기
+  const calculateAverageRating = () => {
+    totalPrice = reviews.reduce((total, review) => total + review.rating, 0);
+    return totalPrice / reviews.length;
+  };
+
   return (
     <div className="Restaurant">
       <img src={`http://localhost:8080/${restaurantInfo.picture}`} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
@@ -210,9 +218,9 @@ const Restaurant = () => {
       {selectedTab === 'info' && (
         <div>
           <h3>가게 정보</h3>
-          <p>별점: {restaurantInfo.rating}</p>
+          <p>별점: {reviews.length === 0 ? 0 : calculateAverageRating()}</p>
           <p>리뷰 수: {reviews.length}개</p>
-          <p>최소 주문 금액: {restaurantInfo.minOrderPrice}원</p>
+          <p>주소: {restaurantInfo.address + " " + restaurantInfo.detail}</p>
         </div>
       )}
 

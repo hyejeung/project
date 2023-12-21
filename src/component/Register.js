@@ -61,6 +61,25 @@ const Register = () => {
         />
       </div>
       <div>
+        <label htmlFor="restaurantCategory">음식 카테고리:</label>
+        {/* Step 2: Create a <select> element for category selection */}
+        <select
+          id="restaurantCategory"
+          value={newStoreInfo.category}
+          onChange={(e) => setNewStoreInfo({ ...newStoreInfo, category: e.target.value})}
+        >
+          <option value="">카테고리 선택</option>
+          <option value="korean">한식</option>
+          <option value="italian">일식</option>
+          <option value="italian">중식</option>
+          <option value="italian">치킨</option>
+          <option value="italian">피자</option>
+          <option value="italian">분식</option>
+          <option value="italian">버거</option>
+          {/* Add more categories as needed */}
+        </select>
+      </div>
+      <div>
         <label htmlFor="restaurantLocation">가게 위치:</label>
         <input
           type="text"

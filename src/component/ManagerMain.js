@@ -54,34 +54,39 @@ const ManagerMain = () => {
   }, []);
 
   useEffect(() => {
-    fetchOrders(); // 초기 주문 목록 가져오기
+    const storeId = localStorage.getItem('store_id');
+    if (storeId !== '0') {
+      fetchOrders(); // 초기 주문 목록 가져오기
+    }
   }, [fetchOrders]);
 
   // 주문 목록이 업데이트되면 로그에 출력
   useEffect(() => {
-    // SSE 이벤트 수신
-    const sse = new EventSource(`/api/connect`);
+    const storeId = localStorage.getItem('store_id');
+    if (storeId !== '0') {
+      // SSE 이벤트 수신
+      const sse = new EventSource(`/api/connect`);
 
-    sse.addEventListener('connect', async (event) => {
-      const { data: receiveConnectData } = event;
-      console.log('connect event data: ', receiveConnectData);
-    });
+      sse.addEventListener('connect', async (event) => {
+        const { data: receiveConnectData } = event;
+        console.log('connect event data: ', receiveConnectData);
+      });
 
-    const handleSseEvent = (eventName, setFunction) => (e) => {
-      const orderData = JSON.parse(e.data);
-      console.log(`${eventName} event data: `, orderData);
-      setFunction((prevOrders) => [...prevOrders, orderData]);
-    };
+      const handleSseEvent = (eventName, setFunction) => (e) => {
+        const orderData = JSON.parse(e.data);
+        console.log(`${eventName} event data: `, orderData);
+        setFunction((prevOrders) => [...prevOrders, orderData]);
+      };
 
-    sse.addEventListener('newOrder', handleSseEvent('newOrder', setOrders));
-    sse.addEventListener('processingOrder', handleSseEvent('processingOrder', setProcessingOrders));
-    sse.addEventListener('cancelOrder', handleSseEvent('cancelOrder', setCancelOrders));
-    sse.addEventListener('compOrder', handleSseEvent('compOrder', setCompOrders));
+      sse.addEventListener('newOrder', handleSseEvent('newOrder', setOrders));
+      sse.addEventListener('processingOrder', handleSseEvent('processingOrder', setProcessingOrders));
+      sse.addEventListener('cancelOrder', handleSseEvent('cancelOrder', setCancelOrders));
+      sse.addEventListener('compOrder', handleSseEvent('compOrder', setCompOrders));
 
-    return () => {
-      sse.close(); // SSE 연결 정리
-    };
-
+      return () => {
+        sse.close(); // SSE 연결 정리
+      };
+    }
   }, [setOrders, setProcessingOrders]);
 
   const processOrder = async (orderId, status) => {
@@ -93,7 +98,6 @@ const ManagerMain = () => {
           'Content-Type': 'application/json',
         },
       });
-      // fetchOrders(); // 주문 처리 후 목록 다시 불러오기
 
       // 주문 처리 후 해당 주문을 목록에서 제거
       if (status === 'READY') {
@@ -123,34 +127,40 @@ const ManagerMain = () => {
 
   return (
     <div className="managermain-container">
-      <h1>주문 관리 페이지</h1>
+      {localStorage.getItem('store_id') === '0' ? (
+        <p>가맹점 가입 후 이용할 수 있습니다.</p>
+      ) : (
+        <>
+          <h1>주문 관리 페이지</h1>
 
-      <div className="order-buttons">
-        <button onClick={() => setSelectedTab('processing')}>접수대기</button>
-        <button onClick={() => setSelectedTab('inProgress')}>처리중</button>
-        <button onClick={() => setSelectedTab('cancelled')}>주문취소</button>
-        <button onClick={() => setSelectedTab('delivered')}>배달완료</button>
-      </div>
+          <div className="order-buttons">
+            <button onClick={() => setSelectedTab('processing')}>접수대기</button>
+            <button onClick={() => setSelectedTab('inProgress')}>처리중</button>
+            <button onClick={() => setSelectedTab('cancelled')}>주문취소</button>
+            <button onClick={() => setSelectedTab('delivered')}>배달완료</button>
+          </div>
 
-      {selectedTab === 'processing' && (<ProcessingOrders orders={orders} processOrder={processOrder} />)}
-      {selectedTab === 'inProgress' && <InProgressOrders orders={processingOrders} processOrder={processOrder} />}
-      {selectedTab === 'cancelled' && <CancelledOrders orders={cancelOrders} />}
-      {selectedTab === 'delivered' && <DeliveredOrders orders={compOrders} />}
+          {selectedTab === 'processing' && (<ProcessingOrders orders={orders} processOrder={processOrder} />)}
+          {selectedTab === 'inProgress' && <InProgressOrders orders={processingOrders} processOrder={processOrder} />}
+          {selectedTab === 'cancelled' && <CancelledOrders orders={cancelOrders} />}
+          {selectedTab === 'delivered' && <DeliveredOrders orders={compOrders} />}
 
-      <Pagination
-        activePage={currentPage}
-        itemsCountPerPage={perPage}
-        totalItemsCount={totalData}
-        pageRangeDisplayed={5}
-        onChange={handlePageChange}
-        prevPageText="<"
-        nextPageText=">"
-        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-        itemClass="page-item"
-        linkClass="page-link"
-        innerClass="pagination"
-      />
+          <Pagination
+            activePage={currentPage}
+            itemsCountPerPage={perPage}
+            totalItemsCount={totalData}
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+            prevPageText="<"
+            nextPageText=">"
+            firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+            lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+            itemClass="page-item"
+            linkClass="page-link"
+            innerClass="pagination"
+          />
+        </>
+      )}
     </div>
   );
 };
