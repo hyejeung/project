@@ -18,7 +18,8 @@
 
 .header-menu a:hover,
 .header-menu a.active { /* 추가된 스타일: 클릭한 버튼의 색상 유지 */
-  background-color: rgba(255, 255, 255, 0.1);
+  /* background-color: rgba(255, 255, 255, 0.1); */
+  background-color: #3bc53b;
 }
 
 /* 추가된 스타일 */

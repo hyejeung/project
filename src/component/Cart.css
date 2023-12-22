@@ -1,6 +1,6 @@
 .cart-container {
   max-width: 1000px;
-  margin: 0 auto;
+  margin: 20px auto 0; /* 여기서 상단 여백을 추가합니다. */
   padding: 20px;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -24,20 +24,45 @@
 .item-info {
   flex: 1;
   display: flex;
+  align-items: center;
   justify-content: space-between;
 }
 
+.item-info img {
+  margin-right: 10px; /* 이미지와 이름 사이 간격 조정 */
+}
+
+.item-actions {
+  display: flex;
+  gap: 10px;
+}
+
 .menu-name {
-  font-size: 18px;
   font-weight: bold;
   color: #333;
   margin-bottom: 5px;
 }
 
+.quantity {
+  display: flex;
+  align-items: center;
+}
+
+.quantity button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin: 0 4px;
+  cursor: pointer;
+}
+
+.menu-name,
 .quantity,
 .price {
-  font-size: 16px;
+  font-size: 20px;
   color: #555;
+  margin-right: 10px;
 }
 
 .item-actions {

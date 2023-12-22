@@ -18,7 +18,7 @@
 }
 
 .RestaurantCard:hover {
-  transform: scale(1.02); /* 수정: 크기를 더 작게 조정 */
+  transform: scale(1.02);
 }
 
 .RestaurantCard h3 {

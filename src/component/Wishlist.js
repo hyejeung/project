@@ -4,6 +4,7 @@ import './Wishlist.css';
 import axios from 'axios';
 
 const Wishlist = () => {
+
   const [wishlistStores, setWishlistStores] = useState([]);
 
   useEffect(() => {

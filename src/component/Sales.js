@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';
+import axios from 'axios';
 import './Sales.css';
 
 const generateRandomData = (length, max) => {
   return Array.from({ length }, () => Math.floor(Math.random() * max));
 };
-
 
 const generateWeeklyData = () => {
   // Assuming today is Sunday
@@ -38,9 +38,8 @@ const generateYearlySalesData = (years, max) => {
   });
 };
 
-
 const Sales = () => {
-  const [salesType, setSalesType] = useState('yearly');
+  const [salesType, setSalesType] = useState('daily');
   const [yearlySales, setYearlySales] = useState(generateYearlySalesData(8, 5000)); // Assuming 8 years of data
 
   const [monthlySales, setMonthlySales] = useState(generateRandomData(12, 5000));
@@ -58,6 +57,22 @@ const Sales = () => {
   const chartRef = useRef(null);
 
   useEffect(() => {
+
+    //판매 정보 데이터를 가져오는 코드
+    const fetchData = async () => {
+      try {
+        const response = await axios.get('/api/menu-sales', {
+          // Add headers or parameters as needed
+        });
+
+        setMenuSales(response.data); // Assuming the server returns an array of menu sales data
+      } catch (error) {
+        console.error('Error fetching menu sales:', error);
+      }
+    };
+
+    fetchData();
+
     if (chartRef.current) {
       chartRef.current.destroy();
     }
@@ -131,7 +146,7 @@ const Sales = () => {
       </div>
       <div>
         <hr />
-        <p>선택한 날짜: {selectedDate.toLocaleDateString()}</p>
+        <p>선택한 날짜: {selectedDate.toISOString().split('T')[0]}</p>
         {/* 달력 컴포넌트 추가 */}
         <input type="date" value={selectedDate.toISOString().split('T')[0]} onChange={(e) => handleDateChange(new Date(e.target.value))} />
         <ul>

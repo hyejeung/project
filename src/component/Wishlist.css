@@ -1,81 +1,59 @@
+/* Wishlist.css */
+
 .wishlist-container {
   max-width: 1000px;
-  margin: 0 auto;
+  margin: 20px auto 0; /* 여기서 상단 여백을 추가합니다. */
   padding: 20px;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  border: 1px solid #ccc;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 }
 
-.wishlist-container h2 {
-  color: #4caf50;
+h2 {
+  color: #333;
   font-size: 24px;
   margin-bottom: 20px;
 }
 
-.wishlist-container p {
-  font-size: 18px;
-  color: #555;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.wishlist-container ul {
-  list-style-type: none;
+ul {
+  list-style: none;
   padding: 0;
 }
 
-.wishlist-container li {
-  position: relative;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 40px;
-  background-color: #f8f8f8;
-  padding: 40px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease-in-out;
-  cursor: pointer;
-}
-
-.wishlist-container li:hover {
-  background-color: #c1e7c3;
+li {
+  margin-bottom: 20px;
 }
 
 .restaurant-info {
-  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
 }
 
 .restaurant-name {
-  font-size: 20px;
-  font-weight: bold;
   color: #333;
-  margin-bottom: 20px;
+  font-size: 18px;
   text-decoration: none;
 }
+
 
 .order-link {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  color: #fff;
+  background-color: #59addf;
+  padding: 10px 15px;
+  border-radius: 5px;
   text-decoration: none;
-  color: #333;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.wishlist-container li:hover .restaurant-name {
-  display: none;
-}
-
-.wishlist-container li:hover .order-link {
-  display: inline;
+  transition: background-color 0.3s;
+  font-weight: bold; /* 텍스트 굵게 */
+  display: inline-block;
 }
 
 .order-link:hover {
-  text-decoration: underline;
+  background-color: #59addf;
+  transform: scale(1.05); /* 호버 시 약간 확대되도록 */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
 }

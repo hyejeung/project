@@ -1,4 +1,4 @@
-/* mypage.css (전체) */
+/* mypage.css */
 
 .my-page-container {
   max-width: 800px;
@@ -128,10 +128,15 @@
   margin-bottom: 20px;
   text-align: left;
 }
+.mypage-modal button.update-button,
+.mypage-modal button.close-button {
+  margin-right: 8px; /* 수정된 부분: 수정완료와 닫기 버튼 간격을 조절하기 위해 margin 추가 */
+}
+
 
 .mypage-modal button {
-  padding: 10px 18px;
-  margin: 8px 10px; 
+  padding: 8px 12px; /* 수정된 부분: 작은 패딩으로 버튼 크기 줄임 */
+  margin: 8px; /* 수정된 부분: 간격을 주기 위해 margin 추가 */
   background: #4caf50;
   color: #fff;
   border: none;

@@ -3,8 +3,6 @@ import axios from 'axios';
 import Pagination from 'react-js-pagination';
 import './Restaurant.css';
 import { useParams } from 'react-router';
-import { useAuth } from '../AuthContext'; // AuthContext 불러오기
-
 
 const Restaurant = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,21 +18,17 @@ const Restaurant = () => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const [restaurantInfo, setRestaurantInfo] = useState({
-    name: '',
-    image: '',
-    rating: 0,
-    reviewCount: 0,
-    minOrderAmount: 0,
-  });
+  const [restaurantInfo, setRestaurantInfo] = useState({});
   const [reviews, setReviews] = useState([]);
   const [menuList, setMenuList] = useState([]);
 
   const { id } = useParams();
   const userId = localStorage.getItem('user_id'); // 사용자 ID 불러오기
 
+  let totalPrice;
+
   useEffect(() => {
-    axios.get(`/api/stores/${id}`, {
+    axios.get(`/api/store/${id}`, {
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
         'Content-Type': 'application/json',
@@ -47,7 +41,7 @@ const Restaurant = () => {
       params: {
         offset: offset,
         limit: perPage,
-        size: 5
+        size: 20
       },
       headers: {
         Authorization: 'Bearer ' + localStorage.getItem('access_token'),
@@ -60,14 +54,19 @@ const Restaurant = () => {
       })
       .catch(error => console.error('Error fetching restaurant info:', error));
 
-    // axios.get('/api/reviews', {
-    //   params: {
-    //     offset: offset,
-    //     limit: perPage,
-    //   },
-    // })
-    //   .then(response => setReviews(response.data))
-    //   .catch(error => console.error('Error fetching reviews:', error));
+    axios.get(`/api/review/${id}`, {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        setReviews(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching reviews:', error);
+        setReviews([]);
+      });
 
     axios.get(`/api/bookmark/${id}`, {
       headers: {
@@ -79,7 +78,7 @@ const Restaurant = () => {
         setIsLiked(response.data.status);
         setLikeCount(response.data.count);
       })
-  }, [offset, perPage, userId]);
+  }, []);
 
   const handleMenuButtonClick = (menu) => {
     setModalOpen(true);
@@ -118,6 +117,7 @@ const Restaurant = () => {
     setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
 
     console.log('isLiked:', isLiked);
+    console.log('store_id', id);
 
     if (isLiked === false) {
       axios.post(`/api/bookmark/${id}`, null, {
@@ -126,8 +126,8 @@ const Restaurant = () => {
           'Content-Type': 'application/json',
         },
       })
-      .then (response => {console.log(response.data)})
-      .catch (error => console.error('Error bookmark add', error));
+        .then(response => { console.log(response.data) })
+        .catch(error => console.error('Error bookmark add', error));
     }
     else if (isLiked === true) {
       axios.delete(`/api/bookmark/${id}`, {
@@ -136,7 +136,7 @@ const Restaurant = () => {
           'Content-Type': 'application/json',
         },
       })
-      .catch (error => console.error('Error bookmark delete', error));
+        .catch(error => console.error('Error bookmark delete', error));
     }
   };
 
@@ -145,9 +145,15 @@ const Restaurant = () => {
     setOffset((pageNumber - 1) * perPage); // 수정: perPage를 곱해서 오프셋 설정
   };
 
+  //리뷰 별점 평균 구하기
+  const calculateAverageRating = () => {
+    totalPrice = reviews.reduce((total, review) => total + review.rating, 0);
+    return totalPrice / reviews.length;
+  };
+
   return (
     <div className="Restaurant">
-      <img src={restaurantInfo.image} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
+      <img src={`http://localhost:8080/${restaurantInfo.picture}`} alt="가게 이미지" style={{ width: '800px', height: '300px' }} />
       <h2>{restaurantInfo.name}</h2>
       <div>
         <button onClick={handleLike}>
@@ -157,21 +163,17 @@ const Restaurant = () => {
       </div>
       <div>
         <h3>최소 주문 금액</h3>
-        <p>{restaurantInfo.minOrderAmount}원</p>
+        <p>{restaurantInfo.minOrderPrice}원</p>
       </div>
       <div>
         <h3>예상 배달 시간</h3>
         <p>30분</p>
       </div>
-      <div>
-        <h3>배달 팁</h3>
-        <p>3000원</p>
+      <div className='menu-buttons'>
+        <button onClick={() => setSelectedTab('menu')}>메뉴</button>
+        <button onClick={() => setSelectedTab('info')}>정보</button>
+        <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
       </div>
-      <div className="tab-buttons">
-    <button onClick={() => setSelectedTab('menu')}>메뉴</button>
-    <button onClick={() => setSelectedTab('info')}>정보</button>
-    <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
-  </div>
 
       {selectedTab === 'menu' && (
         <div>
@@ -179,43 +181,57 @@ const Restaurant = () => {
           <ul>
             {menuList.map((menu) => (
               <li key={menu.itemId} onClick={() => handleMenuButtonClick(menu)}>
-                {/* <img src={menu.image} alt={menu.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} /> */}
+                {menu.picture != "" ? (
+                  <img src={`http://localhost:8080/${menu.picture}`}
+                    alt={menu.itemName}
+                    style={{ width: '150px', height: '150px', marginRight: '10px' }}
+                  />
+                ) : (
+                  <img
+                    src={`http://localhost:8080/upload\\itemImg\\231215\\NoImage.avif`}
+                    alt="No Image"
+                    style={{ width: '150px', height: '150px', marginRight: '10px' }}
+                  />
+                )}
                 {menu.itemName} - {menu.price}원
               </li>
             ))}
           </ul>
+
           <Pagination
-        activePage={currentPage}
-        itemsCountPerPage={perPage}
-        totalItemsCount={totalData}
-        pageRangeDisplayed={5}
-        onChange={handlePageChange}
-        prevPageText="<"
-        nextPageText=">"
-        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-        itemClass="page-item"
-        linkClass="page-link"
-        innerClass="pagination"
-      />
+            activePage={currentPage}
+            itemsCountPerPage={perPage}
+            totalItemsCount={totalData}
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+            prevPageText="<"
+            nextPageText=">"
+            firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+            lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+            itemClass="page-item"
+            linkClass="page-link"
+            innerClass="pagination"
+          />
         </div>
       )}
 
       {selectedTab === 'info' && (
         <div>
           <h3>가게 정보</h3>
-          <p>별점: {restaurantInfo.rating}</p>
-          <p>리뷰 수: {restaurantInfo.reviewCount}개</p>
-          <p>최소 주문 금액: {restaurantInfo.minOrderAmount}원</p>
+          <p>별점: {reviews.length === 0 ? 0 : calculateAverageRating()}</p>
+          <p>리뷰 수: {reviews.length}개</p>
+          <p>주소: {restaurantInfo.address + " " + restaurantInfo.detail}</p>
         </div>
       )}
-      {selectedTab === 'reviews' && (
+
+      {selectedTab === 'reviews' && Array.isArray(reviews) && (
         <div>
           <h3>리뷰</h3>
           {reviews.map((review) => (
             <div key={review.id}>
-              <p>{review.user}</p>
+              <p>{review.userName}</p>
               <p>{review.content}</p>
+              <p>주문 상품: {review.itemNames.join(', ')}</p>
               <p>별점: {review.rating}</p>
             </div>
           ))}
@@ -254,21 +270,6 @@ const Restaurant = () => {
           </div>
         </div>
       )}
-
-      {/* <Pagination
-        activePage={currentPage}
-        itemsCountPerPage={perPage}
-        totalItemsCount={totalData}
-        pageRangeDisplayed={5}
-        onChange={handlePageChange}
-        prevPageText="<"
-        nextPageText=">"
-        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
-        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
-        itemClass="page-item"
-        linkClass="page-link"
-        innerClass="pagination"
-      /> */}
     </div>
   );
 };

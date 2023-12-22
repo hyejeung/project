@@ -1,36 +1,33 @@
-// cart.js
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Cart.css';
 import axios from 'axios';
 
-const Cart = ( setTotalPayment) => {
+const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-
-  //const [totalPayment, setTotalPayment] = useState(0);
   const userId = localStorage.getItem('user_id');
-  console.log('userId:', userId);
+  const navigate = useNavigate();
+
+  let totalPrice;
 
   useEffect(() => {
-    console.log(localStorage.getItem(userId));
-
-    // 장바구니 정보로 서버에서 필요한 정보들 가져오기
-    axios
-      .post('/api/cart', localStorage.getItem(userId), {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
+    //장바구니 정보로 서버에서 필요한 정보들 가져오기
+    axios.post('/api/cart', localStorage.getItem(userId), {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
         setCartItems(response.data);
+        console.log(response.data);
       })
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+      .catch(error => console.log(error));
   }, []);
 
   const calculateTotalPrice = () => {
-    return cartItems.reduce((total, item) => total + item.price * item.amount, 0);
+    totalPrice = cartItems.reduce((total, item) => total + item.price * item.amount, 0);
+    return totalPrice;
   };
 
   const removeItem = (index) => {
@@ -44,57 +41,57 @@ const Cart = ( setTotalPayment) => {
 
   const updateQuantity = (index, itemId, newQuantity) => {
     const updatedCartItems = [...cartItems];
-    updatedCartItems[index].count = newQuantity;
+    updatedCartItems[index].amount = newQuantity;
     setCartItems(updatedCartItems);
 
     // 현재 로컬 스토리지의 장바구니 데이터를 불러옴
     const existingCartData = JSON.parse(localStorage.getItem(userId)) || [];
-
-    // 새로 추가할 아이템
-    const newItem = {
-      itemId: itemId,
-      amount: newQuantity,
-    };
-
-    existingCartData[index].amount = newItem.amount;
+    existingCartData[index].amount = newQuantity;
 
     // 새로운 장바구니 데이터를 로컬 스토리지에 저장
     localStorage.setItem(userId, JSON.stringify(existingCartData));
   };
 
-  const navigate = useNavigate();
-
-  const handleCheckout = () => {
-    const totalPayment = calculateTotalPrice();
-    setTotalPayment(totalPayment); // 부모 컴포넌트로 직접 totalPayment를 전달
-    navigate('/payment', { state: { totalPayment } });
+  const handleIncreaseQuantity = (index) => {
+    updateQuantity(index, cartItems[index].id, cartItems[index].amount + 1);
   };
-  
+
+  const handleDecreaseQuantity = (index) => {
+    if (cartItems[index].amount > 1) {
+      updateQuantity(index, cartItems[index].id, cartItems[index].amount - 1);
+    }
+  };
+
+  const handleRestaurantClick = (restaurantId) => {
+    navigate(`/restaurant/${restaurantId}`);
+  };
+
   return (
     <div className="cart-container">
       <h2>장바구니</h2>
       {cartItems.map((item, index) => (
         <div className="cart-item" key={index}>
           <div className="item-info">
+            <img src={`http://localhost:8080/${item.picture}`} alt={item.itemName} style={{ width: '150px', height: '150px', marginRight: '10px' }} />
             <span className="menu-name">{item.name}</span>
-            <span className="quantity">수량: {item.amount}</span>
+            <span className="quantity">
+              <button onClick={() => handleDecreaseQuantity(index)}>-</button>
+              {item.amount}
+              <button onClick={() => handleIncreaseQuantity(index)}>+</button>
+            </span>
             <span className="price">가격: {item.price}원</span>
           </div>
           <div className="item-actions">
-            <input
-              type="number"
-              min="1"
-              value={item.amount}
-              onChange={(e) => updateQuantity(index, item.item_id, parseInt(e.target.value, 10))}
-            />
             <button onClick={() => removeItem(index)}>삭제</button>
           </div>
         </div>
       ))}
+      {/* <button onClick={() => handleRestaurantClick(cartItems[0].restaurantId)}>더 담으러 가기</button> */}
       <div className="total-price">
         <span>총 주문 금액: {calculateTotalPrice()}원</span>
       </div>
-      <Link to="/payment" className="order-button" onClick={handleCheckout}>
+
+      <Link to={{ pathname: "/payment", state: { totalPrice: totalPrice } }} className="order-button">
         주문하러 가기
       </Link>
     </div>

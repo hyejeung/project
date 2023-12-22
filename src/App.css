@@ -65,6 +65,10 @@ header {
   overflow-x: auto; /* 가로 스크롤을 허용하도록 설정 */
   padding: 10px; /* 좌우 여백 추가 */
   gap: 20px; /* 간격을 더 늘림 */
+  display: flex;
+  overflow-x: auto; /* 가로 스크롤을 허용하도록 설정 */
+  padding: 10px; /* 좌우 여백 추가 */
+  gap: 20px; /* 간격을 더 늘림 */
   background-color: #f2f2f2;
 }
 
@@ -78,9 +82,12 @@ header {
   transition: background-color 0.3s ease-in-out;
   white-space: nowrap; /* 텍스트가 길어져도 줄 바꿈을 하지 않도록 설정 */
   text-decoration: none; /* 링크의 밑줄 제거 */
+  white-space: nowrap; /* 텍스트가 길어져도 줄 바꿈을 하지 않도록 설정 */
+  text-decoration: none; /* 링크의 밑줄 제거 */
 }
 
-.category:hover {
+.category:hover,
+.category.active {
   background-color: #4caf50; /* 호버 시 어두운 초록색으로 수정 */
 }
 .restaurants {
