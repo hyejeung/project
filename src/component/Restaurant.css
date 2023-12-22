@@ -29,6 +29,7 @@ body {
 
 /* 섹션 간 구분선 */
 .Restaurant div > div {
+ 
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 20px;
   margin-bottom: 20px;
@@ -52,14 +53,11 @@ body {
 /* 메뉴 클릭 시 호버 효과 */
 .Restaurant li:hover {
   background-color: #4CAF50;
-  color: #fff;
+  /* color: #fff; */
 }
 
-/* restaurant.css */
 
-.Restaurant {
-  /* 추가 스타일링 필요한 경우 여기에 작성 */
-}
+
 
 .restaurant-modal-overlay {
   position: fixed;
@@ -143,6 +141,7 @@ body {
   background-color: transparent;
   color: #333;
   border: 1px solid #333;
+
 }
 
 /* 메뉴 정보 리뷰 버튼 스타일 수정 */
@@ -152,8 +151,14 @@ body {
   border: 1px solid #4CAF50;
 }
 
+/* 메뉴 정보 리뷰 버튼 간격 조정 */
+.Restaurant .tab-buttons button {
+  margin-right: 10px; /* 필요에 따라 조절하세요. */
+}
 
-.pagination {
+
+
+ .pagination {
   display: flex;
   justify-content: center;
   margin-top: 20px;
@@ -185,5 +190,5 @@ body {
 .pagination .active {
   background-color: #4CAF50;
   color: #fff;
-}
+} 
 

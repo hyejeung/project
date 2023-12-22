@@ -1,4 +1,4 @@
-/* mypage.css */
+/* mypage.css (전체) */
 
 .my-page-container {
   max-width: 800px;
@@ -45,6 +45,39 @@
 
 .my-page-container button:hover {
   background: #45a049;
+}
+
+.my-page-container table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.my-page-container th, .my-page-container td {
+  border: 1px solid #ddd;
+  padding: 15px;
+  text-align: left;
+}
+
+.my-page-container th {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.my-page-container td:nth-child(1),
+.my-page-container th:nth-child(1) {
+  width: 30%;
+  background-color: #d1ffd1;
+}
+
+.my-page-container td:nth-child(2),
+.my-page-container th:nth-child(2) {
+  width: 70%;
+}
+
+.my-page-container td:first-child,
+.my-page-container th:first-child {
+  border-right: 1px solid #ddd;
 }
 
 .my-page-container ul {
@@ -117,30 +150,43 @@
 .mypage-modal button.update-review,
 .mypage-modal button.delete-review {
   display: inline-block;
-  margin-right: 10px; /* 버튼 사이의 간격을 조절합니다. */
-  margin-bottom: 10px; /* 버튼과 하단의 간격을 조절합니다. */
-  padding: 8px 14px; /* 버튼의 크기를 조절합니다. */
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 8px 14px;
 }
 
 .mypage-modal button.update-review.burger-king {
   margin-right: 4%;
 }
+
 .my-page-container .tab-navigation button {
-  margin-right: 10px; /* 버튼 사이의 간격을 조절합니다. */
-  margin-right: 10px;
+  /* 주문 내역과 회원 정보 버튼의 디자인을 변경 */
   margin-bottom: 10px;
   padding: 8px 14px;
-  background: #0ed80e; /* 버튼 배경색 수정 */
-  color: #fff; /* 버튼 텍스트 색상 수정 */
+  background: none; /* 배경색 제거 */
+  color: #4caf50; /* 글씨 색상 변경 */
   border: none;
-  border-radius: 4px;
+  border-bottom: 2px solid transparent; /* 기본 구분선을 투명하게 설정 */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: border-bottom 0.3s ease, color 0.3s ease; /* 구분선 및 글씨 색상 변경 애니메이션 추가 */
   font-size: 18px;
   font-weight: bold;
   text-align: center;
 }
 
 .my-page-container .tab-navigation button:hover {
-  background: #09ce3a; /* 버튼 호버 시 배경색 수정 */
+  /* 호버 시 구분선 색상 변경 및 글씨 색상 연한색으로 변경 */
+  border-bottom: 2px solid #a1f8a3;
+  color: #85e184; /* 연한색으로 변경 */
+}
+
+/* 주문 내역과 회원 정보 버튼 사이의 구분선 */
+.my-page-container .tab-navigation button + button {
+  margin-left: 10px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }

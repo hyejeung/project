@@ -249,17 +249,43 @@ const MyPage = () => {
 
       {activeTab === 'userInfo' && (
         <>
-          <h3>회원 정보</h3>
-          <p>사용자 이름: {userInfo.name}</p>
-          <p>Email: {userInfo.email}</p>
-          <p>전화번호: {userInfo.phone}</p>
-          {/* <p>비밀번호: {userInfo.password}</p> */}
-          <p>성별: {userInfo.gender}</p>
-          <p>적립금: {userInfo.points} 포인트</p>
-          <p>등급: {userInfo.grade}</p>
-          <p>주소: {userInfo.address}</p>
-          <button onClick={openModal}>회원정보 수정</button>
-          <button onClick={handleWithdrawal}>회원탈퇴</button>
+         <h3>회원 정보</h3>
+          <table>
+            <tbody>
+              <tr>
+                <td>사용자 이름:</td>
+                <td>{userInfo.name}</td>
+              </tr>
+              <tr>
+                <td>Email:</td>
+                <td>{userInfo.email}</td>
+              </tr>
+              <tr>
+                <td>전화번호:</td>
+                <td>{userInfo.phone}</td>
+              </tr>
+              <tr>
+                <td>성별:</td>
+                <td>{userInfo.gender}</td>
+              </tr>
+              <tr>
+                <td>적립금:</td>
+                <td>{userInfo.points} 포인트</td>
+              </tr>
+              <tr>
+                <td>등급:</td>
+                <td>{userInfo.grade}</td>
+              </tr>
+              <tr>
+                <td>주소:</td>
+                <td>{userInfo.address}</td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="button-container">
+      <button onClick={openModal}>회원정보 수정</button>
+      <button onClick={handleWithdrawal}>회원탈퇴</button>
+    </div>
         </>
       )}
       

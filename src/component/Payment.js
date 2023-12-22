@@ -133,9 +133,9 @@ const Payment = ({  }) => {
         </div>
       </div>
       {/* 결제 버튼 */}
-      <button className="pay-button" onClick={handlePayment}>
+      {/* <button className="pay-button" onClick={handlePayment}>
         결제하러 가기
-      </button>
+      </button> */}
     </div>
   );
 };

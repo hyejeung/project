@@ -1,4 +1,3 @@
-User
 /* StoreInfoEdit.css */
 
 /* 스토어 정보 수정 컴포넌트 스타일 */
@@ -7,7 +6,7 @@ User
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin: 20px auto;
-  max-width: 60%;
+  width: 80%; /* 전체 가로폭을 설정 */
 }
 
 .storeinfoedit-container h1 {
@@ -27,6 +26,15 @@ User
   color: rgb(10, 171, 10);
   text-align: left;
   max-width: 100%;
+}
+
+.tab-navigation {
+  margin-top: 20px; /* 가게 정보와 메뉴 관리 버튼 간격 조절 */
+  text-align: left; /* 왼쪽 정렬 추가 */
+}
+
+.tab-navigation button {
+  margin-right: 20px; /* 버튼 간격을 조절할 수 있는 마진 추가 */
 }
 
 /* 주문 목록 스타일 */
@@ -74,7 +82,7 @@ User
 /* 메뉴 추가 버튼 스타일 */
 .add-menu-link {
   margin-top: 20px;
-  text-align: center;
+  text-align: left; /* 왼쪽 정렬 추가 */
 }
 
 .add-menu-link button {

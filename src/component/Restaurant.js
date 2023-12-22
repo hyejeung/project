@@ -167,11 +167,11 @@ const Restaurant = () => {
         <h3>배달 팁</h3>
         <p>3000원</p>
       </div>
-      <div>
-        <button onClick={() => setSelectedTab('menu')}>메뉴</button>
-        <button onClick={() => setSelectedTab('info')}>정보</button>
-        <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
-      </div>
+      <div className="tab-buttons">
+    <button onClick={() => setSelectedTab('menu')}>메뉴</button>
+    <button onClick={() => setSelectedTab('info')}>정보</button>
+    <button onClick={() => setSelectedTab('reviews')}>리뷰</button>
+  </div>
 
       {selectedTab === 'menu' && (
         <div>
@@ -184,6 +184,20 @@ const Restaurant = () => {
               </li>
             ))}
           </ul>
+          <Pagination
+        activePage={currentPage}
+        itemsCountPerPage={perPage}
+        totalItemsCount={totalData}
+        pageRangeDisplayed={5}
+        onChange={handlePageChange}
+        prevPageText="<"
+        nextPageText=">"
+        firstPageText="<<"  // 수정: 첫 페이지로 이동하는 버튼
+        lastPageText=">>"   // 수정: 마지막 페이지로 이동하는 버튼
+        itemClass="page-item"
+        linkClass="page-link"
+        innerClass="pagination"
+      />
         </div>
       )}
 
@@ -205,6 +219,20 @@ const Restaurant = () => {
               <p>별점: {review.rating}</p>
             </div>
           ))}
+           <Pagination
+            activePage={currentPage}
+            itemsCountPerPage={perPage}
+            totalItemsCount={totalData} // 리뷰 데이터의 총 개수로 설정
+            pageRangeDisplayed={5}
+            onChange={handlePageChange}
+            prevPageText="<"
+            nextPageText=">"
+            firstPageText="<<"
+            lastPageText=">>"
+            itemClass="page-item"
+            linkClass="page-link"
+            innerClass="pagination"
+          />
         </div>
       )}
 
@@ -227,7 +255,7 @@ const Restaurant = () => {
         </div>
       )}
 
-      <Pagination
+      {/* <Pagination
         activePage={currentPage}
         itemsCountPerPage={perPage}
         totalItemsCount={totalData}
@@ -240,7 +268,7 @@ const Restaurant = () => {
         itemClass="page-item"
         linkClass="page-link"
         innerClass="pagination"
-      />
+      /> */}
     </div>
   );
 };
