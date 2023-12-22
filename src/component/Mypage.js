@@ -7,6 +7,7 @@ import Pagination from 'react-js-pagination';
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({});
   const [activeTab, setActiveTab] = useState('orderHistory');
+  const [hoveredTab, setHoveredTab] = useState(null);
   const [orderHistory, setOrderHistory] = useState([
     {
       order_id: 1,
@@ -194,11 +195,26 @@ const MyPage = () => {
 
   return (
     <div className="my-page-container">
-      <h2>마이페이지</h2>
+       <h2>마이페이지</h2>
       <div className="tab-navigation">
-        <button onClick={() => setActiveTab('orderHistory')}>주문 내역</button>
-        <button onClick={() => setActiveTab('userInfo')}>회원 정보</button>
+        <button
+          onClick={() => setActiveTab('orderHistory')}
+          onMouseEnter={() => setHoveredTab('orderHistory')}
+          onMouseLeave={() => setHoveredTab(null)}
+          className={activeTab === 'orderHistory' || hoveredTab === 'orderHistory' ? 'active' : ''}
+        >
+          주문 내역
+        </button>
+        <button
+          onClick={() => setActiveTab('userInfo')}
+          onMouseEnter={() => setHoveredTab('userInfo')}
+          onMouseLeave={() => setHoveredTab(null)}
+          className={activeTab === 'userInfo' || hoveredTab === 'userInfo' ? 'active' : ''}
+        >
+          회원 정보
+        </button>
       </div>
+
 
       {activeTab === 'orderHistory' && (
   <>
@@ -253,31 +269,31 @@ const MyPage = () => {
           <table>
             <tbody>
               <tr>
-                <td>사용자 이름:</td>
+                <td>사용자 이름</td>
                 <td>{userInfo.name}</td>
               </tr>
               <tr>
-                <td>Email:</td>
+                <td>Email</td>
                 <td>{userInfo.email}</td>
               </tr>
               <tr>
-                <td>전화번호:</td>
+                <td>전화번호</td>
                 <td>{userInfo.phone}</td>
               </tr>
               <tr>
-                <td>성별:</td>
+                <td>성별</td>
                 <td>{userInfo.gender}</td>
               </tr>
               <tr>
-                <td>적립금:</td>
+                <td>적립금</td>
                 <td>{userInfo.points} 포인트</td>
               </tr>
               <tr>
-                <td>등급:</td>
+                <td>등급</td>
                 <td>{userInfo.grade}</td>
               </tr>
               <tr>
-                <td>주소:</td>
+                <td>주소</td>
                 <td>{userInfo.address}</td>
               </tr>
             </tbody>
