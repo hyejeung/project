@@ -35,6 +35,23 @@
 
 .tab-navigation button {
   margin-right: 20px; /* 버튼 간격을 조절할 수 있는 마진 추가 */
+  background: none; /* 초록색 배경 제거 */
+  color: black; /* 글씨 색상 변경 */
+  border: none;
+  border-bottom: 2px solid transparent; /* 기본 구분선을 투명하게 설정 */
+  cursor: pointer;
+  transition: border-bottom 0.3s ease; /* 구분선 변경 애니메이션 추가 */
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.tab-navigation button:hover {
+  /* 호버 시 구분선 색상 변경 */
+  border-bottom: 2px solid #a1f8a3;
+}
+
+.tab-navigation button + button {
+  margin-left: 20px; /* 버튼 간격을 조절할 수 있는 마진 추가 */
 }
 
 /* 주문 목록 스타일 */
@@ -131,3 +148,9 @@
 .close-button {
   background-color: #e74c3c;
 }
+
+
+.tab-navigation button.active {
+  border-bottom: 2px solid #a1f8a3;
+}
+

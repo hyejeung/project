@@ -33,11 +33,10 @@ const Navbar = ({ handleSearchChange }) => {
         {/* "배달및 주문서비스"를 클릭 가능한 링크로 만듭니다. */}
         <Link to="/" className="nav-link">
           <FontAwesomeIcon icon={faMotorcycle} size="2x" /> {/* 크기 지정 (2배) */}
-          <h1>배달및 주문서비스</h1>
+          <div class='header-title'>배달 및 주문서비스</div>
         </Link>
       </div>
       <div className="header-right">
-        <input type="text" placeholder="검색" onChange={handleSearchChange} />
         <Link to="/mypage" className="nav-link">
           마이페이지
         </Link>

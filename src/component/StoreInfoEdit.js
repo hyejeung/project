@@ -58,6 +58,10 @@ const StoreInfoEdit = () => {
     // 모달 열기
     setNewMenuItemModalOpen(true);
   };
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
 
   const handleImageUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -151,15 +155,24 @@ const StoreInfoEdit = () => {
   //activeTab === 'storeInfo' 에서 가게 정보가 출력되어야함
   return (
     <div className="storeinfoedit-container">
-      <h1>가게 정보</h1>
       <div className="tab-navigation">
-      <button onClick={() => setActiveTab('storeInfo')}>가게 정보</button>
-      <button onClick={() => setActiveTab('menuManagement')}>메뉴 관리</button>
-    </div>
+        <button
+          onClick={() => handleTabClick('storeInfo')}
+          className={activeTab === 'storeInfo' ? 'active' : ''} // 주석: 활성 탭일 때 클래스 추가
+        >
+          가게 정보
+        </button>
+        <button
+          onClick={() => handleTabClick('menuManagement')}
+          className={activeTab === 'menuManagement' ? 'active' : ''} // 주석: 활성 탭일 때 클래스 추가
+        >
+          메뉴 관리
+        </button>
+      </div>
 
       {activeTab === 'storeInfo' && (
         <>
-          <h2>가게 정보</h2>
+        
           <form>
             <div>
               <label htmlFor="name">가게 이름</label>
@@ -307,7 +320,7 @@ const StoreInfoEdit = () => {
 
       {activeTab === 'menuManagement' && (
         <>
-          <h2>메뉴 관리</h2>
+         
           <div className="order-list">
             {itemInfo.map((item) => (
               <div className="order-item" onClick={() => handleMenuClick(item)}>

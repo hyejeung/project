@@ -19,12 +19,45 @@ header {
   align-items: center;
 }
 
-.header-left h1 {
-  margin: 0;
+.header-left .nav-link {
+  display: flex;
+  width: 250px;
+  height: 30px;
+  text-decoration: none;
+}
+.header-left svg {
+  width: 30px;
+  height: 30px;
+}
+.header-left path {
+  fill: #333 !important;
 }
 
 .header-right input {
   margin-right: 10px;
+}
+.header-title {
+  height: 30px;
+  line-height: 30px;
+  margin-left: 11px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+.header-right .nav-link {
+  text-decoration: none;
+    margin: 0 15px;
+    font-size: 14px;
+    height: 34px;
+    line-height: 30px;
+    border-radius: 5px;
+    padding: 5px 10px;
+    color: #333;
+}
+.header-right .nav-link:hover {
+  background: #ffffff63;
+  font-weight: bold;
+  color: #313131;
 }
 
 .categories {
@@ -37,10 +70,10 @@ header {
 
 .category {
   flex: 1; /* 각 카테고리가 동일한 너비를 갖도록 수정 */
-  background-color: #808080; /* 회색 배경색으로 수정 */
+  background-color: #8bc34a; /* 연한 초록색 배경색으로 수정 */
   color: white;
-  padding: 15px; /* 패딩을 늘림 */
-  border-radius: 8px; /* 더 둥근 모양으로 */
+  padding: 8px 12px; /* 패딩을 더 작게 조절 */
+  border-radius: 20px; /* 더 둥근 모양으로 */
   cursor: pointer;
   transition: background-color 0.3s ease-in-out;
   white-space: nowrap; /* 텍스트가 길어져도 줄 바꿈을 하지 않도록 설정 */
@@ -48,9 +81,8 @@ header {
 }
 
 .category:hover {
-  background-color: #555; /* 호버 시 어두운 회색으로 수정 */
+  background-color: #4caf50; /* 호버 시 어두운 초록색으로 수정 */
 }
-
 .restaurants {
   display: flex;
   flex-wrap: wrap;
@@ -58,7 +90,6 @@ header {
   align-items: stretch; /* 세로폭이 늘어나도록 설정 */
   padding: 20px;
 }
-
 .restaurant-card {
   flex: 0 0 calc(25% - 20px); /* 한 줄에 4개의 카드가 들어가도록 설정 */
   margin: 10px;
@@ -75,7 +106,6 @@ header {
 }
 
 .my-page-link,
-.nav-link,
 .logout-button {
   text-decoration: none;
   color: black;
@@ -90,10 +120,6 @@ header {
 .my-page-link:hover {
   background-color: rgb(105, 163, 108); /* 더 진한 그린 톤 */
   text-decoration: underline;
-}
-
-.nav-link:hover {
-  background-color: #12ec24; /* 더 진한 블루 톤 */
 }
 
 .logout-button:hover {
