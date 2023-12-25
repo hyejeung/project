@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import './StoreInfoEdit.css';
 import axios from 'axios';
+import DaumPostcode from 'react-daum-postcode'; 
 import MenuDetail from './MenuDetail';
 
 const StoreInfoEdit = () => {
@@ -10,6 +11,9 @@ const StoreInfoEdit = () => {
   const [isNewMenuItemModalOpen, setNewMenuItemModalOpen] = useState(false);
   const [isAddMenuModalOpen, setAddMenuModalOpen] = useState(false);
   const [storeInfo, setStoreInfo] = useState({});
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [isDaumAddressModalOpen, setIsDaumAddressModalOpen] = useState(false);
+
   const [updatedStoreInfo, setUpdatedStoreInfo] = useState({ ...storeInfo });
   const [previewUrl, setPreviewUrl] = useState('https://picsum.photos/id/237/200/300');
 
@@ -25,7 +29,24 @@ const StoreInfoEdit = () => {
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+  const openDaumAddressModal = () => {
+    setIsDaumAddressModalOpen(true);
+  };
 
+  const closeDaumAddressModal = () => {
+    setIsDaumAddressModalOpen(false);
+  };
+  const handleDaumAddressComplete = (data) => {
+    const { address, addressType, userSelectedType, userLanguageType } = data;
+    // 사용자가 선택한 주소 정보를 가게 위치에 업데이트
+    setUpdatedStoreInfo((prevInfo) => ({
+      ...prevInfo,
+      address,
+    }));
+    closeDaumAddressModal();
+  };
+
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -181,7 +202,7 @@ const StoreInfoEdit = () => {
       picture: newImageUrl,
     }));
   };
-
+ 
   //activeTab === 'storeInfo' 에서 가게 정보가 출력되어야함
   return (
     <div className="storeinfoedit-container">
@@ -226,7 +247,7 @@ const StoreInfoEdit = () => {
               <label htmlFor="editedRepresentativeImage"> 대표 사진</label>
               <p>{storeInfo.picture}</p>
             </div>
-            {previewUrl && (
+            {/* {previewUrl && (
               <div>
                 <h3>사진 미리보기</h3>
                 <img
@@ -235,7 +256,7 @@ const StoreInfoEdit = () => {
                   style={{ width: '400px', height: '300px' }}
                 />
               </div>
-            )}
+            )} */}
             <div>
               <label htmlFor="openTime">영업 오픈 시간</label>
               <p>{storeInfo.openTime}</p>
@@ -263,17 +284,22 @@ const StoreInfoEdit = () => {
                       }
                     />
                   </div>
-                  <div>
-                    <label htmlFor="editedLocation"> 가게 위치</label>
-                    <input
-                      type="text"
-                      id="editedLocation"
-                      value={updatedStoreInfo.address}
-                      onChange={(e) =>
-                        setUpdatedStoreInfo({ ...updatedStoreInfo, address: e.target.value })
-                      }
-                    />
-                  </div>
+                  <div className="address-input-container">
+        <label htmlFor="editedLocation"> 가게 위치</label>
+        <div className="address-input-container">
+          <input
+            type="text"
+            id="editedLocation"
+            value={updatedStoreInfo.address}
+            onChange={(e) =>
+              setUpdatedStoreInfo({ ...updatedStoreInfo, address: e.target.value })
+            }
+          />
+          <button type="button" onClick={openDaumAddressModal}>
+            주소 검색
+          </button>
+        </div>
+        </div>
                   <div>
                     <label htmlFor="editedPhoneNumber"> 가게 전화번호</label>
                     <input
@@ -297,6 +323,16 @@ const StoreInfoEdit = () => {
                         onChange={handleImageUpload}
                       />
                     </div>
+                    {previewUrl && (
+              <div>
+                {/* <h3>사진 미리보기</h3> */}
+                <img
+                  src={file ? URL.createObjectURL(file) : `http://localhost:8080/${storeInfo.picture}`}
+                  alt="대표 사진 미리보기"
+                  style={{ width: '200px', height: '100px' }}
+                />
+              </div>
+            )}
                   </div>
                   <div>
                     <label htmlFor="editedDetails"> 상세 내용</label>
@@ -349,6 +385,17 @@ const StoreInfoEdit = () => {
           </form>
         </>
       )}
+      {isDaumAddressModalOpen && (
+  <div className="modal-overlay">
+    <div className="modal">
+      {/* DaumPostcode 모달 열기 */}
+      <DaumPostcode onComplete={handleDaumAddressComplete} />
+      <button className="close-button" onClick={closeDaumAddressModal}>
+        닫기
+      </button>
+    </div>
+  </div>
+)}
 
       {activeTab === 'menuManagement' && (
         <>

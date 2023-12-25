@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './MyPage.css'; // 스타일링을 위한 CSS 파일을 import
 import ReviewModal from './ReviewModal';
+import DaumPostcode from 'react-daum-postcode';
 
 const MyPage = () => {
   const [userInfo, setUserInfo] = useState({});
   const [activeTab, setActiveTab] = useState('orderHistory');
   const [hoveredTab, setHoveredTab] = useState(null);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [orderHistory, setOrderHistory] = useState([
     {
       order_id: 1,
@@ -25,7 +27,29 @@ const MyPage = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [reviewOrder, setReviewOrder] = useState(null);
   const [isReviewModalOpen, setReviewModalOpen] = useState(false);
+  const openAddressModal = () => {
+    setIsAddressModalOpen(true);
+  };
+  const closeAddressModal = () => {
+    setIsAddressModalOpen(false);
+  };
 
+  const handleAddressSelect = (data) => {
+    const selectedAddress = `${data.address} ${data.addressDetail}`;
+    setUpdatedUserInfo({ ...updatedUserInfo, address: selectedAddress });
+    closeAddressModal(); // 주소 선택 후 모달 닫기
+  };
+
+  // const handleAddressSelect = (data) => {
+  //   // Handle the selected address data
+  //   const selectedAddress = `${data.address} ${data.addressDetail}`;
+    
+  //   // Update the user info with the selected address
+  //   setUpdatedUserInfo({ ...updatedUserInfo, address: selectedAddress });
+
+  //   // Close the DaumPostcode modal
+  //   setIsAddressModalOpen(false);
+  // };
   useEffect(() => {
     // 회원 정보 및 주문 내역을 서버에서 가져오는 로직
     axios.get('/api/user', {
@@ -359,14 +383,32 @@ const MyPage = () => {
 
             <div>
               <label htmlFor="updatedAddress"> 주소</label>
-              <input
-                type="text"
-                id="updatedAddress"
-                value={updatedUserInfo.address}
-                onChange={(e) =>
-                  setUpdatedUserInfo({ ...updatedUserInfo, address: e.target.value })
-                }
-              />
+              <div className="address-input-container">
+                <input
+                  type="text"
+                  id="updatedAddress"
+                  value={updatedUserInfo.address}
+                  onChange={(e) => setUpdatedUserInfo({ ...updatedUserInfo, address: e.target.value })}
+                />
+                <button className="search-address" onClick={openAddressModal}>
+                  주소검색
+                </button>
+              </div>
+              {isAddressModalOpen && (
+                <div className="address-modal-overlay">
+                  <div className="address-modal">
+                    <DaumPostcode
+                      onComplete={handleAddressSelect}
+                      autoClose
+                      animation
+                      height={500}
+                    />
+                    <button className="close-button" onClick={closeAddressModal}>
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <button className="update-button" onClick={handleUpdate}>

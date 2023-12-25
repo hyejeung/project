@@ -1,5 +1,3 @@
-/* managermypage.css (전체 코드) */
-
 .my-page-container {
   max-width: 800px;
   margin: 50px auto;
@@ -46,6 +44,11 @@
 .button-container {
   display: flex;
   gap: 10px;
+  margin-top: 20px;
+}
+
+.button-container button.update-button {
+  margin-right: 20px; /* 수정 완료 버튼 우측 여백 추가 */
 }
 
 /* 표 스타일 */
@@ -57,7 +60,7 @@
 
 .my-page-container th, .my-page-container td {
   border: 1px solid #ddd;
-  padding: 15px; /* 셀 내용에 여백 추가 */
+  padding: 15px;
   text-align: left;
 }
 
@@ -68,16 +71,16 @@
 
 .my-page-container td:nth-child(1),
 .my-page-container th:nth-child(1) {
-  width: 30%; /* 첫 번째 열 너비를 30%로 조정 */
-  background-color: #d1ffd1; /* 연한 초록색 배경색 추가 */
+  width: 30%;
+  background-color: #d1ffd1;
 }
 
 .my-page-container td:nth-child(2),
 .my-page-container th:nth-child(2) {
-  width: 70%; /* 두 번째 열 너비를 70%로 조정 */
+  width: 70%;
 }
 
 .my-page-container td:first-child,
 .my-page-container th:first-child {
-  border-right: 1px solid #ddd; /* 첫 번째 열에만 오른쪽 구분선 추가 */
+  border-right: 1px solid #ddd;
 }

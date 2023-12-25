@@ -1,3 +1,4 @@
+
 /* StoreInfoEdit.css */
 
 /* 스토어 정보 수정 컴포넌트 스타일 */
@@ -135,14 +136,61 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
-
 .modal form {
   display: grid;
   gap: 20px;
- 
-  margin: 0 auto; /* 수정: 중앙 정렬을 위해 margin 추가 */
+  margin: 0 auto;
 }
 
+.modal label[for="editedLocation"] {
+  /* 수정: 타이틀이 왼쪽에 위치하도록 설정 */
+  text-align: left;
+  grid-column: span 1; /* 주소 입력 필드의 라벨이 1개의 그리드 열을 차지하도록 함 */
+  margin-right: 20px; /* 타이틀과 주소 입력 필드 간격 조절 */
+}
+
+/* 수정: 주소 입력 필드 및 버튼이 왼쪽으로 정렬되도록 수정 */
+.address-input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between; /* 오른쪽 정렬을 위해 추가 */
+ 
+}
+
+.modal input[type="text"] {
+  /* 수정: 입력창이 모달 전체를 차지하도록 함 */
+  flex: 1; /* 남은 공간을 모두 차지하도록 함 */
+  padding: 10px;
+  margin-right: 10px; /* 입력창과 버튼 간격 조절 */
+}
+
+.modal button[type="button"] {
+  background-color: #218c53;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 5px; 
+  margin-left: auto;
+}
+
+.modal button[type="button"]::after {
+  content: "";
+  flex: 1;
+}
+
+.modal button[type="button"]:hover {
+  background-color: #04751a;
+}
+
+
+.address-input-container {
+  display: flex;
+  flex-direction: column; /* 수정: 주소 입력 필드 및 버튼이 세로로 나타나도록 수정 */
+}
 
 
 .modal button {
@@ -161,4 +209,3 @@
 .tab-navigation button.active {
   border-bottom: 2px solid #a1f8a3;
 }
-

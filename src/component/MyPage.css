@@ -10,7 +10,7 @@
   background-color: #fff;
   box-sizing: border-box;
   text-align: center;
-  height: 100%;
+  /* height: 100%; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -195,3 +195,58 @@
   gap: 10px;
   margin-top: 10px;
 }
+.my-page-container .address-input-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.my-page-container input#updatedAddress {
+  flex: 1;
+  padding: 14px;
+  margin-right: 10px;
+}
+
+.my-page-container button.search-address {
+  padding: 10px 16px; /* 크기 조절 */
+  background: #4caf50;
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 16px; /* 크기 조절 */
+  font-weight: bold;
+  margin-left: auto;
+ 
+}
+
+
+
+.my-page-container button.search-address:hover {
+  background: #45a049;
+}
+
+.address-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.address-modal {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+  box-sizing: border-box;
+  text-align: left;
+  max-width: 800px;
+  width: 100%;
+}
+

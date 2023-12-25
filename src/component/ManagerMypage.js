@@ -1,45 +1,53 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './ManagerMypage.css'; // Import the CSS file for styling
+import './ManagerMypage.css';
+import DaumPostcode from 'react-daum-postcode';
 
 const ManagerMypage = () => {
   const [userInfo, setUserInfo] = useState({});
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
   const [updatedUserInfo, setUpdatedUserInfo] = useState({ ...userInfo });
 
-  useEffect(() => {
-    axios.get('/api/user', {
-      headers: {
-        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => {
-        setUserInfo(response.data);
-        setUpdatedUserInfo(response.data); // Initialize updatedUserInfo with current user info
-        return response;
-      })
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
-  }, []);
+  const openModal = () => {
+    setUpdatedUserInfo({ ...userInfo });
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+  };
+
+  const openAddressModal = () => {
+    setIsAddressModalOpen(true);
+  };
+
+  const closeAddressModal = () => {
+    setIsAddressModalOpen(false);
+  };
+
+  const handleAddressSelect = (data) => {
+    const selectedAddress = `${data.address} ${data.addressDetail}`;
+    setUpdatedUserInfo({ ...updatedUserInfo, address: selectedAddress });
+    closeAddressModal();
+  };
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put('api/user', updatedUserInfo, {
+      const response = await axios.put('/api/user', updatedUserInfo, {
         headers: {
           Authorization: 'Bearer ' + localStorage.getItem('access_token'),
           'Content-Type': 'application/json',
         },
       });
 
-      setUserInfo(updatedUserInfo);
-      setModalOpen(false); // Close the modal after successful update
+      setUserInfo(response.data);
+      setModalOpen(false);
     } catch (error) {
       console.error('사용자 정보 업데이트 실패:', error.message);
       // 에러 핸들링 로직 추가
     }
   };
-
   const handleWithdrawal = async () => {
     const confirmWithdrawal = window.confirm('정말로 회원을 탈퇴하시겠습니까?');
 
@@ -60,13 +68,22 @@ const ManagerMypage = () => {
     }
   };
 
-  const openModal = () => {
-    setModalOpen(true);
-  };
 
-  const closeModal = () => {
-    setModalOpen(false);
-  };
+  useEffect(() => {
+    axios.get('/api/user', {
+      headers: {
+        Authorization: 'Bearer ' + localStorage.getItem('access_token'),
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((response) => {
+        setUserInfo(response.data);
+        setUpdatedUserInfo(response.data);
+        return response;
+      })
+      .then((response) => console.log(response.data))
+      .catch((error) => console.log(error));
+  }, []);
 
   return (
     <div className="my-page-container">
@@ -141,14 +158,32 @@ const ManagerMypage = () => {
             </div>
             <div>
               <label htmlFor="updatedAddress"> 주소</label>
-              <input
-                type="text"
-                id="updatedAddress"
-                value={updatedUserInfo.address}
-                onChange={(e) =>
-                  setUpdatedUserInfo({ ...updatedUserInfo, address: e.target.value })
-                }
-              />
+              <div className="address-input-container">
+                <input
+                  type="text"
+                  id="updatedAddress"
+                  value={updatedUserInfo.address}
+                  onChange={(e) => setUpdatedUserInfo({ ...updatedUserInfo, address: e.target.value })}
+                />
+                <button className="search-address" onClick={openAddressModal}>
+                  주소검색
+                </button>
+              </div>
+              {isAddressModalOpen && (
+                <div className="address-modal-overlay">
+                  <div className="address-modal">
+                    <DaumPostcode
+                      onComplete={handleAddressSelect}
+                      autoClose
+                      animation
+                      height={500}
+                    />
+                    <button className="close-button" onClick={closeAddressModal}>
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <button className="update-button" onClick={handleUpdate}>
