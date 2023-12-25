@@ -24,6 +24,33 @@ body {
   text-align: center;
 }
 
+.Restaurant .tab-buttons {
+  /* display: flex; */
+  gap: 10px;
+  justify-content: flex-start; /* 왼쪽으로 정렬 */
+}
+
+.Restaurant .tab-buttons button {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #333;
+  padding: px 8px; /* 간격을 조절합니다. */
+  margin-right: 5px; /* 간격을 조절합니다. */
+  position: relative;
+  z-index: 2;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.Restaurant .tab-buttons button.active {
+  background-color: #fff;
+  color: #4CAF50;
+}
+
+.Restaurant .tab-buttons button:hover {
+  background-color: #fff;
+  color: #4CAF50;
+}
+
 .Restaurant div > div {
   border-bottom: 2px solid #e0e0e0;
   padding-bottom: 20px;
@@ -104,7 +131,6 @@ body {
 .Restaurant .menu-buttons {
   display: flex;
   gap: 10px;
-  justify-content: flex-start; /* 왼쪽으로 정렬 */
 }
 
 .Restaurant .menu-buttons button {
@@ -115,7 +141,6 @@ body {
   position: relative;
   z-index: 2;
   transition: background-color 0.3s ease, color 0.3s ease;
-
 }
 
 .Restaurant .menu-buttons button.active {
@@ -127,7 +152,6 @@ body {
   background-color: #fff;
   color: #4CAF50;
 }
-
 
 .Restaurant > div > div {
   text-align: center;
@@ -152,6 +176,8 @@ body {
   background-color: transparent;
   color: #333;
   border: 1px solid #333;
+  padding: 8px 12px; /* 간격을 조절합니다. */
+  margin-right: 5px; /* 간격을 조절합니다. */
   position: relative;
   z-index: 2;
   transition: background-color 0.3s ease, color 0.3s ease;
